@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: vuln-asset-manager
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: RENDER
+        value: "True"
+      - key: POSTGRES_DATABASE
+        fromDatabase:
+          name: vuln-asset-manager-db
+          property: database
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: vuln-asset-manager-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: vuln-asset-manager-db
+          property: password
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: vuln-asset-manager-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: vuln-asset-manager-db
+          property: port
+    healthCheckPath: /
+    autoDeploy: true
+
+  - type: postgres
+    name: vuln-asset-manager-db
+    plan: free
+    ipAllowList: [] 
