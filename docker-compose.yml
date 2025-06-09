@@ -3,7 +3,8 @@ version: '3.11'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    image: vuln-asset-manager
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
