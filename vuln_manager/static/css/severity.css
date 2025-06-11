@@ -1,0 +1,73 @@
+.severity-critical {
+    color: #dc3545 !important;  /* Rojo oscuro */
+    font-weight: bold !important;
+}
+
+.severity-high {
+    color: #fd7e14 !important;  /* Naranja */
+    font-weight: bold !important;
+}
+
+.severity-medium {
+    color: #ffc107 !important;  /* Amarillo */
+    font-weight: bold !important;
+}
+
+.severity-low {
+    color: #6c757d !important;  /* Gris */
+}
+
+.severity-none {
+    color: #6c757d !important;  /* Gris claro */
+}
+
+/* Estilos para badges */
+.badge-severity-critical {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.badge-severity-high {
+    background-color: #fd7e14 !important;
+    color: white !important;
+}
+
+.badge-severity-medium {
+    background-color: #ffc107 !important;
+    color: black !important;
+}
+
+.badge-severity-low {
+    background-color: #6c757d !important;
+    color: white !important;
+}
+
+.badge-severity-none {
+    background-color: #e9ecef !important;
+    color: #6c757d !important;
+}
+
+/* Estilos para filas de tabla */
+tr.severity-critical {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+tr.severity-high {
+    background-color: rgba(253, 126, 20, 0.1) !important;
+}
+
+tr.severity-medium {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+tr.severity-low {
+    background-color: rgba(108, 117, 125, 0.1) !important;
+}
+
+tr.severity-none {
+    background-color: rgba(233, 236, 239, 0.1) !important;
+}
+
+.clickable-row {
+    cursor: pointer;
+} 

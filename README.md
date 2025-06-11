@@ -66,7 +66,7 @@ services:
       - "8000:8000"
     environment:
       - DEBUG=1
-      - DJANGO_SETTINGS_MODULE=core.settings
+      - DJANGO_SETTINGS_MODULE=config.settings
     depends_on:
       - db
 
@@ -86,7 +86,7 @@ volumes:
 ### 3. Estructura del proyecto
 ```
 vuln-asset-manager/
-├── core/                    # Proyecto principal Django
+├── config/                    # Proyecto principal Django
 │   ├── settings.py         # Configuración del proyecto
 │   ├── urls.py            # Configuración de URLs
 │   ├── wsgi.py
@@ -103,7 +103,7 @@ vuln-asset-manager/
 
 1. Crear el proyecto Django:
 ```bash
-docker-compose run --rm web django-admin startproject core .
+docker-compose run --rm web django-admin startproject config .
 ```
 
 2. Configurar settings.py:
@@ -115,7 +115,7 @@ docker-compose run --rm web django-admin startproject core .
 - Implementar una página básica con Bootstrap
 - Configurar la navegación
 
-4. Configurar URLs (core/urls.py):
+4. Configurar URLs (config/urls.py):
 - Configurar la ruta principal
 - Configurar el panel de administración
 

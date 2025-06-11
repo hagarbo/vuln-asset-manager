@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">
+                {{ vulnerabilidad.cve_id }}
+                <span class="badge badge-severity-{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }} float-right">
+                    {{ vulnerabilidad.get_severidad_display }}
+                </span>
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Información General</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">Descripción (ES)</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.descripcion_es }}</dd>
+
+                        <dt class="col-sm-4">Descripción (EN)</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.descripcion_en }}</dd>
+
+                        <dt class="col-sm-4">Score CVSS v3</dt>
+                        <dd class="col-sm-8">
+                            <span class="{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }}">
+                                {{ vulnerabilidad.cvss3_score|default:"N/A" }}
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Vector CVSS v3</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.cvss3_vector|default:"N/A" }}</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.get_status_display }}</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <h4>Fechas</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">Publicación</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.fecha_publicacion }}</dd>
+
+                        <dt class="col-sm-4">Modificación</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.fecha_modificacion }}</dd>
+
+                        <dt class="col-sm-4">Detección</dt>
+                        <dd class="col-sm-8">{{ vulnerabilidad.fecha_deteccion }}</dd>
+                    </dl>
+
+                    <h4>Referencias</h4>
+                    <ul class="list-unstyled">
+                        {% for ref in vulnerabilidad.referencias %}
+                        <li><a href="{{ ref }}" target="_blank">{{ ref }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <h4 class="mt-4">Activos Afectados</h4>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Activo</th>
+                            <th>Estado</th>
+                            <th>Fecha Detección</th>
+                            <th>Fecha Resolución</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for av in vulnerabilidad.activovulnerabilidad_set.all %}
+                        <tr>
+                            <td>{{ av.activo.nombre }}</td>
+                            <td>{{ av.get_estado_display }}</td>
+                            <td>{{ av.fecha_deteccion }}</td>
+                            <td>{{ av.fecha_resolucion|default:"-" }}</td>
+                            <td>{{ av.notas|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No hay activos afectados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
