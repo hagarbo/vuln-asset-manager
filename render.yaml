@@ -38,7 +38,9 @@ services:
     healthCheckPath: /
     autoDeploy: true
 
-  - type: postgres
-    name: vuln-asset-manager-db
+databases:
+  - name: vuln-asset-manager-db
+    databaseName: vuln_asset_manager
+    user: vuln_asset_manager
     plan: free
     ipAllowList: [] 
