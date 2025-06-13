@@ -56,4 +56,9 @@ ENV DEBUG=False
 ENV RENDER=True
 
 # Temporalmente cambiamos el CMD para crear un superusuario
-CMD ["python", "create_superuser.py"] 
+CMD ["python", "create_superuser.py"]
+
+COPY scripts/init_project.sh /app/init_project.sh
+RUN chmod +x /app/init_project.sh
+
+CMD ["/app/init_project.sh"] 
