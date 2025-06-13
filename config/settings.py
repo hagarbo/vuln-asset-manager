@@ -108,9 +108,26 @@ if os.getenv('RENDER'):
         }
     }
     
-    # Forzar modo producción
-    DEBUG = False
-    ALLOWED_HOSTS = ['.onrender.com']
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'DEBUG' if DEBUG else 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
     
     # Configuración de seguridad para producción
     SECURE_SSL_REDIRECT = True
