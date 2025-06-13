@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
+
+{% block title %}Detalle de Vulnerabilidad - Vuln-Asset-Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        {{ vulnerabilidad.cve_id }}
+        <span class="badge bg-{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }}">
+            {{ vulnerabilidad.get_severidad_display }}
+        </span>
+    </h1>
+    {% include 'components/detail_actions.html' with update_url='vuln_manager:vulnerabilidad_update' delete_url='vuln_manager:vulnerabilidad_delete' list_url='vuln_manager:vulnerabilidad_list' %}
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Información General</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Descripción (ES)</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.descripcion_es }}</dd>
+
+                    <dt class="col-sm-4">Descripción (EN)</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.descripcion_en }}</dd>
+
+                    <dt class="col-sm-4">Score CVSS v3</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }}">
+                            {{ vulnerabilidad.cvss3_score|default:"N/A" }}
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Vector CVSS v3</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.cvss3_vector|default:"N/A" }}</dd>
+
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-{{ vulnerabilidad.status|status_to_css_class }}">
+                            {{ vulnerabilidad.get_status_display }}
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Publicación</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.fecha_publicacion|date:"d/m/Y" }}</dd>
+
+                    <dt class="col-sm-4">Modificación</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.fecha_modificacion|date:"d/m/Y" }}</dd>
+
+                    <dt class="col-sm-4">Detección</dt>
+                    <dd class="col-sm-8">{{ vulnerabilidad.fecha_deteccion|date:"d/m/Y" }}</dd>
+                </dl>
+
+                <h6 class="mt-3">Referencias</h6>
+                <ul class="list-group list-group-flush">
+                    {% for ref in vulnerabilidad.referencias %}
+                    <li class="list-group-item">
+                        <a href="{{ ref }}" target="_blank" class="text-decoration-none">
+                            <i class="bi bi-link-45deg"></i> {{ ref }}
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">
+                        <i class="bi bi-info-circle"></i> No hay referencias disponibles.
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Activos Afectados</h5>
+        {% if perms.vuln_manager.add_activovulnerabilidad %}
+        <a href="{% url 'vuln_manager:activo_vulnerabilidad_create' %}?vulnerabilidad={{ vulnerabilidad.pk }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Agregar Activo
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Activo</th>
+                        <th>Estado</th>
+                        <th>Fecha Detección</th>
+                        <th>Fecha Resolución</th>
+                        <th>Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for av in activos %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'vuln_manager:activo_detail' av.activo.pk %}" class="text-decoration-none">
+                                {{ av.activo.nombre }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ vuln.status|status_to_css_class }}">
+                                {{ av.get_estado_display }}
+                            </span>
+                        </td>
+                        <td>{{ av.fecha_deteccion|date:"d/m/Y" }}</td>
+                        <td>{{ av.fecha_resolucion|date:"d/m/Y"|default:"-" }}</td>
+                        <td>{{ av.notas|default:"-" }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                {% if perms.vuln_manager.change_activovulnerabilidad %}
+                                <a href="{% url 'vuln_manager:activo_vulnerabilidad_update' av.pk %}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                {% endif %}
+                                {% if perms.vuln_manager.delete_activovulnerabilidad %}
+                                <a href="{% url 'vuln_manager:activo_vulnerabilidad_delete' av.pk %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i> No hay activos afectados.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

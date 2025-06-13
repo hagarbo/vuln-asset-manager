@@ -1,29 +1,36 @@
 version: '3.11'
 
 services:
-  web:
+  vuln-manager-web:
+    container_name: vuln-manager-web
     build: .
-    image: vuln-asset-manager
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn core.wsgi:application --bind 0.0.0.0:8000"
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - static_volume:/app/static
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      - DEBUG=${DEBUG:-1}
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
     depends_on:
       - db
 
-
   db:
+    container_name: vuln-manager-db
     image: postgres:15
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - .env
+      - vuln_manager_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
 
 volumes:
-  postgres_data: 
+  vuln_manager_postgres_data:
+    name: vuln_manager_postgres_data
+  static_volume:
+    name: vuln_manager_static_volume 
