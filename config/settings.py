@@ -94,6 +94,10 @@ if os.getenv('RENDER'):
             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
             'HOST': os.getenv('POSTGRES_HOST'),
             'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'CONN_MAX_AGE': 600,  # 10 minutos
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
 else:

@@ -29,14 +29,22 @@ RUN mkdir -p /app/static /app/media
 RUN echo '#!/bin/bash\n\
 if [ "$RENDER" = "True" ]; then\n\
     echo "Running in production mode with gunicorn..."\n\
+    echo "Waiting for database..."\n\
+    while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do\n\
+        sleep 0.1\n\
+    done\n\
+    echo "Database is up!"\n\
     python manage.py migrate\n\
     python manage.py collectstatic --noinput\n\
-    gunicorn config.wsgi:application --bind 0.0.0.0:8000\n\
+    exec gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 0\n\
 else\n\
     echo "Running in development mode..."\n\
     python manage.py runserver 0.0.0.0:8000\n\
 fi' > /app/entrypoint.sh \
     && chmod +x /app/entrypoint.sh
+
+# Instalar netcat para el health check
+RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
 
 # Exponer el puerto
 EXPOSE 8000
