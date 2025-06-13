@@ -52,9 +52,6 @@ EXPOSE 8000
 # Usar el script de entrada como comando
 CMD ["/app/entrypoint.sh"]
 
-ENV DEBUG=False
-ENV RENDER=True
-
 # Temporalmente cambiamos el CMD para crear un superusuario
 CMD ["python", "create_superuser.py"]
 

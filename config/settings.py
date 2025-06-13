@@ -130,7 +130,7 @@ if os.getenv('RENDER'):
     }
 
         # Forzar modo producción
-    DEBUG = os.getenv('DEBUG', 'False')
+    DEBUG = os.getenv('DEBUG', 'True')
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
     
     # Configuración de seguridad para producción
@@ -152,6 +152,9 @@ else:
             'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
             'HOST': os.getenv('POSTGRES_HOST', 'db'),
             'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'disable',  # Deshabilitar SSL en desarrollo
+            },
         }
     }
 
