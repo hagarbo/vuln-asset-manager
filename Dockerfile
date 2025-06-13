@@ -50,4 +50,9 @@ RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/a
 EXPOSE 8000
 
 # Usar el script de entrada como comando
-CMD ["/app/entrypoint.sh"] 
+CMD ["/app/entrypoint.sh"]
+
+ENV DEBUG=False
+ENV RENDER=True
+
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--timeout", "120"] 

@@ -98,9 +98,14 @@ if os.getenv('RENDER'):
             'OPTIONS': {
                 'sslmode': 'require',
                 'connect_timeout': 30,
+                'hostaddr': os.getenv('POSTGRES_HOST'),  # Forzar uso de TCP/IP
             },
         }
     }
+    
+    # Forzar modo producción
+    DEBUG = False
+    ALLOWED_HOSTS = ['.onrender.com']
     
     # Configuración de seguridad para producción
     SECURE_SSL_REDIRECT = True
