@@ -13,6 +13,8 @@ services:
         value: .onrender.com
       - key: RENDER
         value: "True"
+      - key: PORT
+        value: "8000"
       - key: POSTGRES_DATABASE
         fromDatabase:
           name: vuln-asset-manager-db
