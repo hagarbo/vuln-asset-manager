@@ -85,6 +85,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if os.getenv('RENDER'):
+    # Extraer el hostname de la URL de la base de datos si es necesario
+    db_host = os.getenv('POSTGRES_HOST', '')
+    if db_host.startswith('postgresql://'):
+        # Si es una URL completa, extraer solo el hostname
+        db_host = db_host.split('@')[1].split('/')[0]
+
     # Configuración para producción (Render.com)
     DATABASES = {
         'default': {
@@ -92,7 +98,7 @@ if os.getenv('RENDER'):
             'NAME': os.getenv('POSTGRES_DATABASE', 'vuln_asset_manager'),
             'USER': os.getenv('POSTGRES_USER', 'vuln_asset_manager'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('POSTGRES_HOST', 'dpg-d161po63jp1c73d25e70-a'),
+            'HOST': db_host,
             'PORT': os.getenv('POSTGRES_PORT', '5432'),
             'CONN_MAX_AGE': 600,  # 10 minutos
             'OPTIONS': {
