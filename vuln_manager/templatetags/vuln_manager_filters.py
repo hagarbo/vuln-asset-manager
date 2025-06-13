@@ -1,19 +1,39 @@
 from django import template
+from django.utils.safestring import mark_safe
+from vuln_manager.models import ActivoVulnerabilidad, Vulnerabilidad
 
 register = template.Library()
 
 @register.filter
-def severity_to_css_class(severity_es):
+def severity_to_css_class(severity):
     """
-    Mapea la severidad en español a la clase CSS correspondiente en inglés.
+    Convierte la severidad de una vulnerabilidad en una clase CSS de Bootstrap.
     """
-    mapping = {
-        'critica': 'critical',
-        'alta': 'high',
-        'media': 'medium',
-        'baja': 'low',
-        'desconocida': 'none',
-        # Asegurarse de que cualquier otro valor se mapee a 'none' por defecto
-        'ninguna': 'none',
+    severity_classes = {
+        'critica': 'severity-critical',
+        'alta': 'severity-high',
+        'media': 'severity-medium',
+        'baja': 'severity-low',
+        'ninguna': 'severity-none',
     }
-    return mapping.get(severity_es.lower(), 'none') 
+    return severity_classes.get(severity.lower(), 'bg-secondary')
+
+@register.filter
+def status_to_css_class(estado):
+    """
+    Convierte el estado de una vulnerabilidad en una clase CSS de Bootstrap.
+    Maneja tanto los estados de ActivoVulnerabilidad como los estados de Vulnerabilidad.
+    """
+    estado_classes = {
+        # Estados de ActivoVulnerabilidad
+        'pendiente': 'warning',
+        'en_proceso': 'info',
+        'resuelta': 'success',
+        'falso_positivo': 'secondary',
+        
+        # Estados de Vulnerabilidad
+        'published': 'success',
+        'draft': 'warning',
+        'rejected': 'danger',
+    }
+    return estado_classes.get(str(estado).lower(), 'secondary') 

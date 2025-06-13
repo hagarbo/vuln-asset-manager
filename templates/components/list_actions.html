@@ -1,0 +1,5 @@
+{% if perms.vuln_manager.add_vuln_manager %}
+    <a href="{% url create_url %}" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i> Crear {{ model_name }}
+    </a>
+{% endif %} 

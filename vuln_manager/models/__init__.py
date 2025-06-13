@@ -1,16 +1,15 @@
-from .cliente import Cliente
-from .activo import Activo
-from .vulnerabilidad import Vulnerabilidad
-from .activo_vulnerabilidad import ActivoVulnerabilidad
-from .alerta import Alerta
-from .tarea import Tarea, EjecucionTarea
+from .auth.usuario import Usuario
+from .cliente.cliente import Cliente
+from .cliente.analista_cliente import AnalistaCliente
+from .activo.activo import Activo
+from .vulnerabilidad.vulnerabilidad import Vulnerabilidad
+from .vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
 
 __all__ = [
-    'Cliente', 
-    'Activo', 
-    'Vulnerabilidad', 
-    'ActivoVulnerabilidad', 
-    'Alerta',
-    'Tarea',
-    'EjecucionTarea'
+    'Usuario',
+    'Cliente',
+    'AnalistaCliente',
+    'Activo',
+    'Vulnerabilidad',
+    'ActivoVulnerabilidad',
 ] 

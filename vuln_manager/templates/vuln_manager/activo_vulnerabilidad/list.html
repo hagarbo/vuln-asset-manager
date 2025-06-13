@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Activos Vulnerabilidades</h2>
+    <a href="{% url 'vuln_manager:activo_vulnerabilidad_create' %}" class="btn btn-primary mb-3">Nueva Asignación</a>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Activo</th>
+                    <th>Vulnerabilidad</th>
+                    <th>Estado</th>
+                    <th>Fecha Detección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for av in activo_vulnerabilidades %}
+                <tr>
+                    <td>{{ av.activo.nombre }}</td>
+                    <td>{{ av.vulnerabilidad.nombre }}</td>
+                    <td>{{ av.get_estado_display }}</td>
+                    <td>{{ av.fecha_deteccion|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_detail' av.pk %}" class="btn btn-info btn-sm">Ver</a>
+                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_update' av.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_delete' av.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay asignaciones de vulnerabilidades a activos.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

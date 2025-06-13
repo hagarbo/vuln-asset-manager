@@ -1,15 +1,19 @@
 [
     {
-        "model": "auth.user",
+        "model": "vuln_manager.usuario",
         "pk": 1,
         "fields": {
-            "username": "admin",
-            "password": "pbkdf2_sha256$600000$your_password_hash_here",
+            "password": "pbkdf2_sha256$600000$2xNtr32gyKWgORFEMAqfoA$yQv4Cebv9DNqPiRmqSerEBDQTpxNxuIohk/yx+ieimQ=",
+            "last_login": null,
             "is_superuser": true,
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@admin.com",
             "is_staff": true,
             "is_active": true,
-            "email": "admin@example.com",
-            "date_joined": "2025-06-11T15:02:42Z"
+            "date_joined": "2025-06-11T15:00:00Z",
+            "rol": "admin"
         }
     },
     {
@@ -17,7 +21,7 @@
         "pk": 1,
         "fields": {
             "nombre": "Empresa A",
-            "analistas": [1],
+            "analistas": [],
             "created_at": "2025-06-11T15:00:00Z",
             "updated_at": "2025-06-11T15:00:00Z"
         }
@@ -27,7 +31,7 @@
         "pk": 2,
         "fields": {
             "nombre": "Empresa B",
-            "analistas": [1],
+            "analistas": [],
             "created_at": "2025-06-11T15:00:00Z",
             "updated_at": "2025-06-11T15:00:00Z"
         }
@@ -187,24 +191,8 @@
             "tipo": "cve",
             "descripcion": "Actualización automática de la base de datos de CVEs",
             "programacion": "0 0 * * *",
-            "estado": "programada",
-            "activa": true,
-            "creada_por": 1,
-            "created_at": "2025-06-11T15:00:00Z",
-            "updated_at": "2025-06-11T15:00:00Z"
-        }
-    },
-    {
-        "model": "vuln_manager.tarea",
-        "pk": 2,
-        "fields": {
-            "nombre": "Escaneo semanal de activos",
-            "tipo": "scan",
-            "descripcion": "Escaneo de vulnerabilidades en todos los activos",
-            "programacion": "0 0 * * 0",
-            "estado": "programada",
-            "activa": true,
-            "creada_por": 1,
+            "ultima_ejecucion": null,
+            "estado": "activa",
             "created_at": "2025-06-11T15:00:00Z",
             "updated_at": "2025-06-11T15:00:00Z"
         }

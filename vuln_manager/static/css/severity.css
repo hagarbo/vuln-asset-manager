@@ -22,27 +22,27 @@
 }
 
 /* Estilos para badges */
-.badge-severity-critical {
+.bg-severity-critical {
     background-color: #dc3545 !important;
     color: white !important;
 }
 
-.badge-severity-high {
+.bg-severity-high {
     background-color: #fd7e14 !important;
     color: white !important;
 }
 
-.badge-severity-medium {
+.bg-severity-medium {
     background-color: #ffc107 !important;
     color: black !important;
 }
 
-.badge-severity-low {
+.bg-severity-low {
     background-color: #6c757d !important;
     color: white !important;
 }
 
-.badge-severity-none {
+.bg-severity-none {
     background-color: #e9ecef !important;
     color: #6c757d !important;
 }

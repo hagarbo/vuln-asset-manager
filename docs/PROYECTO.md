@@ -45,7 +45,11 @@ vuln-asset-manager/
 │       ├── cliente_detail.html
 │       ├── activo_list.html
 │       ├── activo_detail.html
-│       ├── vulnerabilidad_list.html
+│       ├── vulnerabilidades/
+│       │   ├── list.html
+│       │   ├── detail.html
+│       │   ├── form.html
+│       │   └── confirm_delete.html
 │       └── vulnerabilidad_detail.html
 ├── static/              # Archivos estáticos
 ├── docs/               # Documentación

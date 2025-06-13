@@ -2,120 +2,127 @@
 
 ## Notas Importantes
 - La versión de docker-compose está fijada en 3.11 y NO debe cambiarse a 3.8 u otra versión para evitar problemas de compatibilidad.
-- Antes de crear nuevas carpetas o archivos, es crucial revisar y seguir las buenas prácticas y estándares de Django. La refactorización posterior de la estructura del proyecto es compleja y puede causar problemas de compatibilidad.
+- **Estructura del Proyecto y Buenas Prácticas de Django:**
+  - **Plantillas (Templates):**
+    - **A nivel de Proyecto (`/templates/`):** Contiene plantillas globales como `base.html`, `home.html` y plantillas de autenticación (`/templates/registration/`).
+    - **Específicas de la Aplicación (`/vuln_manager/templates/vuln_manager/`):** Cada aplicación tiene su propio directorio `templates` con un subdirectorio que coincide con el nombre de la aplicación.
+  - **Archivos Estáticos (Static Files):**
+    - **Específicos de la Aplicación (`/vuln_manager/static/`):** Todos los archivos estáticos (CSS, JS, imágenes) relacionados con una aplicación residen aquí.
+  - **Configuración de URLs:**
+    - `config/urls.py` delega las URLs específicas de la aplicación (`vuln_manager.urls`).
+    - `vuln_manager/urls.py` define las rutas con `app_name` para usar namespaces.
+  - **Vistas (`views.py`):**
+    - Las vistas se separan en archivos por modelo.
+    - `vuln_manager/views/__init__.py` expone las vistas necesarias.
+  - **Consistencia de Contexto:** Se asegura que `context_object_name` en las vistas coincida con las variables usadas en las plantillas.
+  - **Filtros de Plantilla:** Ubicados en `app_name/templatetags/` y cargados explícitamente.
 
-## Última Actualización: 11/06/2025
+## Última Actualización: 12/06/2025
 
 ### Cambios Realizados
-1. Reorganización de la estructura del proyecto:
-   - Renombrado `core` a `config` para seguir las mejores prácticas de Django
-   - Renombrado `core_app` a `vuln_manager` para mejor claridad
-   - Actualizadas todas las referencias en el código
+1. **Sistema de Roles y Permisos:**
+   - Implementado modelo de Usuario personalizado con roles jerárquicos (Admin, Analista, Cliente)
+   - Añadida relación ManyToMany entre analistas y clientes
+   - Implementados mixins para control de acceso basado en roles
+   - Definidos permisos específicos para cada rol
 
-2. Reorganización de las vistas en archivos separados:
-   - Creado directorio `vuln_manager/views/`
-   - Separadas las vistas en archivos específicos:
-     - `cliente_views.py`
-     - `activo_views.py`
-     - `vulnerabilidad_views.py`
-   - Creado `__init__.py` para exportar las vistas
+2. **Estructura de Roles:**
+   - **Administrador:**
+     - Gestión completa de la aplicación
+     - Creación de cuentas de analistas y clientes
+     - Asignación de clientes a analistas
+   - **Analista:**
+     - Gestión de activos de sus clientes asignados
+     - Gestión de vulnerabilidades de sus clientes
+   - **Cliente:**
+     - Visualización de sus propios activos
+     - Visualización de vulnerabilidades de sus activos
 
-3. Corrección de nombres de campos en vistas y plantillas:
-   - Actualizado `fecha_creacion` a `created_at`
-   - Actualizado `fecha_actualizacion` a `updated_at`
-   - Corregido `activo_set` a `activos`
-   - Corregido `vulnerabilidad_set` a `vulnerabilidades`
+3. **Mejoras en la Seguridad:**
+   - Implementado sistema de permisos basado en roles
+   - Añadidos mixins para control de acceso
+   - Validaciones de acceso a nivel de vista y modelo
 
-4. Mejoras en las plantillas:
-   - Mejorado el diseño y estructura HTML
-   - Añadidos mensajes informativos cuando no hay datos
-   - Mejorado el formato de la información mostrada
-   - Añadidos badges para mostrar severidad de vulnerabilidades
-
-### Cambios Recientes (11/06/2025)
-- Corregidas las importaciones en las vistas para usar rutas absolutas (`vuln_manager.models`) en lugar de relativas
-- Movidas las plantillas de `templates/core_app/` a `templates/vuln_manager/` para mantener consistencia con el nombre de la aplicación
-- Eliminada temporalmente la restricción de login en las vistas para facilitar el desarrollo
-- Corregida la configuración de URLs para incluir las rutas de autenticación
-- Añadida plantilla de login en `templates/registration/login.html`
-- Eliminado el directorio redundante `staticfiles/` y ajustada la configuración para usar solo `static/` como raíz de archivos estáticos.
-- Añadida la estructura básica de carpetas en `static/` (`css`, `js`, `img`).
-- Actualizado `settings.py` para reflejar estos cambios y mejorar la seguridad (CORS, CSRF, Whitenoise).
-- Actualizado `requirements.txt` e instalado dependencias de testing y seguridad en el contenedor.
-- Ejecutado `collectstatic` para recopilar archivos estáticos correctamente.
-
-### Próximos Pasos
-1. Implementar formularios para crear/editar entidades
-2. Añadir autenticación y autorización
-3. Implementar búsqueda y filtrado
-4. Añadir validaciones de datos
-5. Implementar pruebas unitarias
-
-### Problemas Conocidos
-1. No se puede acceder por HTTPS en desarrollo (configurado para usar HTTP)
-2. Pendiente de implementar la gestión de sesiones de usuarios
-3. El atributo `version` en docker-compose.yml está obsoleto (warning)
-4. Necesidad de implementar la autenticación de usuarios
-5. Pendiente de implementar formularios para crear/editar registros
-
-### Notas
-- El proyecto está funcionando correctamente en desarrollo con HTTP
-- Las vistas están correctamente organizadas y son mantenibles
-- Las plantillas están optimizadas y son responsivas
-
-### Notas para la Próxima Sesión
-1. Pendiente de implementar:
-   - Formularios para crear/editar entidades
-   - Sistema de autenticación
-   - Búsqueda y filtrado
-   - Validaciones de datos
-
-2. Consideraciones técnicas:
-   - Mantener la estructura actual de vistas separadas
-   - Seguir el patrón de diseño actual para nuevas funcionalidades
-   - Considerar la implementación de Class-Based Views para formularios
-
-3. Puntos de atención:
-   - Revisar la necesidad de HTTPS en desarrollo
-   - Evaluar la implementación de un sistema de caché
-   - Considerar la implementación de paginación en las listas
-
-4. URLs actuales:
-   - Lista de clientes: `/clientes/`
-   - Detalle de cliente: `/clientes/<id>/`
-   - Lista de activos: `/activos/`
-   - Detalle de activo: `/activos/<id>/`
-   - Lista de vulnerabilidades: `/vulnerabilidades/`
-   - Detalle de vulnerabilidad: `/vulnerabilidades/<id>/`
-
-## Última Sesión
-- **Fecha**: [Fecha actual]
-- **Objetivo**: Implementación del modelo de Vulnerabilidades
-- **Cambios realizados**:
-  - Añadido soporte para CVSS v2/v3
-  - Implementado sistema de referencias
-  - Añadido campo de estado para vulnerabilidades
-
-## Estado Actual
-- **Modelos implementados**:
+### Estado Actual
+- **Modelos implementados y registrados en Admin:**
+  - [x] Usuario (con sistema de roles)
   - [x] Cliente
   - [x] Activo
   - [x] Vulnerabilidad
   - [x] ActivoVulnerabilidad
   - [x] Alerta
   - [x] Tarea
+  - [x] EjecucionTarea
 
-- **Funcionalidades en desarrollo**:
-  - Sistema de actualización automática de CVEs
-  - Sistema de alertas
-  - Generación de informes
+- **Sistema de Roles:**
+  - [x] Modelo de Usuario personalizado
+  - [x] Relaciones analista-cliente
+  - [x] Permisos específicos por rol
+  - [x] Mixins de control de acceso
 
-## Próximas Tareas
-1. Completar la implementación del modelo ActivoVulnerabilidad
-2. Implementar el sistema de alertas
-3. Desarrollar la generación de informes
+### Próximos Pasos
+1. Implementar vistas específicas para cada rol
+2. Desarrollar interfaz de gestión de usuarios
+3. Implementar sistema de asignación de clientes a analistas
+4. Desarrollar la interfaz para la gestión de Tareas y Alertas
+5. Implementar la lógica de interacción con APIs externas
+6. Desarrollar la generación de informes
+7. Añadir pruebas unitarias para el sistema de roles
+
+### URLs Actuales
+- Inicio: `/`
+- Panel de Administración: `/admin/`
+- Login: `/config/login/`
+- Logout: `/config/logout/`
 
 ## Notas de Desarrollo
 - Usar Docker para todas las operaciones
 - Seguir las convenciones de código establecidas
-- Actualizar la documentación con cada cambio significativo 
+- Actualizar la documentación con cada cambio significativo
+- Mantener la estructura de vistas separadas
+- Seguir el patrón de diseño actual para nuevas funcionalidades
+
+### Problemas Conocidos
+1. El atributo `version` en docker-compose.yml está obsoleto (warning)
+2. Pendiente de implementar vistas específicas para cada rol
+3. Pendiente de implementar interfaz de gestión de usuarios
+
+### Notas para la Próxima Sesión
+1. Implementar vistas específicas para cada rol
+2. Desarrollar interfaz de gestión de usuarios
+3. Implementar sistema de asignación de clientes a analistas
+4. Considerar la implementación de paginación en las listas
+
+## Tests unitarios
+- Pendiente de actualizar los tests para incluir el nuevo sistema de roles
+- Añadir tests para los mixins de control de acceso
+- Implementar tests para las relaciones analista-cliente
+
+### ¿Qué cubren los tests?
+- **Modelos:**
+  - Cliente, Activo, Vulnerabilidad, Tarea, Alerta, ActivoVulnerabilidad, EjecucionTarea.
+  - Se comprueba la creación de instancias, relaciones básicas y el método `__str__` de cada modelo.
+- **Vistas:**
+  - Listado y detalle de Cliente, Activo y Vulnerabilidad.
+  - Se comprueba el acceso a las URLs, el uso de la plantilla correcta, la presencia de los objetos esperados en el contexto y la visualización de datos clave.
+
+### ¿Cómo ejecutar los tests?
+
+Los tests deben ejecutarse dentro del contenedor Docker para asegurar el mismo entorno que en producción/desarrollo. Utiliza el siguiente comando desde la raíz del proyecto:
+
+```sh
+docker compose exec vuln-manager-web python manage.py test vuln_manager
+```
+
+Esto:
+- Crea una base de datos temporal para testing.
+- Ejecuta todos los tests de la app `vuln_manager`.
+- Muestra un resumen de los resultados.
+
+### Recomendaciones para ampliar la cobertura
+- Añadir tests para los filtros de plantilla personalizados y utilidades.
+- Incluir tests para vistas adicionales o futuras funcionalidades (por ejemplo, formularios, permisos, etc.).
+- Considerar el uso de fixtures para poblar la base de datos de test con más variedad de datos.
+
+**Última ejecución:**
+- Todos los tests pasan correctamente (18 tests, 0 fallos). 
