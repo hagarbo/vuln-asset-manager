@@ -89,16 +89,15 @@ if os.getenv('RENDER'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DATABASE'),
-            'USER': os.getenv('POSTGRES_USER'),
+            'NAME': os.getenv('POSTGRES_DATABASE', 'vuln_asset_manager'),
+            'USER': os.getenv('POSTGRES_USER', 'vuln_asset_manager'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('POSTGRES_HOST'),
+            'HOST': os.getenv('POSTGRES_HOST', 'dpg-d161po63jp1c73d25e70-a'),
             'PORT': os.getenv('POSTGRES_PORT', '5432'),
             'CONN_MAX_AGE': 600,  # 10 minutos
             'OPTIONS': {
                 'sslmode': 'require',
                 'connect_timeout': 30,
-                'hostaddr': os.getenv('POSTGRES_HOST'),  # Forzar uso de TCP/IP
             },
         }
     }
