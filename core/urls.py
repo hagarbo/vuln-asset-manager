@@ -15,22 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from django.views.generic import TemplateView
-from vuln_manager.mixins.auth import CustomLoginRequiredMixin
-from django.conf import settings
-from django.conf.urls.static import static
-
-class HomeView(CustomLoginRequiredMixin, TemplateView):
-    template_name = 'home.html'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomeView.as_view(), name='home'),
-    path('', include('vuln_manager.urls')),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
-
-if settings.DEBUG:
-    # Servir archivos estáticos desde STATICFILES_DIRS en desarrollo
-    for static_dir in settings.STATICFILES_DIRS:
-        urlpatterns += static(settings.STATIC_URL, document_root=static_dir)
