@@ -12,7 +12,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>
         {{ vulnerabilidad.cve_id }}
-        <span class="badge bg-{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }}">
+        <span class="badge {{ vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">
             {{ vulnerabilidad.get_severidad_display }}
         </span>
     </h1>
@@ -33,15 +33,51 @@
                     <dt class="col-sm-4">Descripción (EN)</dt>
                     <dd class="col-sm-8">{{ vulnerabilidad.descripcion_en }}</dd>
 
-                    <dt class="col-sm-4">Score CVSS v3</dt>
+                    <dt class="col-sm-4">Score CVSS</dt>
                     <dd class="col-sm-8">
-                        <span class="badge bg-{{ vulnerabilidad.cvss3_severidad|severity_to_css_class }}">
-                            {{ vulnerabilidad.cvss3_score|default:"N/A" }}
-                        </span>
+                        {% with cvss=vulnerabilidad.cvss_data|get_cvss:'4.0' %}
+                            {% if cvss.score %}
+                                <span class="badge {{ vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                            {% else %}
+                                {% with cvss=vulnerabilidad.cvss_data|get_cvss:'3.1' %}
+                                    {% if cvss.score %}
+                                        <span class="badge {{ vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                    {% else %}
+                                        {% with cvss=vulnerabilidad.cvss_data|get_cvss:'3.0' %}
+                                            {% if cvss.score %}
+                                                <span class="badge {{ vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">N/A</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endwith %}
                     </dd>
 
-                    <dt class="col-sm-4">Vector CVSS v3</dt>
-                    <dd class="col-sm-8">{{ vulnerabilidad.cvss3_vector|default:"N/A" }}</dd>
+                    <dt class="col-sm-4">Vector CVSS</dt>
+                    <dd class="col-sm-8">
+                        {% with cvss=vulnerabilidad.cvss_data|get_cvss:'4.0' %}
+                            {% if cvss.vector %}
+                                {{ cvss.vector }}
+                            {% else %}
+                                {% with cvss=vulnerabilidad.cvss_data|get_cvss:'3.1' %}
+                                    {% if cvss.vector %}
+                                        {{ cvss.vector }}
+                                    {% else %}
+                                        {% with cvss=vulnerabilidad.cvss_data|get_cvss:'3.0' %}
+                                            {% if cvss.vector %}
+                                                {{ cvss.vector }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endwith %}
+                    </dd>
 
                     <dt class="col-sm-4">Estado</dt>
                     <dd class="col-sm-8">

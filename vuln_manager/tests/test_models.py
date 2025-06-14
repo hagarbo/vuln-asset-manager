@@ -1,37 +1,21 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from vuln_manager.models import (
-    Usuario,
-    Cliente,
-    Activo,
-    Vulnerabilidad,
-    ActivoVulnerabilidad,
-    Tarea,
-    EjecucionTarea,
-    Alerta,
-)
-import datetime
+from vuln_manager.models.cliente.cliente import Cliente
+from vuln_manager.models.activo.activo import Activo
+from vuln_manager.models.vulnerabilidad.vulnerabilidad import Vulnerabilidad
+from vuln_manager.models.activo_vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
+from django.utils import timezone
 
 User = get_user_model()
 
 class ClienteModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = User.objects.create_superuser('testuser', 'test@example.com', 'password')
-        cls.cliente = Cliente.objects.create(
-            nombre='Cliente Test',
-            email='cliente@test.com',
-            telefono='123456789',
-            direccion='Dirección Test'
+    def setUp(self):
+        self.cliente = Cliente.objects.create(
+            nombre='Cliente Test'
         )
-        cls.cliente.analistas.add(cls.user)
 
     def test_cliente_creation(self):
         self.assertEqual(self.cliente.nombre, 'Cliente Test')
-        self.assertEqual(self.cliente.email, 'cliente@test.com')
-        self.assertEqual(self.cliente.telefono, '123456789')
-        self.assertEqual(self.cliente.direccion, 'Dirección Test')
-        self.assertIn(self.user, self.cliente.analistas.all())
         self.assertIsNotNone(self.cliente.created_at)
         self.assertIsNotNone(self.cliente.updated_at)
 
@@ -46,99 +30,65 @@ class ActivoModelTest(TestCase):
         cls.activo = Activo.objects.create(
             cliente=cls.cliente,
             nombre='Activo Test',
-            tipo='SERVIDOR',
-            descripcion='Descripción Test',
-            estado='ACTIVO'
+            tipo='hardware',
+            descripcion='Descripción de prueba',
+            palabras_clave='test,prueba,ejemplo',
+            ip='192.168.1.1',
+            puerto=8080,
+            version='1.0'
         )
 
     def test_activo_creation(self):
         self.assertEqual(self.activo.nombre, 'Activo Test')
-        self.assertEqual(self.activo.cliente, self.cliente)
-        self.assertEqual(self.activo.get_tipo_display(), 'Servidor')
-        self.assertEqual(self.activo.descripcion, 'Descripción Test')
-        self.assertEqual(self.activo.estado, 'ACTIVO')
+        self.assertEqual(self.activo.tipo, 'hardware')
+        self.assertEqual(self.activo.descripcion, 'Descripción de prueba')
+        self.assertEqual(self.activo.palabras_clave, 'test,prueba,ejemplo')
+        self.assertEqual(self.activo.ip, '192.168.1.1')
+        self.assertEqual(self.activo.puerto, 8080)
+        self.assertEqual(self.activo.version, '1.0')
         self.assertIsNotNone(self.activo.created_at)
         self.assertIsNotNone(self.activo.updated_at)
 
     def test_activo_str(self):
-        self.assertEqual(str(self.activo), 'Activo Test (Servidor)')
+        self.assertEqual(str(self.activo), 'Activo Test (Hardware)')
 
 class VulnerabilidadModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.vulnerabilidad = Vulnerabilidad.objects.create(
-            nombre='Vulnerabilidad Test',
-            descripcion='Descripción Test',
-            severidad='ALTA',
-            estado='ACTIVA'
+            cve_id='CVE-2024-0001',
+            descripcion_en='Test vulnerability description',
+            descripcion_es='Descripción de vulnerabilidad de prueba',
+            severidad='high',
+            status='published',
+            fecha_publicacion=timezone.now().date(),
+            fecha_modificacion=timezone.now().date(),
+            cvss_data={
+                'v3.0': {
+                    'score': 7.5,
+                    'severidad': 'HIGH',
+                    'vector': 'CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H'
+                }
+            },
+            referencias=['https://example.com/cve-2024-0001']
         )
 
     def test_vulnerabilidad_creation(self):
-        self.assertEqual(self.vulnerabilidad.nombre, 'Vulnerabilidad Test')
-        self.assertEqual(self.vulnerabilidad.descripcion, 'Descripción Test')
-        self.assertEqual(self.vulnerabilidad.get_severidad_display(), 'Alta')
-        self.assertEqual(self.vulnerabilidad.estado, 'ACTIVA')
+        self.assertEqual(self.vulnerabilidad.cve_id, 'CVE-2024-0001')
+        self.assertEqual(self.vulnerabilidad.descripcion_en, 'Test vulnerability description')
+        self.assertEqual(self.vulnerabilidad.descripcion_es, 'Descripción de vulnerabilidad de prueba')
+        self.assertEqual(self.vulnerabilidad.severidad, 'high')
+        self.assertEqual(self.vulnerabilidad.status, 'published')
+        self.assertIsNotNone(self.vulnerabilidad.fecha_publicacion)
+        self.assertIsNotNone(self.vulnerabilidad.fecha_modificacion)
+        self.assertIsNotNone(self.vulnerabilidad.fecha_deteccion)
+        self.assertEqual(self.vulnerabilidad.cvss_data['v3.0']['score'], 7.5)
+        self.assertEqual(self.vulnerabilidad.referencias[0], 'https://example.com/cve-2024-0001')
+        self.assertIsNotNone(self.vulnerabilidad.created_at)
+        self.assertIsNotNone(self.vulnerabilidad.updated_at)
 
     def test_vulnerabilidad_str(self):
-        self.assertEqual(str(self.vulnerabilidad), 'Vulnerabilidad Test')
-
-class TareaModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = User.objects.create_superuser('testuser', 'test@example.com', 'password')
-        cls.tarea = Tarea.objects.create(
-            nombre='Tarea Test',
-            descripcion='Descripción Test',
-            tipo='ESCANEO',
-            estado='PENDIENTE',
-            creada_por=cls.user
-        )
-
-    def test_tarea_creation(self):
-        self.assertEqual(self.tarea.nombre, 'Tarea Test')
-        self.assertEqual(self.tarea.descripcion, 'Descripción Test')
-        self.assertEqual(self.tarea.get_tipo_display(), 'Escaneo')
-        self.assertEqual(self.tarea.creada_por, self.user)
-
-    def test_tarea_str(self):
-        self.assertEqual(str(self.tarea), 'Tarea Test (Escaneo)')
-
-class AlertaModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = User.objects.create_superuser('testuser', 'test@example.com', 'password')
-        cls.cliente = Cliente.objects.create(nombre='Cliente Test')
-        cls.activo = Activo.objects.create(
-            cliente=cls.cliente,
-            nombre='Activo Test',
-            tipo='SERVIDOR',
-            palabras_clave='web'
-        )
-        cls.vulnerabilidad = Vulnerabilidad.objects.create(
-            nombre='Vulnerabilidad Test',
-            descripcion='Descripción Test',
-            severidad='ALTA',
-            estado='ACTIVA'
-        )
-        cls.alerta = Alerta.objects.create(
-            vulnerabilidad=cls.vulnerabilidad,
-            activo=cls.activo,
-            analista_asignado=cls.user,
-            mensaje='Mensaje Test',
-            severidad='ALTA',
-            estado='ACTIVA'
-        )
-
-    def test_alerta_creation(self):
-        self.assertEqual(self.alerta.vulnerabilidad, self.vulnerabilidad)
-        self.assertEqual(self.alerta.activo, self.activo)
-        self.assertEqual(self.alerta.analista_asignado, self.user)
-        self.assertEqual(self.alerta.get_estado_display(), 'Activa')
-        self.assertEqual(self.alerta.mensaje, 'Mensaje Test')
-        self.assertEqual(self.alerta.severidad, 'ALTA')
-
-    def test_alerta_str(self):
-        self.assertEqual(str(self.alerta), f"Alerta {self.vulnerabilidad.nombre} - {self.activo.nombre}")
+        self.assertEqual(str(self.vulnerabilidad), 'CVE-2024-0001')
 
 class ActivoVulnerabilidadModelTest(TestCase):
     @classmethod
@@ -147,46 +97,35 @@ class ActivoVulnerabilidadModelTest(TestCase):
         cls.activo = Activo.objects.create(
             cliente=cls.cliente,
             nombre='Activo Test',
-            tipo='SERVIDOR',
-            palabras_clave='web'
+            tipo='hardware',
+            palabras_clave='test'
         )
         cls.vulnerabilidad = Vulnerabilidad.objects.create(
-            nombre='Vulnerabilidad Test',
-            descripcion='Descripción Test',
-            severidad='ALTA',
-            estado='ACTIVA'
+            cve_id='CVE-2024-0001',
+            descripcion_en='Test vulnerability',
+            descripcion_es='Vulnerabilidad de prueba',
+            severidad='high',
+            status='published',
+            fecha_publicacion=timezone.now().date(),
+            fecha_modificacion=timezone.now().date()
         )
         cls.activo_vulnerabilidad = ActivoVulnerabilidad.objects.create(
             activo=cls.activo,
             vulnerabilidad=cls.vulnerabilidad,
-            estado='DETECTADA',
-            notas='Notas Test'
+            fecha_deteccion=timezone.now().date(),
+            estado='PENDIENTE',
+            notas='Notas de prueba'
         )
 
     def test_activo_vulnerabilidad_creation(self):
         self.assertEqual(self.activo_vulnerabilidad.activo, self.activo)
         self.assertEqual(self.activo_vulnerabilidad.vulnerabilidad, self.vulnerabilidad)
-        self.assertEqual(self.activo_vulnerabilidad.get_estado_display(), 'Detectada')
-        self.assertEqual(self.activo_vulnerabilidad.notas, 'Notas Test')
+        self.assertIsNotNone(self.activo_vulnerabilidad.fecha_deteccion)
+        self.assertEqual(self.activo_vulnerabilidad.estado, 'PENDIENTE')
+        self.assertEqual(self.activo_vulnerabilidad.notas, 'Notas de prueba')
+        self.assertIsNotNone(self.activo_vulnerabilidad.created_at)
+        self.assertIsNotNone(self.activo_vulnerabilidad.updated_at)
 
-class EjecucionTareaModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = User.objects.create_superuser('testuser', 'test@example.com', 'password')
-        cls.tarea = Tarea.objects.create(
-            nombre='Tarea Test',
-            descripcion='Descripción Test',
-            tipo='ESCANEO',
-            estado='PENDIENTE',
-            creada_por=cls.user
-        )
-        cls.ejecucion_tarea = EjecucionTarea.objects.create(
-            tarea=cls.tarea,
-            estado='EN_PROGRESO',
-            ejecutada_por=cls.user
-        )
-
-    def test_ejecucion_tarea_creation(self):
-        self.assertEqual(self.ejecucion_tarea.tarea, self.tarea)
-        self.assertEqual(self.ejecucion_tarea.get_estado_display(), 'En Progreso')
-        self.assertEqual(self.ejecucion_tarea.ejecutada_por, self.user) 
+    def test_activo_vulnerabilidad_str(self):
+        expected_str = f"{self.activo} - {self.vulnerabilidad}"
+        self.assertEqual(str(self.activo_vulnerabilidad), expected_str) 

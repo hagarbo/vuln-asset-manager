@@ -4,7 +4,7 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 
 class ClienteListView(RoleRequiredMixin, ListView):
     model = Cliente
-    template_name = 'vuln_manager/clientes/list.html'
+    template_name = 'vuln_manager/cliente/list.html'
     context_object_name = 'clientes'
     allowed_roles = ['admin', 'analista', 'cliente']
 
@@ -13,7 +13,7 @@ class ClienteListView(RoleRequiredMixin, ListView):
         if user.es_admin():
             return Cliente.objects.all()
         elif user.es_analista():
-            return Cliente.objects.filter(analistas=user)
+            return Cliente.objects.filter(relaciones_analista__analista=user)
         elif user.es_cliente():
-            return Cliente.objects.filter(id=user.cliente.id)
+            return Cliente.objects.filter(relaciones_cliente__cliente=user)
         return Cliente.objects.none() 

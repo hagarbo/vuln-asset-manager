@@ -1,4 +1,32 @@
-# Estado del Proyecto
+# Estado del Proyecto Vuln-Asset-Manager
+
+## 🚨 REGLAS MUY IMPORTANTES 🚨
+
+### Estructura y Organización
+1. **Una clase, un archivo**: Cada clase debe estar en su propio archivo. Para grupos relacionados (como formularios), crear una carpeta específica.
+2. **Organización jerárquica**: Seguir las convenciones de Django para la estructura de carpetas.
+3. **Carpeta raíz limpia**: Mantener solo los archivos estrictamente necesarios en la raíz del proyecto.
+4. **Crecimiento controlado**: No añadir nueva funcionalidad hasta que la existente esté completamente probada y funcionando.
+5. **Consistencia en nombres**: 
+   - Mantener consistencia en el nombrado de archivos y modelos
+   - Para modelos de relación, usar el formato `entidad1_entidad2.py` (ej: `activo_vulnerabilidad.py`, `analista_cliente.py`)
+   - Para clases de modelos de relación, usar el formato `Entidad1Entidad2` (ej: `ActivoVulnerabilidad`, `AnalistaCliente`)
+
+### Proceso de Desarrollo
+1. **Confirmación de cambios**: Solicitar confirmación antes de crear nuevos archivos.
+2. **Documentación**: Explicar claramente el propósito y funcionamiento de cada nuevo componente.
+3. **TDD (Test-Driven Development)**:
+   - Escribir tests antes de implementar nueva funcionalidad
+   - Validar el código con tests unitarios
+   - Mantener la cobertura de tests
+4. **Verificación de funcionalidad**: Asegurar que todo funciona antes de añadir nuevas características.
+
+### Convenciones de Nombrado
+- Usar nombres descriptivos para contenedores Docker (evitar 'pfc-daw-dual')
+- Mantener consistencia en el nombrado de archivos y clases
+- Seguir las convenciones de Python/Django para el nombrado
+- Para modelos de relación, usar el formato `entidad1_entidad2.py`
+- Para clases de modelos de relación, usar el formato `Entidad1Entidad2`
 
 ## Notas Importantes
 - La versión de docker-compose está fijada en 3.11 y NO debe cambiarse a 3.8 u otra versión para evitar problemas de compatibilidad.
@@ -17,33 +45,39 @@
   - **Consistencia de Contexto:** Se asegura que `context_object_name` en las vistas coincida con las variables usadas en las plantillas.
   - **Filtros de Plantilla:** Ubicados en `app_name/templatetags/` y cargados explícitamente.
 
-## Última Actualización: 12/06/2025
+## 📝 Registro de Cambios
 
-### Cambios Realizados
-1. **Sistema de Roles y Permisos:**
-   - Implementado modelo de Usuario personalizado con roles jerárquicos (Admin, Analista, Cliente)
-   - Añadida relación ManyToMany entre analistas y clientes
-   - Implementados mixins para control de acceso basado en roles
-   - Definidos permisos específicos para cada rol
+### 2025-06-13: Integración y normalización de la recolección de CVEs desde NIST
+- Arquitectura desacoplada con DTO, recolector y repositorio.
+- Añadido soporte para CVSS v3 y CVSS v4 (eliminado CVSS v2).
+- Normalización automática de los campos de severidad (`severidad`, `cvss3_severidad`, `cvss4_severidad`).
+- Ampliados los campos `cvss3_vector` y `cvss4_vector` a 512 caracteres.
+- Comando de gestión para recolección periódica (`collect_cves`).
+- Script para normalizar severidad en la base de datos.
+- Tests para el recolector y validación de integración.
+- Documentación de la estructura y buenas prácticas para futuras fuentes de CVEs.
 
-2. **Estructura de Roles:**
-   - **Administrador:**
-     - Gestión completa de la aplicación
-     - Creación de cuentas de analistas y clientes
-     - Asignación de clientes a analistas
-   - **Analista:**
-     - Gestión de activos de sus clientes asignados
-     - Gestión de vulnerabilidades de sus clientes
-   - **Cliente:**
-     - Visualización de sus propios activos
-     - Visualización de vulnerabilidades de sus activos
+### 2025-06-13: Limpieza y migración de datos
+- Eliminadas vulnerabilidades recientes para pruebas de recolección.
+- Actualización de la base de datos y migraciones para soportar los nuevos campos.
 
-3. **Mejoras en la Seguridad:**
-   - Implementado sistema de permisos basado en roles
-   - Añadidos mixins para control de acceso
-   - Validaciones de acceso a nivel de vista y modelo
+### 2024-06-12: Sistema de Roles y Permisos
+- Implementado modelo de Usuario personalizado con roles jerárquicos (Admin, Analista, Cliente)
+- Añadida relación ManyToMany entre analistas y clientes
+- Implementados mixins para control de acceso basado en roles
+- Definidos permisos específicos para cada rol
 
-### Estado Actual
+### 2024-06-12: Estructura de Roles y Seguridad
+- Mejoras en la seguridad y control de acceso
+- Validaciones de acceso a nivel de vista y modelo
+
+### 2024-03-19 a 2024-03-20: Reorganización y buenas prácticas
+- Reorganización de formularios, vistas y tests por entidad
+- Separación de archivos y carpetas siguiendo el dominio
+- Refactorización de modelos de relación y consistencia en nombres
+- Actualización de la documentación y reglas del proyecto
+
+## Estado Actual
 - **Modelos implementados y registrados en Admin:**
   - [x] Usuario (con sistema de roles)
   - [x] Cliente
@@ -53,27 +87,23 @@
   - [x] Alerta
   - [x] Tarea
   - [x] EjecucionTarea
-
 - **Sistema de Roles:**
   - [x] Modelo de Usuario personalizado
   - [x] Relaciones analista-cliente
   - [x] Permisos específicos por rol
   - [x] Mixins de control de acceso
 
-### Próximos Pasos
-1. Implementar vistas específicas para cada rol
-2. Desarrollar interfaz de gestión de usuarios
-3. Implementar sistema de asignación de clientes a analistas
-4. Desarrollar la interfaz para la gestión de Tareas y Alertas
-5. Implementar la lógica de interacción con APIs externas
-6. Desarrollar la generación de informes
-7. Añadir pruebas unitarias para el sistema de roles
-
-### URLs Actuales
-- Inicio: `/`
-- Panel de Administración: `/admin/`
-- Login: `/config/login/`
-- Logout: `/config/logout/`
+## Próximos Pasos
+1. Visualización y filtrado avanzado de vulnerabilidades (por severidad, fecha, CVSS, etc.).
+2. Mejorar la presentación de los datos de CVSS v4 en la interfaz.
+3. Programar el comando `collect_cves` como Scheduled Job en Render.
+4. Implementar nuevos recolectores para otras fuentes de CVEs.
+5. Mejorar la gestión de usuarios y roles (vistas específicas, asignación de clientes a analistas).
+6. Ampliar la cobertura de tests (inserción/actualización de vulnerabilidades, filtros de plantilla, etc.).
+7. Unificar y mantener actualizado este fichero de estado y el de `docs/estado.md`.
+8. Documentar el flujo de recolección y normalización de CVEs.
+9. Revisar la visualización de los nuevos campos en la interfaz.
+10. Probar la integración de la tarea programada en Render.
 
 ## Notas de Desarrollo
 - Usar Docker para todas las operaciones
@@ -82,47 +112,32 @@
 - Mantener la estructura de vistas separadas
 - Seguir el patrón de diseño actual para nuevas funcionalidades
 
-### Problemas Conocidos
-1. El atributo `version` en docker-compose.yml está obsoleto (warning)
-2. Pendiente de implementar vistas específicas para cada rol
-3. Pendiente de implementar interfaz de gestión de usuarios
-
-### Notas para la Próxima Sesión
-1. Implementar vistas específicas para cada rol
-2. Desarrollar interfaz de gestión de usuarios
-3. Implementar sistema de asignación de clientes a analistas
-4. Considerar la implementación de paginación en las listas
-
 ## Tests unitarios
-- Pendiente de actualizar los tests para incluir el nuevo sistema de roles
-- Añadir tests para los mixins de control de acceso
-- Implementar tests para las relaciones analista-cliente
-
-### ¿Qué cubren los tests?
-- **Modelos:**
-  - Cliente, Activo, Vulnerabilidad, Tarea, Alerta, ActivoVulnerabilidad, EjecucionTarea.
-  - Se comprueba la creación de instancias, relaciones básicas y el método `__str__` de cada modelo.
-- **Vistas:**
-  - Listado y detalle de Cliente, Activo y Vulnerabilidad.
-  - Se comprueba el acceso a las URLs, el uso de la plantilla correcta, la presencia de los objetos esperados en el contexto y la visualización de datos clave.
-
-### ¿Cómo ejecutar los tests?
-
-Los tests deben ejecutarse dentro del contenedor Docker para asegurar el mismo entorno que en producción/desarrollo. Utiliza el siguiente comando desde la raíz del proyecto:
+- Añadir tests para los nuevos campos y lógica de recolección
+- Mantener la cobertura de tests para roles, permisos y relaciones
+- Ejecutar los tests dentro del contenedor Docker:
 
 ```sh
 docker compose exec vuln-manager-web python manage.py test vuln_manager
 ```
 
-Esto:
-- Crea una base de datos temporal para testing.
-- Ejecuta todos los tests de la app `vuln_manager`.
-- Muestra un resumen de los resultados.
+## Cambios Realizados
 
-### Recomendaciones para ampliar la cobertura
-- Añadir tests para los filtros de plantilla personalizados y utilidades.
-- Incluir tests para vistas adicionales o futuras funcionalidades (por ejemplo, formularios, permisos, etc.).
-- Considerar el uso de fixtures para poblar la base de datos de test con más variedad de datos.
+### 14/06/2024
+- Refactorización de la estructura de templates:
+  - Renombradas las carpetas de templates de plural a singular para mantener coherencia con el resto del proyecto:
+    - `activos` → `activo`
+    - `clientes` → `cliente`
+    - `vulnerabilidades` → `vulnerabilidad`
+  - Actualizadas todas las referencias a los templates en las vistas y tests
+  - Verificado que todos los tests pasan correctamente tras la refactorización
 
-**Última ejecución:**
-- Todos los tests pasan correctamente (18 tests, 0 fallos). 
+- Mejoras en la vista de vulnerabilidades:
+  - Añadido orden por defecto por `fecha_modificacion` en orden descendente
+  - Eliminada la advertencia de paginación con objetos no ordenados
+  - Las vulnerabilidades ahora se muestran con las más recientes primero
+
+### Tareas Pendientes
+- Documentar la estructura del proyecto
+- Implementar tests adicionales para nuevas funcionalidades
+- Revisar y actualizar la documentación de la API 

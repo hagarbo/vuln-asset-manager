@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
+
+{% block title %}Vulnerabilidades - Vuln-Asset-Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Listado de Vulnerabilidades</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>CVE ID</th>
+                        <th>Descripción</th>
+                        <th>
+                          <a href="?sort=severidad&dir={% if current_sort == 'severidad' and current_dir == 'desc' %}asc{% else %}desc{% endif %}">
+                            Severidad
+                            {% if current_sort == 'severidad' %}
+                              {% if current_dir == 'desc' %}&darr;{% else %}&uarr;{% endif %}
+                            {% endif %}
+                          </a>
+                        </th>
+                        <th>Score CVSS</th>
+                        <th>Estado</th>
+                        <th>
+                          <a href="?sort=fecha_modificacion&dir={% if current_sort == 'fecha_modificacion' and current_dir == 'desc' %}asc{% else %}desc{% endif %}">
+                            Última Modificación
+                            {% if current_sort == 'fecha_modificacion' %}
+                              {% if current_dir == 'desc' %}&darr;{% else %}&uarr;{% endif %}
+                            {% endif %}
+                          </a>
+                        </th>
+                        <th>
+                          <a href="?sort=fecha_publicacion&dir={% if current_sort == 'fecha_publicacion' and current_dir == 'desc' %}asc{% else %}desc{% endif %}">
+                            Publicación
+                            {% if current_sort == 'fecha_publicacion' %}
+                              {% if current_dir == 'desc' %}&darr;{% else %}&uarr;{% endif %}
+                            {% endif %}
+                          </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vuln in vulnerabilidades %}
+                    <tr class="clickable-row" data-href="{% url 'vuln_manager:vulnerabilidad_detail' vuln.pk %}">
+                        <td><strong>{{ vuln.cve_id }}</strong></td>
+                        <td>{{ vuln.descripcion_es|default_if_none:vuln.descripcion_en|default:vuln.descripcion_en|truncatechars:100 }}</td>
+                        <td>
+                            <span class="badge {{ vuln.severidad|severity_to_css_class }}">
+                                {{ vuln.get_severidad_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% with cvss=vuln.cvss_data|get_cvss:'4.0' %}
+                                {% if cvss.score %}
+                                    <span class="badge {{ vuln.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                {% else %}
+                                    {% with cvss=vuln.cvss_data|get_cvss:'3.1' %}
+                                        {% if cvss.score %}
+                                            <span class="badge {{ vuln.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                        {% else %}
+                                            {% with cvss=vuln.cvss_data|get_cvss:'3.0' %}
+                                                {% if cvss.score %}
+                                                    <span class="badge {{ vuln.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ vuln.status|status_to_css_class }}">
+                                {{ vuln.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ vuln.fecha_modificacion|date:"d/m/Y" }}</td>
+                        <td>{{ vuln.fecha_publicacion|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i> No hay vulnerabilidades registradas.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Paginación">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1">&laquo; Primera</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo; Primera</span></li>
+      <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+    <li class="page-item active"><span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+      <li class="page-item disabled"><span class="page-link">Última &raquo;</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.clickable-row');
+        rows.forEach(row => {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -9,6 +9,7 @@ from .cliente import ClienteRepository
 from .alerta import AlertaRepository
 from .tarea import TareaRepository
 from .usuario import UsuarioRepository
+from .activo_vulnerabilidad import ActivoVulnerabilidadRepository
 
 __all__ = [
     'VulnerabilidadRepository',
@@ -17,4 +18,5 @@ __all__ = [
     'AlertaRepository',
     'TareaRepository',
     'UsuarioRepository',
+    'ActivoVulnerabilidadRepository',
 ] 

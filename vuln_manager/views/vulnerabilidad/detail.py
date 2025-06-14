@@ -5,7 +5,7 @@ from vuln_manager.mixins import RoleRequiredMixin
 
 class VulnerabilidadDetailView(RoleRequiredMixin, DetailView):
     model = Vulnerabilidad
-    template_name = 'vuln_manager/vulnerabilidades/detail.html'
+    template_name = 'vuln_manager/vulnerabilidad/detail.html'
     context_object_name = 'vulnerabilidad'
     allowed_roles = ['admin', 'analista', 'gestor']
 

@@ -8,7 +8,7 @@ from vuln_manager.forms.activo.creation import ActivoCreationForm
 class ActivoCreateView(RoleRequiredMixin, CreateView):
     model = Activo
     form_class = ActivoCreationForm
-    template_name = 'vuln_manager/activos/form.html'
+    template_name = 'vuln_manager/activo/form.html'
     success_url = reverse_lazy('vuln_manager:activo_list')
     allowed_roles = ['admin', 'analista']
 

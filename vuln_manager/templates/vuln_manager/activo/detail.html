@@ -33,6 +33,8 @@ El base.html ya carga severity.css.
                     <th>Estado</th>
                     <th>Fecha Detección</th>
                     <th>Fecha Resolución</th>
+                    <th>Score CVSS</th>
+                    <th>Vector CVSS</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -43,6 +45,48 @@ El base.html ya carga severity.css.
                     <td><span class="badge bg-{{ av.estado|status_to_css_class }}">{{ av.get_estado_display }}</span></td>
                     <td>{{ av.fecha_deteccion|default:"-" }}</td>
                     <td>{{ av.fecha_resolucion|default:"-" }}</td>
+                    <td>
+                        {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'4.0' %}
+                            {% if cvss.score %}
+                                <span class="badge {{ av.vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                            {% else %}
+                                {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.1' %}
+                                    {% if cvss.score %}
+                                        <span class="badge {{ av.vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                    {% else %}
+                                        {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.0' %}
+                                            {% if cvss.score %}
+                                                <span class="badge {{ av.vulnerabilidad.severidad|default:'no_establecida'|lower|severity_to_css_class }}">{{ cvss.score }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">N/A</span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'4.0' %}
+                            {% if cvss.vector %}
+                                {{ cvss.vector }}
+                            {% else %}
+                                {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.1' %}
+                                    {% if cvss.vector %}
+                                        {{ cvss.vector }}
+                                    {% else %}
+                                        {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.0' %}
+                                            {% if cvss.vector %}
+                                                {{ cvss.vector }}
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
                     <td>
                         <a href="{% url 'vuln_manager:activo_vulnerabilidad_detail' av.pk %}" class="btn btn-sm btn-info">Ver</a>
                         <a href="{% url 'vuln_manager:activo_vulnerabilidad_update' av.pk %}" class="btn btn-sm btn-warning">Editar</a>

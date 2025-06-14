@@ -5,7 +5,7 @@ from vuln_manager.repository.activo.activo_repository import ActivoRepository
 
 class ActivoListView(RoleRequiredMixin, ListView):
     model = Activo
-    template_name = 'vuln_manager/activos/list.html'
+    template_name = 'vuln_manager/activo/list.html'
     context_object_name = 'activos'
     allowed_roles = ['admin', 'analista', 'cliente']
 

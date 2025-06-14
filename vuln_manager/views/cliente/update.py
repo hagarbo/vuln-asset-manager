@@ -6,6 +6,6 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 class ClienteUpdateView(RoleRequiredMixin, UpdateView):
     model = Cliente
     # form_class = ClienteForm
-    template_name = 'vuln_manager/clientes/form.html'
+    template_name = 'vuln_manager/cliente/form.html'
     success_url = reverse_lazy('vuln_manager:cliente_list')
     allowed_roles = ['admin'] 

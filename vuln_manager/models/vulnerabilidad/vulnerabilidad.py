@@ -3,10 +3,11 @@ from vuln_manager.models.activo.activo import Activo
 
 class Vulnerabilidad(models.Model):
     SEVERIDAD_CHOICES = [
-        ('critica', 'Crítica'),
-        ('alta', 'Alta'),
-        ('media', 'Media'),
-        ('baja', 'Baja'),
+        ('critical', 'Crítica'),
+        ('high', 'Alta'),
+        ('medium', 'Media'),
+        ('low', 'Baja'),
+        ('no_establecida', 'No Establecida'),
     ]
 
     ESTADO_CHOICES = [
@@ -31,26 +32,18 @@ class Vulnerabilidad(models.Model):
     fecha_modificacion = models.DateField()
     fecha_deteccion = models.DateField(auto_now_add=True)
     
-    # Campos CVSS v2
-    cvss2_score = models.FloatField(null=True, blank=True, verbose_name="Score CVSS v2")
-    cvss2_severidad = models.CharField(max_length=20, null=True, blank=True, verbose_name="Severidad CVSS v2")
-    cvss2_vector = models.CharField(max_length=100, null=True, blank=True, verbose_name="Vector CVSS v2")
-    
-    # Campos CVSS v3
-    cvss3_score = models.FloatField(null=True, blank=True, verbose_name="Score CVSS v3")
-    cvss3_severidad = models.CharField(
-        max_length=20, 
-        null=True, 
-        blank=True, 
-        verbose_name="Severidad CVSS v3",
-        choices=SEVERIDAD_CHOICES
+    # Datos de CVSS en formato dinámico
+    cvss_data = models.JSONField(
+        default=dict,
+        blank=True,
+        verbose_name="Datos CVSS",
+        help_text="Datos de CVSS en formato: {'v3.0': {'score': 6.7, 'severidad': 'MEDIUM', 'vector': '...'}}"
     )
-    cvss3_vector = models.CharField(max_length=100, null=True, blank=True, verbose_name="Vector CVSS v3")
     
     # Referencias
     referencias = models.JSONField(default=list, blank=True, verbose_name="URLs de Referencia")
     
-    activos = models.ManyToManyField(Activo, through='ActivoVulnerabilidad', related_name='vulnerabilidades_asociadas')
+    activos = models.ManyToManyField(Activo, through='vuln_manager.ActivoVulnerabilidad', related_name='vulnerabilidades_asociadas')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

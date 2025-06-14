@@ -1,11 +1,9 @@
 from django.db import models
 from django.utils import timezone
-from ..activo.activo import Activo
-from .vulnerabilidad import Vulnerabilidad
 
 class ActivoVulnerabilidad(models.Model):
-    activo = models.ForeignKey(Activo, on_delete=models.CASCADE, related_name='relaciones_vulnerabilidad')
-    vulnerabilidad = models.ForeignKey(Vulnerabilidad, on_delete=models.CASCADE, related_name='activo_vulnerabilidad_set')
+    activo = models.ForeignKey('vuln_manager.Activo', on_delete=models.CASCADE, related_name='relaciones_vulnerabilidad')
+    vulnerabilidad = models.ForeignKey('vuln_manager.Vulnerabilidad', on_delete=models.CASCADE, related_name='activo_vulnerabilidad_set')
     fecha_deteccion = models.DateField()
     fecha_resolucion = models.DateField(null=True, blank=True)
     estado = models.CharField(max_length=20, choices=[

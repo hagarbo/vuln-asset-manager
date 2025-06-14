@@ -8,7 +8,7 @@ from vuln_manager.forms.activo.update import ActivoUpdateForm
 class ActivoUpdateView(RoleRequiredMixin, UpdateView):
     model = Activo
     form_class = ActivoUpdateForm
-    template_name = 'vuln_manager/activos/form.html'
+    template_name = 'vuln_manager/activo/form.html'
     success_url = reverse_lazy('vuln_manager:activo_list')
     allowed_roles = ['admin', 'analista']
 

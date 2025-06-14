@@ -5,6 +5,6 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 
 class ClienteDeleteView(RoleRequiredMixin, DeleteView):
     model = Cliente
-    template_name = 'vuln_manager/clientes/confirm_delete.html'
+    template_name = 'vuln_manager/cliente/confirm_delete.html'
     success_url = reverse_lazy('vuln_manager:cliente_list')
     allowed_roles = ['admin'] 

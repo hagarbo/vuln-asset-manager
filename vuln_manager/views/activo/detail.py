@@ -1,11 +1,12 @@
 from django.views.generic import DetailView
-from vuln_manager.models import Activo, ActivoVulnerabilidad
+from vuln_manager.models.activo.activo import Activo
+from vuln_manager.models.activo_vulnerabilidad import ActivoVulnerabilidad
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.activo.activo_repository import ActivoRepository
 
 class ActivoDetailView(RoleRequiredMixin, DetailView):
     model = Activo
-    template_name = 'vuln_manager/activos/detail.html'
+    template_name = 'vuln_manager/activo/detail.html'
     context_object_name = 'activo'
     allowed_roles = ['admin', 'analista', 'cliente']
 

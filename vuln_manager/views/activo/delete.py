@@ -6,7 +6,7 @@ from vuln_manager.repository.activo.activo_repository import ActivoRepository
 
 class ActivoDeleteView(RoleRequiredMixin, DeleteView):
     model = Activo
-    template_name = 'vuln_manager/activos/confirm_delete.html'
+    template_name = 'vuln_manager/activo/confirm_delete.html'
     success_url = reverse_lazy('vuln_manager:activo_list')
     allowed_roles = ['admin', 'analista']
 

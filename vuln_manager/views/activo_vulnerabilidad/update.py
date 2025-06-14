@@ -1,8 +1,27 @@
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
-from vuln_manager.models import ActivoVulnerabilidad
+from vuln_manager.models.activo_vulnerabilidad import ActivoVulnerabilidad
+from vuln_manager.mixins.permissions import RoleRequiredMixin
+from vuln_manager.repository.activo_vulnerabilidad.activo_vulnerabilidad_repository import ActivoVulnerabilidadRepository
 
-class ActivoVulnerabilidadUpdateView(UpdateView):
+class ActivoVulnerabilidadUpdateView(RoleRequiredMixin, UpdateView):
     model = ActivoVulnerabilidad
-    template_name = 'vuln_manager/activo_vulnerabilidad_form.html'
-    success_url = reverse_lazy('vuln_manager:activo_vulnerabilidad_list') 
+    template_name = 'vuln_manager/activo_vulnerabilidad/form.html'
+    success_url = reverse_lazy('vuln_manager:activo_vulnerabilidad_list')
+    allowed_roles = ['admin', 'analista']
+
+    def get_queryset(self):
+        repository = ActivoVulnerabilidadRepository()
+        user = self.request.user
+
+        if user.role == 'admin':
+            return repository.get_all()
+        else:  # analista
+            return repository.get_by_activos_analista(user.id)
+
+    def form_valid(self, form):
+        repository = ActivoVulnerabilidadRepository()
+        instance = repository.update(self.object.id, **form.cleaned_data)
+        if instance:
+            return super().form_valid(form)
+        return self.form_invalid(form) 

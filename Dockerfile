@@ -17,7 +17,10 @@ RUN apt-get update \
 
 # Instalar dependencias de Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-dev.txt .
+ARG INSTALL_DEV=false
+RUN pip install --no-cache-dir -r requirements.txt \
+    && if [ "$INSTALL_DEV" = "true" ]; then pip install --no-cache-dir -r requirements-dev.txt; fi
 
 # Copiar el proyecto
 COPY . .
