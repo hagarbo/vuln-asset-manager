@@ -6,6 +6,7 @@ from .vulnerabilidad.vulnerabilidad import Vulnerabilidad
 from .activo_vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
 from .tarea.tarea import Tarea
 from .tarea.ejecucion_tarea import EjecucionTarea
+from .tarea.tipo_tarea import TipoTarea
 
 __all__ = [
     'Usuario',
@@ -16,4 +17,5 @@ __all__ = [
     'ActivoVulnerabilidad',
     'Tarea',
     'EjecucionTarea',
+    'TipoTarea',
 ] 

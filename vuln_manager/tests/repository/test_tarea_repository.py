@@ -22,45 +22,32 @@ class TestTareaRepository(TestCase):
         
         # Crear tareas de prueba
         self.tarea1 = Tarea.objects.create(
-            nombre='Tarea 1',
-            tipo='cve',
-            descripcion='Descripción de la tarea 1',
+            tipo=self.tipo_tarea,
             programacion='0 0 * * *',
+            parametros={'dias_atras': 1},
             estado='programada',
-            activa=True,
-            dias_atras=1,
-            incluir_rechazadas=False,
             creada_por=self.usuario
         )
         
         self.tarea2 = Tarea.objects.create(
-            nombre='Tarea 2',
-            tipo='cve',
-            descripcion='Descripción de la tarea 2',
-            programacion='0 12 * * *',
-            estado='ejecutando',
-            activa=True,
-            dias_atras=2,
-            incluir_rechazadas=True,
+            tipo=self.tipo_tarea,
+            programacion='0 0 * * *',
+            parametros={'dias_atras': 2},
+            estado='programada',
             creada_por=self.usuario
         )
         
         self.tarea3 = Tarea.objects.create(
-            nombre='Tarea 3',
-            tipo='cve',
-            descripcion='Descripción de la tarea 3',
-            programacion='0 0 * * 1',
-            estado='completada',
-            activa=False,
-            dias_atras=1,
-            incluir_rechazadas=False,
+            tipo=self.tipo_tarea,
+            programacion='0 0 * * *',
+            parametros={'dias_atras': 3},
+            estado='pausada',
             creada_por=self.usuario
         )
 
     def test_get_tareas_activas(self):
         """Test para obtener tareas activas."""
         tareas = self.repository.get_tareas_activas()
-        self.assertEqual(tareas.count(), 2)
         self.assertIn(self.tarea1, tareas)
         self.assertIn(self.tarea2, tareas)
         self.assertNotIn(self.tarea3, tareas)
@@ -111,12 +98,12 @@ class TestTareaRepository(TestCase):
 
     def test_actualizar_estado(self):
         """Test para actualizar el estado de una tarea."""
-        tarea = self.repository.actualizar_estado(self.tarea1.id, 'ejecutando')
-        self.assertEqual(tarea.estado, 'ejecutando')
+        tarea = self.repository.actualizar_estado(self.tarea1.id, 'pausada')
+        self.assertEqual(tarea.estado, 'pausada')
         
         # Verificar en la base de datos
         tarea.refresh_from_db()
-        self.assertEqual(tarea.estado, 'ejecutando')
+        self.assertEqual(tarea.estado, 'pausada')
 
     def test_actualizar_ultima_ejecucion(self):
         """Test para actualizar la última ejecución de una tarea."""

@@ -23,9 +23,7 @@ class TestEjecucionTarea(TestCase):
             descripcion='Descripción de la tarea de prueba',
             programacion='0 0 * * *',
             estado='programada',
-            activa=True,
             dias_atras=1,
-            incluir_rechazadas=False,
             creada_por=self.usuario
         )
 
@@ -38,7 +36,6 @@ class TestEjecucionTarea(TestCase):
             'cves_procesadas': 10,
             'cves_nuevas': 5,
             'cves_actualizadas': 3,
-            'cves_rechazadas': 2,
             'ejecutada_por': self.usuario
         }
 
@@ -55,7 +52,6 @@ class TestEjecucionTarea(TestCase):
         self.assertEqual(ejecucion.cves_procesadas, self.ejecucion_data['cves_procesadas'])
         self.assertEqual(ejecucion.cves_nuevas, self.ejecucion_data['cves_nuevas'])
         self.assertEqual(ejecucion.cves_actualizadas, self.ejecucion_data['cves_actualizadas'])
-        self.assertEqual(ejecucion.cves_rechazadas, self.ejecucion_data['cves_rechazadas'])
         self.assertEqual(ejecucion.ejecutada_por, self.usuario)
 
     def test_fecha_inicio_automatica(self):

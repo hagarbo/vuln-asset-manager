@@ -11,6 +11,12 @@
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
+        
+        <!-- Parámetros dinámicos -->
+        <div id="parametros-container" class="mt-3">
+            <!-- Los parámetros se cargarán dinámicamente aquí -->
+        </div>
+
         <div class="mt-3">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Guardar
@@ -21,4 +27,66 @@
         </div>
     </form>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tiposTarea = {{ tipos_tarea_json|safe }};
+    const tipoSelect = document.querySelector('#id_tipo');
+    const parametrosContainer = document.querySelector('#parametros-container');
+    const parametrosInput = document.querySelector('#id_parametros');
+
+    function actualizarParametros() {
+        const tipoId = tipoSelect.value;
+        const tipoSeleccionado = tiposTarea.find(t => t.id === parseInt(tipoId));
+        
+        if (!tipoSeleccionado) {
+            parametrosContainer.innerHTML = '';
+            return;
+        }
+
+        let html = '<h4>Parámetros de la Tarea</h4>';
+        const parametros = tipoSeleccionado.parametros;
+        
+        for (const [key, config] of Object.entries(parametros)) {
+            const valor = JSON.parse(parametrosInput.value || '{}')[key] || '';
+            html += `
+                <div class="mb-3">
+                    <label for="param_${key}" class="form-label">${config.label}</label>
+                    <input type="${config.tipo}" 
+                           class="form-control" 
+                           id="param_${key}" 
+                           name="param_${key}" 
+                           value="${valor}"
+                           ${config.requerido ? 'required' : ''}>
+                    ${config.descripcion ? `<small class="form-text text-muted">${config.descripcion}</small>` : ''}
+                </div>
+            `;
+        }
+        
+        parametrosContainer.innerHTML = html;
+
+        // Actualizar el campo oculto de parámetros cuando cambien los valores
+        const inputs = parametrosContainer.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('change', actualizarParametrosJSON);
+        });
+    }
+
+    function actualizarParametrosJSON() {
+        const parametros = {};
+        const inputs = parametrosContainer.querySelectorAll('input');
+        inputs.forEach(input => {
+            const key = input.id.replace('param_', '');
+            parametros[key] = input.value;
+        });
+        parametrosInput.value = JSON.stringify(parametros);
+    }
+
+    // Inicializar y manejar cambios
+    tipoSelect.addEventListener('change', actualizarParametros);
+    actualizarParametros();
+});
+</script>
+{% endblock %}
 {% endblock %} 

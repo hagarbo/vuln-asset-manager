@@ -1,23 +1,19 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from .tipo_tarea import TipoTarea
 
 class Tarea(models.Model):
-    TIPO_CHOICES = [
-        ('cve', 'Actualización de CVEs'),
-    ]
-
     ESTADO_CHOICES = [
         ('programada', 'Programada'),
-        ('ejecutando', 'Ejecutando'),
-        ('completada', 'Completada'),
-        ('error', 'Error'),
-        ('cancelada', 'Cancelada'),
+        ('pausada', 'Pausada'),
     ]
 
-    nombre = models.CharField(max_length=100)
-    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
-    descripcion = models.TextField(blank=True)
+    tipo = models.ForeignKey(
+        TipoTarea,
+        on_delete=models.PROTECT,
+        help_text="Tipo de tarea a ejecutar"
+    )
     programacion = models.CharField(
         max_length=100,
         help_text="Expresión cron (ej: '0 0 * * *' para diario a medianoche)",
@@ -26,20 +22,13 @@ class Tarea(models.Model):
             message='Formato de expresión cron inválido'
         )]
     )
+    parametros = models.JSONField(
+        default=dict,
+        help_text="Valores de los parámetros específicos de la tarea"
+    )
     ultima_ejecucion = models.DateTimeField(null=True, blank=True)
     proxima_ejecucion = models.DateTimeField(null=True, blank=True)
-    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='programada')
-    activa = models.BooleanField(default=True)
-    
-    # Campos específicos para tareas de CVE
-    dias_atras = models.PositiveIntegerField(
-        default=1,
-        help_text='Número de días hacia atrás para buscar CVEs'
-    )
-    incluir_rechazadas = models.BooleanField(
-        default=False,
-        help_text='Incluir CVEs rechazadas en la búsqueda'
-    )
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='programada', help_text='Estado general de la tarea: programada o pausada')
     
     creada_por = models.ForeignKey(
         'Usuario',
@@ -52,14 +41,21 @@ class Tarea(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
-        if self.tipo == 'cve':
-            if self.dias_atras > 30:
-                raise ValidationError('No se pueden buscar CVEs de más de 30 días atrás')
+        if self.tipo and self.tipo.codigo == 'cve_collector':
+            try:
+                dias_atras = int(self.parametros.get('dias_atras', 1))
+                if dias_atras > 30:
+                    raise ValidationError('No se pueden buscar CVEs de más de 30 días atrás')
+                if dias_atras < 1:
+                    raise ValidationError('El número de días debe ser mayor que 0')
+            except (ValueError, TypeError):
+                raise ValidationError('El valor de días atrás debe ser un número entero válido')
+            
             if not self.programacion:
                 raise ValidationError('La programación es requerida para tareas de CVE')
 
     def __str__(self):
-        return self.nombre
+        return f"{self.tipo.nombre} - {self.programacion}"
 
     class Meta:
         verbose_name = 'Tarea Programada'

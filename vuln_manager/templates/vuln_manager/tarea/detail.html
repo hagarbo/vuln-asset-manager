@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Detalle de Tarea{% endblock %}
 
@@ -9,7 +10,7 @@
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h3 class="mb-0">{{ tarea.nombre }}</h3>
+                    <h3 class="mb-0">{{ tarea.tipo.nombre }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -17,14 +18,11 @@
                             <h5>Información General</h5>
                             <dl class="row">
                                 <dt class="col-sm-4">Tipo:</dt>
-                                <dd class="col-sm-8">{{ tarea.get_tipo_display }}</dd>
+                                <dd class="col-sm-8">{{ tarea.tipo.nombre }}</dd>
 
                                 <dt class="col-sm-4">Estado:</dt>
                                 <dd class="col-sm-8">
-                                    <span class="badge {% if tarea.estado == 'completada' %}bg-success
-                                                      {% elif tarea.estado == 'error' %}bg-danger
-                                                      {% elif tarea.estado == 'ejecutando' %}bg-warning
-                                                      {% else %}bg-info{% endif %}">
+                                    <span class="badge {% if tarea.estado == 'programada' %}bg-info{% elif tarea.estado == 'pausada' %}bg-warning{% endif %}">
                                         {{ tarea.get_estado_display }}
                                     </span>
                                 </dd>
@@ -42,17 +40,10 @@
                         <div class="col-md-6">
                             <h5>Configuración</h5>
                             <dl class="row">
-                                <dt class="col-sm-4">Días atrás:</dt>
-                                <dd class="col-sm-8">{{ tarea.dias_atras }}</dd>
-
-                                <dt class="col-sm-4">Incluir rechazadas:</dt>
-                                <dd class="col-sm-8">
-                                    {% if tarea.incluir_rechazadas %}
-                                        <i class="fas fa-check text-success"></i>
-                                    {% else %}
-                                        <i class="fas fa-times text-danger"></i>
-                                    {% endif %}
-                                </dd>
+                                {% for key, value in tarea.parametros.items %}
+                                <dt class="col-sm-4">{{ key|title }}:</dt>
+                                <dd class="col-sm-8">{{ value }}</dd>
+                                {% endfor %}
 
                                 <dt class="col-sm-4">Creada por:</dt>
                                 <dd class="col-sm-8">{{ tarea.creada_por|default:"-" }}</dd>
@@ -66,10 +57,10 @@
                         </div>
                     </div>
 
-                    {% if tarea.descripcion %}
+                    {% if tarea.tipo.descripcion %}
                     <div class="mb-3">
-                        <h5>Descripción</h5>
-                        <p>{{ tarea.descripcion }}</p>
+                        <h5>Descripción del Tipo de Tarea</h5>
+                        <p>{{ tarea.tipo.descripcion }}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -90,6 +81,9 @@
                         <a href="{% url 'vuln_manager:tarea_delete' tarea.id %}" class="btn btn-danger">
                             <i class="fas fa-trash"></i> Eliminar Tarea
                         </a>
+                        <a href="{% url 'vuln_manager:ejecutar_tarea' tarea.id %}" class="btn btn-success">
+                            <i class="fas fa-play"></i> Ejecutar Tarea
+                        </a>
                         <a href="{% url 'vuln_manager:tarea_list' %}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Volver a la lista
                         </a>
@@ -105,7 +99,7 @@
             <h4 class="mb-0">Historial de Ejecuciones</h4>
         </div>
         <div class="card-body">
-            {% if tarea.ejecuciones.all %}
+            {% if ejecuciones %}
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -116,31 +110,29 @@
                                 <th>CVEs Procesadas</th>
                                 <th>CVEs Nuevas</th>
                                 <th>CVEs Actualizadas</th>
-                                <th>CVEs Rechazadas</th>
                                 <th>Ejecutada por</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for ejecucion in tarea.ejecuciones.all %}
+                            {% for ejecucion in ejecuciones %}
                             <tr>
                                 <td>{{ ejecucion.fecha_inicio }}</td>
                                 <td>{{ ejecucion.fecha_fin|default:"-" }}</td>
                                 <td>
-                                    <span class="badge {% if ejecucion.estado == 'exitoso' %}bg-success
+                                    <span class="badge {% if ejecucion.estado == 'completada' %}bg-success
                                                       {% elif ejecucion.estado == 'error' %}bg-danger
                                                       {% else %}bg-warning{% endif %}">
-                                        {{ ejecucion.get_estado_display }}
+                                        {{ ejecucion.get_estado_display|default:ejecucion.estado }}
                                     </span>
                                 </td>
                                 <td>{{ ejecucion.cves_procesadas }}</td>
                                 <td>{{ ejecucion.cves_nuevas }}</td>
                                 <td>{{ ejecucion.cves_actualizadas }}</td>
-                                <td>{{ ejecucion.cves_rechazadas }}</td>
                                 <td>{{ ejecucion.ejecutada_por|default:"-" }}</td>
                             </tr>
                             {% if ejecucion.error %}
                             <tr class="table-danger">
-                                <td colspan="8">
+                                <td colspan="7">
                                     <strong>Error:</strong> {{ ejecucion.error }}
                                 </td>
                             </tr>
@@ -149,6 +141,21 @@
                         </tbody>
                     </table>
                 </div>
+                {% if ejecuciones.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {% if ejecuciones.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ ejecuciones.previous_page_number }}">Anterior</a></li>
+                        {% endif %}
+                        {% for num in ejecuciones.paginator.page_range %}
+                        <li class="page-item {% if ejecuciones.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endfor %}
+                        {% if ejecuciones.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ ejecuciones.next_page_number }}">Siguiente</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
             {% else %}
                 <p class="text-muted">No hay ejecuciones registradas para esta tarea.</p>
             {% endif %}

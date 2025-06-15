@@ -162,3 +162,56 @@ docker compose exec vuln-manager-web python manage.py test vuln_manager
   2. Verificar que todos los `__init__.py` necesarios existen y están correctamente configurados
   3. Asegurarse de que los modelos y clases están correctamente importados y expuestos en los `__init__.py`
   4. Si es necesario, recrear los archivos `__init__.py` desde cero para evitar problemas de codificación 
+
+## 15 de Junio 2024 - Implementación de Tareas Programadas
+
+### Trabajo Realizado
+- Se intentó implementar la funcionalidad de tareas programadas usando Celery
+- Se añadieron las dependencias necesarias (celery, django-celery-beat, redis)
+- Se configuró el entorno Docker para incluir los servicios de Celery y Redis
+- Se creó una implementación inicial de tasks.py y cve_service.py
+
+### Problemas Encontrados
+1. **Inconsistencia en la Arquitectura**:
+   - Se creó una nueva implementación sin tener en cuenta el código existente
+   - Se duplicó funcionalidad que ya existía en management/commands
+   - No se siguió el patrón de diseño establecido
+
+2. **Lecciones Aprendidas**:
+   - Siempre revisar el código existente antes de crear nuevas implementaciones
+   - Mantener la consistencia con la arquitectura establecida
+   - Seguir el patrón de diseño acordado (servicios, repositorios, commands)
+   - Documentar los cambios antes de implementarlos
+
+### Próximos Pasos
+1. Revisar la estructura actual del proyecto:
+   - Analizar management/commands/collect_cves.py
+   - Revisar la implementación de servicios y repositorios existentes
+   - Documentar el flujo de trabajo actual
+
+2. Planificar la implementación de tareas programadas:
+   - Definir cómo integrar Celery con la estructura existente
+   - Mantener la consistencia con el patrón de diseño actual
+   - Asegurar que no se duplique funcionalidad
+
+3. Consideraciones para la implementación:
+   - Usar el comando existente como base
+   - Mantener la separación de responsabilidades
+   - Seguir el patrón de la comunidad
+   - Documentar cada paso del proceso
+
+### Archivos Eliminados
+- vuln_manager/tasks.py
+- vuln_manager/views/tarea/execute.py
+- vuln_manager/services/cve_service.py
+
+### Dependencias Añadidas
+- celery==5.3.6
+- django-celery-beat==2.5.0
+- redis==5.0.1
+
+### Notas Importantes
+- La implementación de tareas programadas debe integrarse con el sistema existente
+- Mantener la consistencia con la arquitectura actual es crucial
+- Seguir el patrón de diseño establecido por la comunidad
+- Documentar todos los cambios y decisiones 

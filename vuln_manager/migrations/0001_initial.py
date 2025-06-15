@@ -121,7 +121,6 @@ class Migration(migrations.Migration):
                 ('ultima_ejecucion', models.DateTimeField(blank=True, null=True)),
                 ('proxima_ejecucion', models.DateTimeField(blank=True, null=True)),
                 ('estado', models.CharField(choices=[('programada', 'Programada'), ('ejecutando', 'Ejecutando'), ('completada', 'Completada'), ('error', 'Error'), ('cancelada', 'Cancelada')], default='programada', max_length=20)),
-                ('activa', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('creada_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='tareas_creadas', to=settings.AUTH_USER_MODEL, verbose_name='Creada por')),

@@ -10,6 +10,7 @@ class NISTCVECollector:
     RESULTS_PER_PAGE = 1000
 
     def __init__(self, days_back=1):
+        days_back = int(days_back)  # Asegura que siempre sea entero
         self.end_date = datetime.now()
         self.start_date = self.end_date - timedelta(days=days_back)
 

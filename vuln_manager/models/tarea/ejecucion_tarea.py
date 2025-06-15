@@ -22,7 +22,6 @@ class EjecucionTarea(models.Model):
     cves_procesadas = models.PositiveIntegerField(default=0)
     cves_nuevas = models.PositiveIntegerField(default=0)
     cves_actualizadas = models.PositiveIntegerField(default=0)
-    cves_rechazadas = models.PositiveIntegerField(default=0)
     
     ejecutada_por = models.ForeignKey(
         'Usuario',

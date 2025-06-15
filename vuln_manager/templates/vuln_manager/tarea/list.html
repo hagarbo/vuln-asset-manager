@@ -19,7 +19,6 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
                                 <th>Tipo</th>
                                 <th>Programación</th>
                                 <th>Última Ejecución</th>
@@ -31,16 +30,12 @@
                         <tbody>
                             {% for tarea in tareas %}
                             <tr>
-                                <td>{{ tarea.nombre }}</td>
-                                <td>{{ tarea.get_tipo_display }}</td>
+                                <td>{{ tarea.tipo.nombre }}</td>
                                 <td>{{ tarea.programacion }}</td>
                                 <td>{{ tarea.ultima_ejecucion|default:"-" }}</td>
                                 <td>{{ tarea.proxima_ejecucion|default:"-" }}</td>
                                 <td>
-                                    <span class="badge {% if tarea.estado == 'completada' %}bg-success
-                                                      {% elif tarea.estado == 'error' %}bg-danger
-                                                      {% elif tarea.estado == 'ejecutando' %}bg-warning
-                                                      {% else %}bg-info{% endif %}">
+                                    <span class="badge {% if tarea.estado == 'programada' %}bg-info{% elif tarea.estado == 'pausada' %}bg-warning{% endif %}">
                                         {{ tarea.get_estado_display }}
                                     </span>
                                 </td>

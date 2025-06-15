@@ -39,6 +39,7 @@ from .tarea import (
     TareaUpdateView,
     TareaDeleteView,
 )
+from .tarea.ejecutar import ejecutar_tarea
 
 __all__ = [
     'ClienteListView',

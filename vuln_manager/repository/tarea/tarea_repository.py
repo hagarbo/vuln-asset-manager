@@ -1,5 +1,6 @@
 from vuln_manager.repository.base_repository import BaseRepository
-from vuln_manager.models.tarea import Tarea
+from vuln_manager.models.tarea.tarea import Tarea
+from vuln_manager.models.tarea.tipo_tarea import TipoTarea
 from django.utils import timezone
 from datetime import timedelta
 
@@ -12,19 +13,16 @@ class TareaRepository(BaseRepository):
         super().__init__(Tarea)
 
     def get_tareas_activas(self):
-        """Obtiene todas las tareas activas."""
-        return self.model.objects.filter(activa=True)
+        """Obtiene todas las tareas programadas."""
+        return self.model.objects.filter(estado='programada')
 
     def get_tareas_pendientes(self):
-        """Obtiene las tareas que están programadas y activas."""
-        return self.model.objects.filter(
-            activa=True,
-            estado='programada'
-        )
+        """Obtiene las tareas que están programadas."""
+        return self.model.objects.filter(estado='programada')
 
-    def get_tareas_por_tipo(self, tipo):
+    def get_tareas_por_tipo(self, tipo_tarea):
         """Obtiene todas las tareas de un tipo específico."""
-        return self.model.objects.filter(tipo=tipo)
+        return self.model.objects.filter(tipo=tipo_tarea)
 
     def get_tareas_por_estado(self, estado):
         """Obtiene todas las tareas en un estado específico."""
@@ -45,7 +43,7 @@ class TareaRepository(BaseRepository):
         fecha_limite = timezone.now() - timedelta(days=dias)
         return self.model.objects.filter(
             ultima_ejecucion__lt=fecha_limite,
-            activa=True
+            estado='programada'
         )
 
     def actualizar_estado(self, tarea_id, estado):
@@ -57,9 +55,16 @@ class TareaRepository(BaseRepository):
         return tarea
 
     def actualizar_ultima_ejecucion(self, tarea_id):
-        """Actualiza la última ejecución de una tarea."""
+        """Actualiza la última ejecución de una tarea y calcula la próxima ejecución."""
         tarea = self.get_by_id(tarea_id)
         if tarea:
-            tarea.ultima_ejecucion = timezone.now()
+            ahora = timezone.now()
+            tarea.ultima_ejecucion = ahora
+            # Calcular la próxima ejecución para el día siguiente a la misma hora
+            tarea.proxima_ejecucion = ahora + timedelta(days=1)
             tarea.save()
-        return tarea 
+        return tarea
+
+    def get_tareas_por_codigo_tipo(self, codigo_tipo):
+        """Obtiene todas las tareas de un tipo específico por su código."""
+        return self.model.objects.filter(tipo__codigo=codigo_tipo) 

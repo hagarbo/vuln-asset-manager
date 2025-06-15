@@ -19,14 +19,10 @@ class TestTarea(TestCase):
 
         # Datos de prueba para la tarea
         self.tarea_data = {
-            'nombre': 'Tarea Test',
-            'tipo': 'cve',
-            'descripcion': 'Descripción de la tarea de prueba',
+            'tipo': self.tipo_tarea,
             'programacion': '0 0 * * *',
+            'parametros': {'dias_atras': 1},
             'estado': 'programada',
-            'activa': True,
-            'dias_atras': 1,
-            'incluir_rechazadas': False,
             'creada_por': self.usuario
         }
 
@@ -43,7 +39,6 @@ class TestTarea(TestCase):
         self.assertEqual(tarea.estado, self.tarea_data['estado'])
         self.assertEqual(tarea.activa, self.tarea_data['activa'])
         self.assertEqual(tarea.dias_atras, self.tarea_data['dias_atras'])
-        self.assertEqual(tarea.incluir_rechazadas, self.tarea_data['incluir_rechazadas'])
         self.assertEqual(tarea.creada_por, self.usuario)
 
     def test_validacion_programacion(self):
@@ -75,16 +70,12 @@ class TestTarea(TestCase):
     def test_estados_tarea(self):
         """Test para verificar los estados posibles de una tarea."""
         tarea = Tarea.objects.create(**self.tarea_data)
-        
         # Verificar estado inicial
         self.assertEqual(tarea.estado, 'programada')
-        
-        # Cambiar estados
-        estados = ['ejecutando', 'completada', 'error', 'cancelada']
-        for estado in estados:
-            tarea.estado = estado
-            tarea.save()
-            self.assertEqual(tarea.estado, estado)
+        # Cambiar a pausada
+        tarea.estado = 'pausada'
+        tarea.save()
+        self.assertEqual(tarea.estado, 'pausada')
 
     def test_ultima_ejecucion(self):
         """Test para verificar la actualización de última ejecución."""

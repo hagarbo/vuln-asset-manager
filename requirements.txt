@@ -8,4 +8,5 @@ crispy-bootstrap5==2024.2
 django-filter==23.5
 django-widget-tweaks==1.5.0
 Pillow==10.2.0
-requests 
+requests
+croniter==2.0.1 

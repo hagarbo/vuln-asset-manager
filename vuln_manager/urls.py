@@ -29,6 +29,7 @@ from .views import (
     TareaDetailView,
     TareaUpdateView,
     TareaDeleteView,
+    ejecutar_tarea
 )
 
 app_name = 'vuln_manager'
@@ -76,4 +77,5 @@ urlpatterns = [
     path('tarea/<int:pk>/', TareaDetailView.as_view(), name='tarea_detail'),
     path('tarea/<int:pk>/update/', TareaUpdateView.as_view(), name='tarea_update'),
     path('tarea/<int:pk>/delete/', TareaDeleteView.as_view(), name='tarea_delete'),
+    path('tarea/<int:pk>/ejecutar/', ejecutar_tarea, name='ejecutar_tarea'),
 ] 
