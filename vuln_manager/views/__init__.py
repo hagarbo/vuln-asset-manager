@@ -32,6 +32,13 @@ from .auth import (
     UsuarioCreateView,
     UsuarioUpdateView,
 )
+from .tarea import (
+    TareaListView,
+    TareaCreateView,
+    TareaDetailView,
+    TareaUpdateView,
+    TareaDeleteView,
+)
 
 __all__ = [
     'ClienteListView',
@@ -58,4 +65,9 @@ __all__ = [
     'CustomLogoutView',
     'UsuarioCreateView',
     'UsuarioUpdateView',
+    'TareaListView',
+    'TareaCreateView',
+    'TareaDetailView',
+    'TareaUpdateView',
+    'TareaDeleteView',
 ] 

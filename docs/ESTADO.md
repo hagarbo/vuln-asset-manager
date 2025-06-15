@@ -77,6 +77,13 @@
 - Refactorización de modelos de relación y consistencia en nombres
 - Actualización de la documentación y reglas del proyecto
 
+### 2025-06-15: Modelos y repositorio de tareas programadas
+- Se ha creado el modelo `Tarea` para gestionar tareas programadas (por ejemplo, recolección de CVEs), siguiendo la estructura y convenciones del proyecto.
+- Se ha creado el modelo `EjecucionTarea` para registrar la ejecución de cada tarea, incluyendo estadísticas específicas para tareas de CVE.
+- Se ha implementado el repositorio `TareaRepository` con métodos para filtrar, actualizar y consultar tareas según distintos criterios.
+- Se han desarrollado y ejecutado tests unitarios para los modelos y el repositorio, cubriendo validaciones, creación, actualización, filtrado y representación.
+- **Todos los tests han pasado correctamente.**
+
 ## Estado Actual
 - **Modelos implementados y registrados en Admin:**
   - [x] Usuario (con sistema de roles)
@@ -141,3 +148,17 @@ docker compose exec vuln-manager-web python manage.py test vuln_manager
 - Documentar la estructura del proyecto
 - Implementar tests adicionales para nuevas funcionalidades
 - Revisar y actualizar la documentación de la API 
+
+## Lecciones Aprendidas
+
+### Errores de Bytes Nulos en Python
+- Cuando se encuentra un error `SyntaxError: source code string cannot contain null bytes`, generalmente indica un problema en la cadena de importaciones de Python.
+- Este error suele aparecer cuando hay problemas en los archivos `__init__.py`, especialmente cuando:
+  1. Faltan importaciones necesarias en algún `__init__.py` de la cadena
+  2. Hay importaciones circulares entre módulos
+  3. Los modelos o clases no están correctamente expuestos en los `__all__` de los `__init__.py`
+- Para resolver estos errores:
+  1. Revisar la cadena completa de importaciones desde el punto donde se origina el error
+  2. Verificar que todos los `__init__.py` necesarios existen y están correctamente configurados
+  3. Asegurarse de que los modelos y clases están correctamente importados y expuestos en los `__init__.py`
+  4. Si es necesario, recrear los archivos `__init__.py` desde cero para evitar problemas de codificación 

@@ -3,7 +3,7 @@ from django.views.generic import CreateView
 from vuln_manager.models import Activo
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.activo.activo_repository import ActivoRepository
-from vuln_manager.forms.activo.creation import ActivoCreationForm
+from vuln_manager.forms import ActivoCreationForm
 
 class ActivoCreateView(RoleRequiredMixin, CreateView):
     model = Activo

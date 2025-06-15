@@ -4,6 +4,8 @@ from .cliente.analista_cliente import AnalistaCliente
 from .activo.activo import Activo
 from .vulnerabilidad.vulnerabilidad import Vulnerabilidad
 from .activo_vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
+from .tarea.tarea import Tarea
+from .tarea.ejecucion_tarea import EjecucionTarea
 
 __all__ = [
     'Usuario',
@@ -12,4 +14,6 @@ __all__ = [
     'Activo',
     'Vulnerabilidad',
     'ActivoVulnerabilidad',
+    'Tarea',
+    'EjecucionTarea',
 ] 
