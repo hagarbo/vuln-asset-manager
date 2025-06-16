@@ -13,9 +13,9 @@ class ActivoVulnerabilidadListView(RoleRequiredMixin, ListView):
         repository = ActivoVulnerabilidadRepository()
         user = self.request.user
 
-        if user.role == 'admin':
+        if user.rol == 'admin':
             return repository.get_all()
-        elif user.role == 'analista':
+        elif user.rol == 'analista':
             return repository.get_by_activos_analista(user.id)
         else:  # cliente
             return repository.get_by_activos_cliente(user.id) 

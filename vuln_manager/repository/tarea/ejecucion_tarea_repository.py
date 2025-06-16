@@ -20,5 +20,5 @@ class EjecucionTareaRepository(BaseRepository):
             ejecucion.save()
         return ejecucion
 
-    def get_by_tarea(self, tarea_id):
-        return self.model.objects.filter(tarea_id=tarea_id) 
+    def get_by_tarea(self, tarea):
+        return self.model.objects.filter(tarea=tarea) 

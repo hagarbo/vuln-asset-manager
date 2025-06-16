@@ -30,12 +30,12 @@ pero el base.html ya carga severity.css.
             <tr>
                 <td>{{ cliente.nombre }}</td>
                 <td>
-                    <div class="btn-group" role="group">
-                        <a href="{% url 'vuln_manager:cliente_detail' cliente.pk %}" class="btn btn-info btn-sm">
+                    <div class="d-flex">
+                        <a href="{% url 'vuln_manager:cliente_detail' cliente.pk %}" class="btn btn-info btn-sm me-2">
                             <i class="bi bi-eye"></i> Ver
                         </a>
                         {% if perms.vuln_manager.change_cliente %}
-                        <a href="{% url 'vuln_manager:cliente_update' cliente.pk %}" class="btn btn-warning btn-sm">
+                        <a href="{% url 'vuln_manager:cliente_update' cliente.pk %}" class="btn btn-warning btn-sm me-2">
                             <i class="bi bi-pencil"></i> Editar
                         </a>
                         {% endif %}

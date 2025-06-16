@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-danger shadow">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center text-danger">Confirmar borrado de activo</h2>
+                    <p class="lead text-center">¿Estás seguro de que deseas eliminar el activo <strong>{{ object.nombre }}</strong>?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item"><strong>Tipo:</strong> {{ object.get_tipo_display }}</li>
+                        <li class="list-group-item"><strong>IP/Hostname:</strong> {{ object.ip|default:"N/A" }}</li>
+                        <li class="list-group-item"><strong>Versión:</strong> {{ object.version|default:"N/A" }}</li>
+                        <li class="list-group-item"><strong>Cliente:</strong> {{ object.cliente.nombre }}</li>
+                    </ul>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <a href="{% url 'vuln_manager:activo_list' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

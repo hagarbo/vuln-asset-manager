@@ -9,15 +9,17 @@ class ActivoVulnerabilidadUpdateView(RoleRequiredMixin, UpdateView):
     template_name = 'vuln_manager/activo_vulnerabilidad/form.html'
     success_url = reverse_lazy('vuln_manager:activo_vulnerabilidad_list')
     allowed_roles = ['admin', 'analista']
+    fields = '__all__'
 
     def get_queryset(self):
         repository = ActivoVulnerabilidadRepository()
         user = self.request.user
 
-        if user.role == 'admin':
+        if user.rol == 'admin':
             return repository.get_all()
-        else:  # analista
+        elif user.rol == 'analista':
             return repository.get_by_activos_analista(user.id)
+        return repository.model.objects.none()
 
     def form_valid(self, form):
         repository = ActivoVulnerabilidadRepository()

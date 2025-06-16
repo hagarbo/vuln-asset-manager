@@ -1,6 +1,7 @@
 from django.views.generic import DetailView
 from vuln_manager.models import Cliente
 from vuln_manager.mixins.permissions import RoleRequiredMixin
+from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
 
 class ClienteDetailView(RoleRequiredMixin, DetailView):
     model = Cliente
@@ -11,9 +12,10 @@ class ClienteDetailView(RoleRequiredMixin, DetailView):
     def get_queryset(self):
         user = self.request.user
         if user.es_admin():
-            return Cliente.objects.all()
+            return ClienteRepository.get_all()
         elif user.es_analista():
-            return Cliente.objects.filter(relaciones_analista__analista=user)
+            return ClienteRepository.get_by_analista(user)
         elif user.es_cliente():
-            return Cliente.objects.filter(relaciones_cliente__cliente=user)
-        return Cliente.objects.none() 
+            # Si Cliente tiene FK a Usuario, filtrar por ese campo
+            return ClienteRepository.get_by_usuario(user)
+        return ClienteRepository.get_none() 

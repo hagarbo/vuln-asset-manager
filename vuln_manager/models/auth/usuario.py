@@ -63,16 +63,6 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.get_rol_display()})"
 
-    def get_clientes_asignados(self):
-        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-        return AnalistaCliente.objects.filter(analista=self).values_list('cliente', flat=True)
-
-    def get_analistas_asignados(self):
-        if not self.es_cliente:
-            return Usuario.objects.none()
-        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-        return Usuario.objects.filter(id__in=AnalistaCliente.objects.filter(cliente=self).values_list('analista_id', flat=True))
-
     def has_perm(self, perm, obj=None):
         """
         Implementa la lógica de permisos basada en roles.

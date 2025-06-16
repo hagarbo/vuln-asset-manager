@@ -6,6 +6,7 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.models.tarea.tarea import Tarea
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
 from vuln_manager.forms.tarea.tarea_form import TareaForm
+from vuln_manager.repository.tarea.tarea_repository import TareaRepository
 
 class TareaUpdateView(RoleRequiredMixin, UpdateView):
     model = Tarea
@@ -22,6 +23,6 @@ class TareaUpdateView(RoleRequiredMixin, UpdateView):
         tipos_tarea = TipoTarea.objects.filter(activo=True)
         context['tipos_tarea_json'] = json.dumps(
             list(tipos_tarea.values('id', 'nombre', 'codigo', 'parametros', 'descripcion')),
-            cls=DjangoJSONEncoder
+            ensure_ascii=False
         )
         return context 

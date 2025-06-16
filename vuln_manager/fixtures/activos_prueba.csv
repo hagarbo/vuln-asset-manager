@@ -1,0 +1,5 @@
+nombre,tipo,descripcion,palabras_clave,ip,puerto,version
+Servidor Web,servidor,"Servidor web principal de la empresa","web,producción",192.168.1.10,80,Apache 2.4
+Base de Datos,bbdd,"Servidor de base de datos MySQL","bbdd,producción",192.168.1.20,3306,MySQL 8.0
+Firewall,firewall,"Firewall perimetral","seguridad,perímetro",192.168.1.1,443,Fortigate 6.2
+Estación Trabajo,pc,"PC de usuario estándar","oficina,usuario",192.168.1.50,,"Windows 10"

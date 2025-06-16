@@ -6,6 +6,7 @@ from vuln_manager.models.activo.activo import Activo
 from vuln_manager.models.vulnerabilidad.vulnerabilidad import Vulnerabilidad
 from vuln_manager.models.activo_vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
 from django.contrib.auth import get_user_model
+from vuln_manager.models.auth.usuario import Usuario
 
 User = get_user_model()
 
@@ -19,15 +20,11 @@ class ActivoVulnerabilidadViewsTest(TestCase):
         )
         
         # Crear usuario analista
-        self.analista = User.objects.create_user(
-            username='analista',
-            email='analista@example.com',
-            password='analistapass',
-            rol='analista'
-        )
+        self.analista = Usuario.objects.create_user(username='analista_test', password='testpass', rol='analista')
         
-        # Crear cliente
-        self.cliente = Cliente.objects.create(nombre='Cliente Test')
+        # Crear usuario cliente
+        self.usuario = Usuario.objects.create_user(username='cliente_test', password='testpass', rol='cliente')
+        self.cliente = Cliente.objects.create(nombre='Cliente Test', usuario=self.usuario)
         self.cliente.analistas.add(self.analista)
         
         # Crear activo
@@ -69,7 +66,7 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_list_view_requires_permission(self):
         """Test que verifica que se requiere permiso para ver la lista"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         response = self.client.get(reverse('vuln_manager:activo_vulnerabilidad_list'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/list.html')
@@ -82,10 +79,10 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_create_view_requires_permission(self):
         """Test que verifica que se requiere permiso para crear"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         response = self.client.get(reverse('vuln_manager:activo_vulnerabilidad_create'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/create.html')
+        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/form.html')
 
     def test_update_view_requires_login(self):
         """Test que verifica que se requiere login para actualizar"""
@@ -95,10 +92,10 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_update_view_requires_permission(self):
         """Test que verifica que se requiere permiso para actualizar"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         response = self.client.get(reverse('vuln_manager:activo_vulnerabilidad_update', args=[self.activo_vulnerabilidad.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/update.html')
+        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/form.html')
 
     def test_delete_view_requires_login(self):
         """Test que verifica que se requiere login para eliminar"""
@@ -108,14 +105,14 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_delete_view_requires_permission(self):
         """Test que verifica que se requiere permiso para eliminar"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         response = self.client.get(reverse('vuln_manager:activo_vulnerabilidad_delete', args=[self.activo_vulnerabilidad.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/delete.html')
+        self.assertTemplateUsed(response, 'vuln_manager/activo_vulnerabilidad/confirm_delete.html')
 
     def test_create_activo_vulnerabilidad(self):
         """Test que verifica la creación de una relación activo-vulnerabilidad"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         
         # Datos para crear una nueva relación
         data = {
@@ -138,7 +135,7 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_update_activo_vulnerabilidad(self):
         """Test que verifica la actualización de una relación activo-vulnerabilidad"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         
         # Datos para actualizar
         data = {
@@ -166,7 +163,7 @@ class ActivoVulnerabilidadViewsTest(TestCase):
 
     def test_delete_activo_vulnerabilidad(self):
         """Test que verifica la eliminación de una relación activo-vulnerabilidad"""
-        self.client.login(username='analista', password='analistapass')
+        self.client.login(username='analista_test', password='testpass')
         
         # Enviar POST request
         response = self.client.post(

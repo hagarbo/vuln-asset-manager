@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from vuln_manager.models import AnalistaCliente
 from .auth import CustomLoginRequiredMixin
+from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
+from vuln_manager.repository.usuario.usuario_repository import UsuarioRepository
 
 class RoleRequiredMixin(CustomLoginRequiredMixin):
     """
@@ -97,7 +99,4 @@ class AnalistaClienteMixin(UserPassesTestMixin):
         cliente_id = self.kwargs.get('cliente_id')
         if not cliente_id:
             return False
-        return AnalistaCliente.objects.filter(
-            analista=self.request.user,
-            cliente_id=cliente_id
-        ).exists() 
+        return ClienteRepository.exists_cliente_for_analista(self.request.user.id, cliente_id) 

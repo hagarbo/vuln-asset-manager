@@ -3,6 +3,7 @@ from vuln_manager.models.activo.activo import Activo
 from vuln_manager.models.activo_vulnerabilidad import ActivoVulnerabilidad
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.activo.activo_repository import ActivoRepository
+from vuln_manager.repository.activo_vulnerabilidad.activo_vulnerabilidad_repository import ActivoVulnerabilidadRepository
 
 class ActivoDetailView(RoleRequiredMixin, DetailView):
     model = Activo
@@ -23,5 +24,5 @@ class ActivoDetailView(RoleRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         activo = self.get_object()
-        context['vulnerabilidades'] = ActivoVulnerabilidad.objects.filter(activo=activo).select_related('vulnerabilidad')
+        context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(activo).select_related('vulnerabilidad')
         return context 

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-danger shadow">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center text-danger">Confirmar borrado de cliente</h2>
+                    <p class="lead text-center">¿Estás seguro de que deseas eliminar el cliente <strong>{{ object.nombre }}</strong>?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item"><strong>Usuario asociado:</strong> {{ object.usuario.username }}</li>
+                        <li class="list-group-item"><strong>Activos asociados:</strong> {{ object.activos.count }}</li>
+                        <li class="list-group-item"><strong>Fecha de creación:</strong> {{ object.created_at|date:"d/m/Y H:i" }}</li>
+                    </ul>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Esta acción eliminará también todos los activos y la cuenta de usuario asociada a este cliente.
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <a href="{% url 'vuln_manager:cliente_list' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

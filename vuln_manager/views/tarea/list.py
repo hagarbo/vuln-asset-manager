@@ -2,6 +2,7 @@ from django.views.generic import ListView
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.models.tarea.tarea import Tarea
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
+from vuln_manager.repository.tarea.tarea_repository import TareaRepository
 
 class TareaListView(RoleRequiredMixin, ListView):
     model = Tarea
@@ -10,7 +11,7 @@ class TareaListView(RoleRequiredMixin, ListView):
     allowed_roles = ['admin']
 
     def get_queryset(self):
-        return Tarea.objects.select_related('tipo').all().order_by('-created_at')
+        return TareaRepository().get_queryset()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

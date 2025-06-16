@@ -12,7 +12,6 @@ from .views import (
     ActivoDeleteView,
     VulnerabilidadListView,
     VulnerabilidadDetailView,
-    VulnerabilidadCreateView,
     VulnerabilidadUpdateView,
     VulnerabilidadDeleteView,
     ActivoVulnerabilidadListView,
@@ -60,9 +59,8 @@ urlpatterns = [
     # URLs de vulnerabilidades
     path('vulnerabilidades/', VulnerabilidadListView.as_view(), name='vulnerabilidad_list'),
     path('vulnerabilidades/<int:pk>/', VulnerabilidadDetailView.as_view(), name='vulnerabilidad_detail'),
-    path('vulnerabilidades/create/', VulnerabilidadCreateView.as_view(), name='vulnerabilidad_create'),
-    path('vulnerabilidades/<int:pk>/update/', VulnerabilidadUpdateView.as_view(), name='vulnerabilidad_update'),
-    path('vulnerabilidades/<int:pk>/delete/', VulnerabilidadDeleteView.as_view(), name='vulnerabilidad_delete'),
+    path('vulnerabilidades/<int:pk>/editar/', VulnerabilidadUpdateView.as_view(), name='vulnerabilidad_update'),
+    path('vulnerabilidades/<int:pk>/eliminar/', VulnerabilidadDeleteView.as_view(), name='vulnerabilidad_delete'),
     
     # URLs de activo-vulnerabilidad
     path('activo-vulnerabilidad/', ActivoVulnerabilidadListView.as_view(), name='activo_vulnerabilidad_list'),

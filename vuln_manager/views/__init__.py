@@ -8,7 +8,6 @@ from .activo import (
 from .vulnerabilidad import (
     VulnerabilidadListView,
     VulnerabilidadDetailView,
-    VulnerabilidadCreateView,
     VulnerabilidadUpdateView,
     VulnerabilidadDeleteView,
 )
@@ -54,7 +53,6 @@ __all__ = [
     'ActivoDeleteView',
     'VulnerabilidadListView',
     'VulnerabilidadDetailView',
-    'VulnerabilidadCreateView',
     'VulnerabilidadUpdateView',
     'VulnerabilidadDeleteView',
     'ActivoVulnerabilidadListView',

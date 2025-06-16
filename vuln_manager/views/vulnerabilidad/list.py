@@ -3,6 +3,7 @@ from vuln_manager.models import Vulnerabilidad
 from vuln_manager.mixins import RoleRequiredMixin
 from django.db.models import F, Case, When, Value, IntegerField
 import json
+from vuln_manager.repository.vulnerabilidad.vulnerabilidad_repository import VulnerabilidadRepository
 
 class VulnerabilidadListView(RoleRequiredMixin, ListView):
     model = Vulnerabilidad

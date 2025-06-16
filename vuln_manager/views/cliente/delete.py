@@ -2,6 +2,7 @@ from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from vuln_manager.models import Cliente
 from vuln_manager.mixins.permissions import RoleRequiredMixin
+from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
 
 class ClienteDeleteView(RoleRequiredMixin, DeleteView):
     model = Cliente

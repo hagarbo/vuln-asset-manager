@@ -9,6 +9,7 @@ class ActivoVulnerabilidadCreateView(RoleRequiredMixin, CreateView):
     template_name = 'vuln_manager/activo_vulnerabilidad/form.html'
     success_url = reverse_lazy('vuln_manager:activo_vulnerabilidad_list')
     allowed_roles = ['admin', 'analista']
+    fields = '__all__'
 
     def form_valid(self, form):
         repository = ActivoVulnerabilidadRepository()

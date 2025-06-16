@@ -215,3 +215,27 @@ docker compose exec vuln-manager-web python manage.py test vuln_manager
 - Mantener la consistencia con la arquitectura actual es crucial
 - Seguir el patrón de diseño establecido por la comunidad
 - Documentar todos los cambios y decisiones 
+
+## Lecciones aprendidas sobre errores en tests y codificación
+
+- **Errores de integridad referencial en tests:**
+  - Si los tests fallan con errores de integridad (por ejemplo, `null value in column "usuario_id"`), revisar que todos los objetos requeridos por la base de datos (usuarios, claves foráneas, etc.) se creen correctamente en el test.
+  - No asumir que el problema está en la estructura de carpetas o archivos vacíos si antes los tests funcionaban y no ha habido cambios masivos en la estructura.
+
+- **Errores de codificación:**
+  - Si aparecen errores extraños al leer o escribir archivos, comprobar la codificación (UTF-8 sin BOM, sin bytes nulos) y asegurarse de que los editores y scripts respetan la codificación estándar.
+
+- **Diagnóstico:**
+  - Antes de eliminar carpetas o archivos, ejecutar los tests de forma individual para aislar el problema.
+  - Documentar estos casos en el historial del proyecto para referencia futura. 
+
+### Estado de los tests de activo-vulnerabilidad (16/06/2025)
+
+- Se han corregido referencias a `user.role` por `user.rol` en vistas y tests para coherencia con el modelo personalizado `Usuario`.
+- Se han actualizado los nombres de los templates en los tests para que coincidan con los usados en las vistas (`form.html`, `confirm_delete.html`).
+- Se ha añadido el atributo `fields = '__all__'` en las vistas de creación y actualización para cumplir con los requisitos de Django.
+- Actualmente, solo fallan dos tests (`test_create_activo_vulnerabilidad` y `test_update_activo_vulnerabilidad`) porque la respuesta es 200 en vez de 302, lo que indica errores de validación en el formulario (probablemente faltan campos obligatorios o hay valores incorrectos en los datos enviados).
+- Próximo paso: imprimir los errores del formulario en los tests para identificar y corregir los datos enviados.
+
+#### Nota
+Mañana se abordará la implementación de los dashboards para los distintos roles. Se recomienda revisar primero los errores de los tests para dejar la base estable antes de avanzar con nuevas funcionalidades. 

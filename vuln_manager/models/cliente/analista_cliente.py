@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from vuln_manager.models.cliente.cliente import Cliente
 
 class AnalistaCliente(models.Model):
     """
@@ -12,9 +13,9 @@ class AnalistaCliente(models.Model):
         verbose_name='Analista'
     )
     cliente = models.ForeignKey(
-        'vuln_manager.Usuario',
+        Cliente,
         on_delete=models.CASCADE,
-        related_name='relaciones_cliente',
+        related_name='relaciones_analista_cliente',
         verbose_name='Cliente'
     )
     fecha_asignacion = models.DateTimeField(
@@ -29,16 +30,13 @@ class AnalistaCliente(models.Model):
         ordering = ['-fecha_asignacion']
 
     def __str__(self):
-        return f"{self.analista.username} -> {self.cliente.username}"
+        return f"{self.analista.username} -> {self.cliente.nombre}"
 
     def clean(self):
         from vuln_manager.models import Usuario
         if not self.analista.es_analista():
             raise ValidationError({'analista': 'El usuario debe ser un analista'})
-        if not self.cliente.es_cliente():
-            raise ValidationError({'cliente': 'El usuario debe ser un cliente'})
-        if self.analista == self.cliente:
-            raise ValidationError('Un usuario no puede ser asignado a sí mismo')
+        # No es necesario validar el rol del cliente, ya que es una instancia de Cliente
 
     def save(self, *args, **kwargs):
         self.clean()

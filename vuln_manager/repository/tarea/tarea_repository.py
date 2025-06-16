@@ -67,4 +67,7 @@ class TareaRepository(BaseRepository):
 
     def get_tareas_por_codigo_tipo(self, codigo_tipo):
         """Obtiene todas las tareas de un tipo específico por su código."""
-        return self.model.objects.filter(tipo__codigo=codigo_tipo) 
+        return self.model.objects.filter(tipo__codigo=codigo_tipo)
+
+    def get_queryset(self):
+        return self.model.objects.select_related('tipo').all().order_by('-created_at') 

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center">{% if form.instance.pk %}Editar Activo{% else %}Alta de Activo{% endif %}</h2>
+                    <form method="post" enctype="multipart/form-data" id="activo-form">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-3" id="field-{{ field.name }}">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {% if field.name == 'palabras_clave' %}
+                                    <div class="input-group mb-2">
+                                        <input type="text" id="input-palabra-clave" class="form-control" placeholder="Añadir palabra clave">
+                                        <button type="button" class="btn btn-outline-primary" id="btn-add-palabra">Añadir</button>
+                                    </div>
+                                    <div id="chips-palabras-clave" class="mb-2"></div>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Confirmar cambios{% else %}Crear Activo{% endif %}</button>
+                            <a href="{% url 'vuln_manager:activo_list' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+// Inicializar chips desde el valor inicial del campo oculto
+function renderChips() {
+    const chipsDiv = document.getElementById('chips-palabras-clave');
+    const inputHidden = document.getElementById('id_palabras_clave');
+    chipsDiv.innerHTML = '';
+    const palabras = inputHidden.value.split(',').map(p => p.trim()).filter(p => p);
+    palabras.forEach((palabra, idx) => {
+        const chip = document.createElement('span');
+        chip.className = 'badge bg-primary me-2 mb-2';
+        chip.textContent = palabra;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-close btn-close-white btn-sm ms-1';
+        btn.style.fontSize = '0.7em';
+        btn.onclick = function() {
+            palabras.splice(idx, 1);
+            inputHidden.value = palabras.join(',');
+            renderChips();
+        };
+        chip.appendChild(btn);
+        chipsDiv.appendChild(chip);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('input-palabra-clave');
+    const btnAdd = document.getElementById('btn-add-palabra');
+    const inputHidden = document.getElementById('id_palabras_clave');
+    renderChips();
+    btnAdd.addEventListener('click', function() {
+        let palabra = input.value.trim();
+        if (palabra) {
+            let palabras = inputHidden.value ? inputHidden.value.split(',').map(p => p.trim()).filter(p => p) : [];
+            if (!palabras.includes(palabra)) {
+                palabras.push(palabra);
+                inputHidden.value = palabras.join(',');
+                renderChips();
+            }
+            input.value = '';
+        }
+    });
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            btnAdd.click();
+        }
+    });
+});
+</script>
+{% endblock %} 

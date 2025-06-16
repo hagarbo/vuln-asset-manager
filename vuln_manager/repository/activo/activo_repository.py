@@ -19,4 +19,4 @@ class ActivoRepository(BaseRepository):
         """
         Obtiene todos los activos de los clientes asignados a un analista.
         """
-        return self.model.objects.filter(cliente__relaciones_analista__analista=analista) 
+        return self.model.objects.filter(cliente__relaciones_analista_cliente__analista=analista) 

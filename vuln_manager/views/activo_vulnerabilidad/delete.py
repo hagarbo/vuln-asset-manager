@@ -14,10 +14,11 @@ class ActivoVulnerabilidadDeleteView(RoleRequiredMixin, DeleteView):
         repository = ActivoVulnerabilidadRepository()
         user = self.request.user
 
-        if user.role == 'admin':
+        if user.rol == 'admin':
             return repository.get_all()
-        else:  # analista
+        elif user.rol == 'analista':
             return repository.get_by_activos_analista(user.id)
+        return repository.model.objects.none()
 
     def delete(self, request, *args, **kwargs):
         repository = ActivoVulnerabilidadRepository()

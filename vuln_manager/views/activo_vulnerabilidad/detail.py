@@ -1,7 +1,7 @@
 from django.views.generic import DetailView
 from vuln_manager.models.activo_vulnerabilidad import ActivoVulnerabilidad
 from vuln_manager.mixins.permissions import RoleRequiredMixin
-from vuln_manager.repository.activo_vulnerabilidad import ActivoVulnerabilidadRepository
+from vuln_manager.repository.activo_vulnerabilidad.activo_vulnerabilidad_repository import ActivoVulnerabilidadRepository
 
 class ActivoVulnerabilidadDetailView(RoleRequiredMixin, DetailView):
     model = ActivoVulnerabilidad
@@ -13,9 +13,10 @@ class ActivoVulnerabilidadDetailView(RoleRequiredMixin, DetailView):
         repository = ActivoVulnerabilidadRepository()
         user = self.request.user
 
-        if user.role == 'admin':
+        if user.rol == 'admin':
             return repository.get_all()
-        elif user.role == 'analista':
+        elif user.rol == 'analista':
             return repository.get_by_activos_analista(user.id)
         else:  # cliente
-            return repository.get_by_activos_cliente(user.id) 
+            return repository.get_by_activos_cliente(user.id)
+        return repository.model.objects.none() 

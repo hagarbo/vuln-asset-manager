@@ -3,11 +3,11 @@ from vuln_manager.models.activo.activo import Activo
 
 class Vulnerabilidad(models.Model):
     SEVERIDAD_CHOICES = [
-        ('critical', 'Crítica'),
-        ('high', 'Alta'),
-        ('medium', 'Media'),
-        ('low', 'Baja'),
-        ('no_establecida', 'No Establecida'),
+        ('critica', 'Crítica'),
+        ('alta', 'Alta'),
+        ('media', 'Media'),
+        ('baja', 'Baja'),
+        ('no establecida', 'No Establecida'),
     ]
 
     ESTADO_CHOICES = [

@@ -3,6 +3,8 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.models.tarea.tarea import Tarea
 from vuln_manager.models.tarea.ejecucion_tarea import EjecucionTarea
 from django.core.paginator import Paginator
+from vuln_manager.repository.tarea.tarea_repository import TareaRepository
+from vuln_manager.repository.tarea.ejecucion_tarea_repository import EjecucionTareaRepository
 
 class TareaDetailView(RoleRequiredMixin, DetailView):
     model = Tarea
@@ -11,13 +13,13 @@ class TareaDetailView(RoleRequiredMixin, DetailView):
     allowed_roles = ['admin']
 
     def get_queryset(self):
-        return Tarea.objects.select_related('tipo', 'creada_por')
+        return TareaRepository().get_queryset().select_related('creada_por')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Obtener el historial de ejecuciones paginado
         page = self.request.GET.get('page', 1)
-        ejecuciones = EjecucionTarea.objects.filter(tarea=self.object).order_by('-fecha_inicio')
+        ejecuciones = EjecucionTareaRepository().get_by_tarea(self.object).order_by('-fecha_inicio')
         paginator = Paginator(ejecuciones, 5)
         context['ejecuciones'] = paginator.get_page(page)
         return context 
