@@ -5,8 +5,16 @@ def migrar_tareas_existentes(apps, schema_editor):
     Tarea = apps.get_model('vuln_manager', 'Tarea')
     TipoTarea = apps.get_model('vuln_manager', 'TipoTarea')
     
-    # Obtener el tipo de tarea de CVEs
-    tipo_cve = TipoTarea.objects.get(codigo='cve_collector')
+    # Crear el tipo de tarea de CVEs si no existe
+    tipo_cve, created = TipoTarea.objects.get_or_create(
+        codigo='cve_collector',
+        defaults={
+            'nombre': 'Recolector de CVEs',
+            'descripcion': 'Recolecta CVEs desde la API de NIST y las almacena en la base de datos.',
+            'parametros': {"dias_atras": {"tipo": "integer", "min": 1, "max": 30, "default": 1, "descripcion": "Número de días hacia atrás para buscar CVEs"}},
+            'activo': True,
+        }
+    )
     
     # Migrar tareas existentes
     for tarea in Tarea.objects.all():

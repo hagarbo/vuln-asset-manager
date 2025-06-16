@@ -3,6 +3,13 @@ from vuln_manager.models.tarea.tarea import Tarea
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
 
 class TareaForm(forms.ModelForm):
+    activa = forms.BooleanField(
+        required=False,
+        initial=True,
+        label='Tarea Activa',
+        help_text='Si está marcada, la tarea se guardará como programada. Si no, se guardará como pausada.'
+    )
+
     class Meta:
         model = Tarea
         fields = ['tipo', 'programacion', 'parametros']
@@ -17,9 +24,10 @@ class TareaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Filtrar solo tipos de tarea activos
         self.fields['tipo'].queryset = TipoTarea.objects.filter(activo=True)
-        # Si hay una instancia, mostrar los parámetros actuales
+        # Si hay una instancia, mostrar los parámetros actuales y el estado
         if self.instance and self.instance.pk:
             self.fields['parametros'].initial = self.instance.parametros
+            self.fields['activa'].initial = self.instance.estado == 'programada'
         else:
             # Si es nueva, inicializar con valores por defecto según el tipo
             self.fields['parametros'].initial = {}
@@ -28,7 +36,9 @@ class TareaForm(forms.ModelForm):
         cleaned_data = super().clean()
         tipo = cleaned_data.get('tipo')
         parametros = cleaned_data.get('parametros', {})
-        # El estado se gestiona fuera del formulario, según la lógica de la vista
+        # Convertir el valor del checkbox en el estado correspondiente
+        cleaned_data['estado'] = 'programada' if cleaned_data.get('activa') else 'pausada'
+        
         if tipo and tipo.codigo == 'cve_collector':
             try:
                 dias_atras = int(parametros.get('dias_atras', 1))
@@ -40,6 +50,7 @@ class TareaForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
+        instance.estado = 'programada' if self.cleaned_data.get('activa') else 'pausada'
         if commit:
             instance.save()
         return instance 

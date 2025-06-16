@@ -18,8 +18,10 @@ django.setup()
 from django.contrib.auth import get_user_model
 User = get_user_model()
 User.objects.filter(username='admin').delete()
-User.objects.create_superuser('admin', 'admin@admin.com', 'Admin123!')
-print('Superusuario creado correctamente')
+admin = User.objects.create_superuser('admin', 'admin@admin.com', 'Admin123!')
+admin.rol = 'admin'
+admin.save()
+print('Superusuario creado correctamente con rol de administrador')
 END
 
 echo -e "${GREEN}Cargando datos de fixtures...${NC}"

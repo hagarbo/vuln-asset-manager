@@ -8,7 +8,7 @@ from vuln_manager.forms.tarea.tarea_form import TareaForm
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
 
 class TareaCreateView(RoleRequiredMixin, View):
-    template_name = 'vuln_manager/tarea/create.html'
+    template_name = 'vuln_manager/tarea/form.html'
     allowed_roles = ['admin']
 
     def get(self, request):
@@ -19,13 +19,14 @@ class TareaCreateView(RoleRequiredMixin, View):
                 'id': t.id,
                 'codigo': t.codigo,
                 'nombre': t.nombre,
-                'parametros': t.parametros
+                'parametros': t.parametros,
+                'descripcion': t.descripcion
             } for t in tipos_tarea],
             cls=DjangoJSONEncoder
         )
         return render(request, self.template_name, {
             'form': form,
-            'tipos_tarea': tipos_tarea_json
+            'tipos_tarea_json': tipos_tarea_json
         })
 
     def post(self, request):
@@ -35,7 +36,11 @@ class TareaCreateView(RoleRequiredMixin, View):
                 tarea = form.save(commit=False)
                 tarea.creada_por = request.user
                 tarea.save()
-                messages.success(request, 'Tarea creada exitosamente.')
+                estado = "Programada" if tarea.estado == "programada" else "Pausada"
+                messages.success(
+                    request,
+                    f'Tarea "{tarea.tipo.nombre}" creada exitosamente. Estado: {estado}'
+                )
                 return redirect('vuln_manager:tarea_list')
             except Exception as e:
                 messages.error(request, f'Error al crear la tarea: {str(e)}')
@@ -50,11 +55,12 @@ class TareaCreateView(RoleRequiredMixin, View):
                 'id': t.id,
                 'codigo': t.codigo,
                 'nombre': t.nombre,
-                'parametros': t.parametros
+                'parametros': t.parametros,
+                'descripcion': t.descripcion
             } for t in tipos_tarea],
             cls=DjangoJSONEncoder
         )
         return render(request, self.template_name, {
             'form': form,
-            'tipos_tarea': tipos_tarea_json
+            'tipos_tarea_json': tipos_tarea_json
         })

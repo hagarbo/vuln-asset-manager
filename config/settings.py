@@ -240,5 +240,26 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = ['bootstrap5']
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_CLASS_CONVERTERS = {
+    'textinput': 'form-control',
+    'passwordinput': 'form-control',
+    'emailinput': 'form-control',
+    'numberinput': 'form-control',
+    'urlinput': 'form-control',
+    'telinput': 'form-control',
+    'dateinput': 'form-control',
+    'datetimeinput': 'form-control',
+    'timeinput': 'form-control',
+    'textarea': 'form-control',
+    'checkboxinput': 'form-check-input',
+    'select': 'form-select',
+    'selectmultiple': 'form-select',
+    'radio': 'form-check-input',
+    'fileinput': 'form-control',
+    'clearablefileinput': 'form-control',
+    'splitdatetimewidget': 'form-control',
+    'selectdatewidget': 'form-control',
+}
+CRISPY_FAIL_SILENTLY = not DEBUG

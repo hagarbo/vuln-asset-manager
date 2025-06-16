@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib import messages
 import json
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.models.tarea.tarea import Tarea
@@ -25,4 +26,21 @@ class TareaUpdateView(RoleRequiredMixin, UpdateView):
             list(tipos_tarea.values('id', 'nombre', 'codigo', 'parametros', 'descripcion')),
             ensure_ascii=False
         )
-        return context 
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(
+            self.request,
+            f'Tarea "{self.object.tipo.nombre}" actualizada correctamente. '
+            f'Estado: {"Programada" if self.object.estado == "programada" else "Pausada"}'
+        )
+        return response
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if self.object:
+            # Asegurarnos de que los parámetros existentes se cargan correctamente
+            initial['parametros'] = self.object.parametros
+            # El campo 'activa' se maneja en el formulario basado en el estado
+        return initial 
