@@ -20,6 +20,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
 
 # Django
 *.log
@@ -83,3 +84,6 @@ yarn-error.log*
 *.dump
 *.sql
 *.sqlite3 
+
+# Dev Files
+requirements-dev.txt    
