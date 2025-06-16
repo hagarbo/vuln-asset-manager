@@ -10,8 +10,7 @@ class UsuarioRepository(BaseRepository):
         super().__init__(Usuario) 
 
     def get_clientes_asignados(self, usuario):
-        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-        return AnalistaCliente.objects.filter(analista=usuario).values_list('cliente', flat=True)
+        return usuario.clientes_asignados.all()
 
     def get_analistas_asignados(self, usuario):
         if not usuario.es_cliente:
@@ -24,11 +23,7 @@ class UsuarioRepository(BaseRepository):
         if not cliente:
             return self.model.objects.none()
             
-        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-        return self.model.objects.filter(
-            id__in=AnalistaCliente.objects.filter(cliente=cliente)
-            .values_list('analista_id', flat=True)
-        )
+        return cliente.analistas.all()
 
     def get_analistas(self):
         return self.model.objects.filter(rol='analista')
@@ -43,8 +38,4 @@ class UsuarioRepository(BaseRepository):
         Returns:
             QuerySet de Usuario con los analistas asignados al cliente
         """
-        print(f"Buscando analistas para cliente: {cliente.nombre}")
-        # Usamos la relación many-to-many directa
-        analistas = cliente.analistas.all()
-        print(f"Analistas encontrados: {analistas.count()}")
-        return analistas 
+        return cliente.analistas.all() 

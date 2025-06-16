@@ -1,6 +1,6 @@
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
-from vuln_manager.models import Cliente
+from vuln_manager.models import Cliente, Usuario
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
 from vuln_manager.forms.cliente.update import ClienteUpdateForm
@@ -15,6 +15,15 @@ class ClienteUpdateView(RoleRequiredMixin, UpdateView):
     def get_queryset(self):
         user = self.request.user
         repository = ClienteRepository()
-        if user.es_admin():
+        if user.es_admin:
             return repository.get_all()
-        return repository.get_none() 
+        return repository.get_none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        
+        if user.es_admin:
+            context['form'].fields['analistas'].queryset = Usuario.objects.filter(rol='analista')
+            
+        return context 

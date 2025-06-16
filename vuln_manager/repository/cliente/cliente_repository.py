@@ -1,7 +1,5 @@
 from vuln_manager.repository.base_repository import BaseRepository
 from vuln_manager.models.cliente.cliente import Cliente
-from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-from vuln_manager.models.auth.usuario import Usuario
 from django.core.exceptions import ValidationError
 
 class ClienteRepository(BaseRepository):
@@ -16,7 +14,7 @@ class ClienteRepository(BaseRepository):
         return self.model.objects.all()
 
     def get_by_analista(self, analista):
-        return self.model.objects.filter(relaciones_analista_cliente__analista=analista)
+        return self.model.objects.filter(analistas=analista)
 
     def get_by_usuario(self, usuario):
         return self.model.objects.filter(usuario=usuario)
@@ -27,27 +25,15 @@ class ClienteRepository(BaseRepository):
     def create_cliente(self, nombre, usuario):
         return self.model.objects.create(nombre=nombre, usuario=usuario)
 
-    def get_or_create_analista_cliente(self, analista, cliente):
-        """
-        Obtiene o crea una relación entre un analista y un cliente.
-        """
-        return AnalistaCliente.objects.get_or_create(analista=analista, cliente=cliente)
-
-    def exists_analista_cliente(self, analista_id, cliente_id):
-        """
-        Verifica si existe una relación entre un analista y un cliente.
-        """
-        return AnalistaCliente.objects.filter(analista_id=analista_id, cliente_id=cliente_id).exists()
-
     def get_analistas_by_cliente(self, cliente):
         """
-        Obtiene los IDs de los analistas asignados a un cliente.
+        Obtiene los analistas asignados a un cliente.
         """
-        return AnalistaCliente.objects.filter(cliente=cliente).values_list('analista_id', flat=True)
+        return cliente.analistas.all()
 
     def asignar_analistas(self, cliente, analistas_ids):
         """
-        Asigna analistas a un cliente usando el modelo intermedio AnalistaCliente.
+        Asigna analistas a un cliente.
         Valida roles y unicidad.
         """
         from vuln_manager.repository.usuario.usuario_repository import UsuarioRepository
@@ -56,11 +42,6 @@ class ClienteRepository(BaseRepository):
         if len(analistas_ids) > 0 and analistas.count() != len(analistas_ids):
             raise ValidationError('Uno o más analistas no son válidos')
             
-        # Limpiar relaciones previas
-        AnalistaCliente.objects.filter(cliente=cliente).delete()
-        
-        # Crear nuevas relaciones usando el modelo intermedio
-        for analista in analistas:
-            self.get_or_create_analista_cliente(analista, cliente)
-            
+        # Asignar analistas usando la relación many-to-many directa
+        cliente.analistas.set(analistas)
         return cliente 

@@ -11,10 +11,13 @@ class ActivoListView(RoleRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.es_admin():
-            return ActivoRepository().get_all()
-        elif user.es_analista():
-            return ActivoRepository().get_by_analista(user)
-        elif user.es_cliente():
-            return ActivoRepository().get_by_cliente(user.cliente)
-        return Activo.objects.none() 
+        repository = ActivoRepository()
+        
+        if user.es_admin:
+            return repository.get_all()
+        elif user.es_analista:
+            return repository.get_by_analista(user)
+        elif user.es_cliente:
+            return repository.get_by_cliente(user.cliente)
+            
+        return repository.get_none() 

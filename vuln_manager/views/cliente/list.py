@@ -12,11 +12,13 @@ class ClienteListView(RoleRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         repository = ClienteRepository()
-        if user.es_admin():
+        
+        if user.es_admin:
             return repository.get_all()
-        elif user.es_analista():
+        elif user.es_analista:
             return repository.get_by_analista(user)
-        elif user.es_cliente():
+        elif user.es_cliente:
             # Si Cliente tiene FK a Usuario, filtrar por ese campo
             return repository.get_by_usuario(user)
+            
         return repository.get_none() 

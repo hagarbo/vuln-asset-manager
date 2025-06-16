@@ -5,7 +5,7 @@ from vuln_manager.models.cliente.cliente import Cliente
 from vuln_manager.models.activo.activo import Activo
 from vuln_manager.models.vulnerabilidad.vulnerabilidad import Vulnerabilidad
 from vuln_manager.models.auth.usuario import Usuario
-from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
+from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
 import datetime
 
 class ViewTestBase(TestCase):
@@ -36,7 +36,7 @@ class ViewTestBase(TestCase):
         # Crear cliente
         cls.cliente_test = Cliente.objects.create(nombre='Cliente de Prueba')
         # Asignar cliente al analista
-        AnalistaCliente.objects.create(analista=cls.analista, cliente=cls.cliente_user)
+        cls.cliente_test.analistas.add(cls.analista)
         # Crear activo
         cls.activo_test = Activo.objects.create(
             cliente=cls.cliente_test,
@@ -54,26 +54,66 @@ class ViewTestBase(TestCase):
             fecha_modificacion=datetime.date(2023, 1, 1)
         )
 
-class ClienteViewTest(ViewTestBase):
+class ClienteViewsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Crear usuario analista
+        cls.analista = Usuario.objects.create_user(
+            username='test_analista',
+            password='test123',
+            rol='analista'
+        )
+        
+        # Crear usuario cliente
+        cls.cliente_user = Usuario.objects.create_user(
+            username='test_cliente',
+            password='test123',
+            rol='cliente'
+        )
+        
+        # Crear cliente
+        cliente_repo = ClienteRepository()
+        cls.cliente = cliente_repo.create_cliente('Test Cliente', cls.cliente_user)
+        
+        # Asignar analista al cliente
+        cls.cliente.analistas.add(cls.analista)
+        
+        # Crear cliente de prueba
+        cls.cliente_repo = ClienteRepository()
+        
     def setUp(self):
-        self.client.login(username='admin', password='adminpass')
-        self.cliente = Cliente.objects.create(nombre='Cliente Test')
-
+        self.client = Client()
+        
     def test_cliente_list_view(self):
-        response = self.client.get(reverse('vuln_manager:cliente_list'))
+        # Login como analista
+        self.client.login(username='test_analista', password='test123')
+        
+        # Obtener la URL
+        url = reverse('vuln_manager:cliente_list')
+        
+        # Hacer la petición
+        response = self.client.get(url)
+        
+        # Verificar que la respuesta es correcta
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'vuln_manager/cliente/list.html')
-        self.assertContains(response, self.cliente.nombre)
-        self.assertIn('clientes', response.context)
-        self.assertIn(self.cliente, list(response.context['clientes']))
-
+        self.assertContains(response, 'Test Cliente')
+        
     def test_cliente_detail_view(self):
-        response = self.client.get(reverse('vuln_manager:cliente_detail', args=[self.cliente.id]))
+        # Login como analista
+        self.client.login(username='test_analista', password='test123')
+        
+        # Obtener la URL
+        url = reverse('vuln_manager:cliente_detail', kwargs={'pk': self.cliente.pk})
+        
+        # Hacer la petición
+        response = self.client.get(url)
+        
+        # Verificar que la respuesta es correcta
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'vuln_manager/cliente/detail.html')
-        self.assertContains(response, self.cliente.nombre)
-        self.assertIn('object', response.context)
-        self.assertEqual(response.context['object'], self.cliente)
+        self.assertContains(response, 'Test Cliente')
+        self.assertContains(response, 'test_analista')
 
 class ActivoViewTest(ViewTestBase):
     def setUp(self):

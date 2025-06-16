@@ -9,8 +9,8 @@
 4. **Crecimiento controlado**: No añadir nueva funcionalidad hasta que la existente esté completamente probada y funcionando.
 5. **Consistencia en nombres**: 
    - Mantener consistencia en el nombrado de archivos y modelos
-   - Para modelos de relación, usar el formato `entidad1_entidad2.py` (ej: `activo_vulnerabilidad.py`, `analista_cliente.py`)
-   - Para clases de modelos de relación, usar el formato `Entidad1Entidad2` (ej: `ActivoVulnerabilidad`, `AnalistaCliente`)
+   - Para modelos de relación, usar el formato `entidad1_entidad2.py` (ej: `activo_vulnerabilidad.py`)
+   - Para clases de modelos de relación, usar el formato `Entidad1Entidad2` (ej: `ActivoVulnerabilidad`)
 
 ### Proceso de Desarrollo
 1. **Confirmación de cambios**: Solicitar confirmación antes de crear nuevos archivos.
@@ -27,6 +27,13 @@
 - Seguir las convenciones de Python/Django para el nombrado
 - Para modelos de relación, usar el formato `entidad1_entidad2.py`
 - Para clases de modelos de relación, usar el formato `Entidad1Entidad2`
+- Para repositorios, usar el formato `entidad_repository.py` y la clase `EntidadRepository`
+- Para servicios, usar el formato `entidad_service.py` y la clase `EntidadService`
+- Para vistas, usar el formato `entidad_view.py` y la clase `EntidadView`
+- Para formularios, usar el formato `entidad_form.py` y la clase `EntidadForm`
+- Para URLs, usar el formato `entidad_urls.py`
+- Para templates, usar el formato `entidad_list.html`, `entidad_detail.html`, etc.
+- Para tests, usar el formato `test_entidad.py` y la clase `EntidadTest`
 
 ## Notas Importantes
 - La versión de docker-compose está fijada en 3.11 y NO debe cambiarse a 3.8 u otra versión para evitar problemas de compatibilidad.

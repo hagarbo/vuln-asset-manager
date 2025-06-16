@@ -17,6 +17,6 @@ class ActivoRepository(BaseRepository):
 
     def get_by_analista(self, analista):
         """
-        Obtiene todos los activos de los clientes asignados a un analista.
+        Obtiene los activos asignados a un analista a través de sus clientes.
         """
-        return self.model.objects.filter(cliente__relaciones_analista_cliente__analista=analista) 
+        return self.model.objects.filter(cliente__analistas=analista) 

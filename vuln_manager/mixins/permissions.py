@@ -2,7 +2,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from vuln_manager.models import AnalistaCliente
 from .auth import CustomLoginRequiredMixin
 from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
 from vuln_manager.repository.usuario.usuario_repository import UsuarioRepository
@@ -81,33 +80,32 @@ class ClientePropioMixin(UserPassesTestMixin):
 
 class AnalistaClienteMixin(UserPassesTestMixin):
     """
-    Mixin para verificar que el analista está accediendo a datos de sus clientes asignados.
-    
-    Attributes:
-        login_url (str): URL a la que redirigir si el usuario no tiene permisos.
+    Mixin para verificar que el usuario es un analista asignado al cliente.
     """
-    login_url = reverse_lazy('vuln_manager:login')
-
     def test_func(self):
-        """
-        Verifica si el analista está asignado al cliente especificado.
-        
-        Returns:
-            bool: True si el analista está asignado al cliente,
-                  False en caso contrario.
-        """
-        cliente_id = self.kwargs.get('cliente_id')
+        user = self.request.user
+        if not user.is_authenticated or not user.es_analista:
+            return False
+            
+        cliente_id = self.kwargs.get('pk')
         if not cliente_id:
             return False
-        repository = ClienteRepository()
-        return repository.exists_cliente_for_analista(self.request.user.id, cliente_id)
+            
+        from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
+        cliente_repo = ClienteRepository()
+        cliente = cliente_repo.get_by_id(cliente_id)
+        
+        if not cliente:
+            return False
+            
+        return cliente.analistas.filter(id=user.id).exists()
 
     def has_permission(self):
         if not super().has_permission():
             return False
         
         # Si es analista, verificar que tenga acceso al cliente
-        if self.request.user.es_analista():
+        if self.request.user.es_analista:
             cliente_id = self.kwargs.get('pk')
             if cliente_id:
                 repository = ClienteRepository()

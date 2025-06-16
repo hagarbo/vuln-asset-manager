@@ -13,16 +13,24 @@ class ActivoDetailView(RoleRequiredMixin, DetailView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.es_admin():
-            return ActivoRepository().get_all()
-        elif user.es_analista():
-            return ActivoRepository().get_by_analista(user)
-        elif user.es_cliente():
-            return ActivoRepository().get_by_cliente(user.cliente)
-        return Activo.objects.none()
+        repository = ActivoRepository()
+        if user.es_admin:
+            return repository.get_all()
+        elif user.es_analista:
+            return repository.get_by_analista(user)
+        elif user.es_cliente:
+            return repository.get_by_cliente(user.cliente)
+        return repository.get_none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        activo = self.get_object()
-        context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(activo).select_related('vulnerabilidad')
+        user = self.request.user
+        
+        if user.es_admin:
+            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+        elif user.es_analista:
+            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+        elif user.es_cliente:
+            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+            
         return context 

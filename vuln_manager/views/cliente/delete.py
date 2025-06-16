@@ -13,6 +13,6 @@ class ClienteDeleteView(RoleRequiredMixin, DeleteView):
     def get_queryset(self):
         user = self.request.user
         repository = ClienteRepository()
-        if user.es_admin():
+        if user.es_admin:
             return repository.get_all()
         return repository.get_none() 
