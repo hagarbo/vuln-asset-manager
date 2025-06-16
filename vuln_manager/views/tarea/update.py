@@ -22,7 +22,7 @@ class TareaUpdateView(RoleRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tipos_tarea = TipoTarea.objects.filter(activo=True)
-        context['tipos_tarea_json'] = json.dumps(
+        context['tipos_tarea'] = json.dumps(
             list(tipos_tarea.values('id', 'nombre', 'codigo', 'parametros', 'descripcion')),
             ensure_ascii=False
         )

@@ -10,4 +10,11 @@ class ClienteUpdateView(RoleRequiredMixin, UpdateView):
     form_class = ClienteUpdateForm
     template_name = 'vuln_manager/cliente/form.html'
     success_url = reverse_lazy('vuln_manager:cliente_list')
-    allowed_roles = ['admin'] 
+    allowed_roles = ['admin']
+
+    def get_queryset(self):
+        user = self.request.user
+        repository = ClienteRepository()
+        if user.es_admin():
+            return repository.get_all()
+        return repository.get_none() 

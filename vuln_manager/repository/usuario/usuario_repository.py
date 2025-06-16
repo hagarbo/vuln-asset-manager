@@ -16,12 +16,35 @@ class UsuarioRepository(BaseRepository):
     def get_analistas_asignados(self, usuario):
         if not usuario.es_cliente:
             return self.model.objects.none()
-        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
-        from vuln_manager.models.cliente.cliente import Cliente
-        cliente = Cliente.objects.filter(usuario=usuario).first()
+        
+        from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
+        cliente_repo = ClienteRepository()
+        cliente = cliente_repo.get_by_usuario(usuario).first()
+        
         if not cliente:
             return self.model.objects.none()
-        return self.model.objects.filter(id__in=AnalistaCliente.objects.filter(cliente=cliente).values_list('analista_id', flat=True))
+            
+        from vuln_manager.models.cliente.analista_cliente import AnalistaCliente
+        return self.model.objects.filter(
+            id__in=AnalistaCliente.objects.filter(cliente=cliente)
+            .values_list('analista_id', flat=True)
+        )
 
     def get_analistas(self):
-        return self.model.objects.filter(rol='analista') 
+        return self.model.objects.filter(rol='analista')
+
+    def get_analistas_by_cliente(self, cliente):
+        """
+        Obtiene los analistas asignados a un cliente específico.
+        
+        Args:
+            cliente: Instancia del modelo Cliente
+            
+        Returns:
+            QuerySet de Usuario con los analistas asignados al cliente
+        """
+        print(f"Buscando analistas para cliente: {cliente.nombre}")
+        # Usamos la relación many-to-many directa
+        analistas = cliente.analistas.all()
+        print(f"Analistas encontrados: {analistas.count()}")
+        return analistas 

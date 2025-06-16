@@ -99,4 +99,17 @@ class AnalistaClienteMixin(UserPassesTestMixin):
         cliente_id = self.kwargs.get('cliente_id')
         if not cliente_id:
             return False
-        return ClienteRepository.exists_cliente_for_analista(self.request.user.id, cliente_id) 
+        repository = ClienteRepository()
+        return repository.exists_cliente_for_analista(self.request.user.id, cliente_id)
+
+    def has_permission(self):
+        if not super().has_permission():
+            return False
+        
+        # Si es analista, verificar que tenga acceso al cliente
+        if self.request.user.es_analista():
+            cliente_id = self.kwargs.get('pk')
+            if cliente_id:
+                repository = ClienteRepository()
+                return repository.exists_cliente_for_analista(self.request.user.id, cliente_id)
+        return True 

@@ -24,9 +24,9 @@ El base.html ya carga severity.css.
         <p class="card-text"><strong>Última Actualización:</strong> {{ object.updated_at|date:"d/m/Y H:i" }}</p>
         <p class="card-text">
             <strong>Analistas Asignados:</strong>
-            {% if object.analistas.all %}
+            {% if analistas %}
                 <ul class="list-group list-group-flush">
-                {% for analista in object.analistas.all %}
+                {% for analista in analistas %}
                     <li class="list-group-item">{{ analista.username }}</li>
                 {% endfor %}
                 </ul>

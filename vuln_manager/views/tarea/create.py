@@ -6,31 +6,27 @@ import json
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.forms.tarea.tarea_form import TareaForm
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
+from vuln_manager.models.tarea.tarea import Tarea
 
 class TareaCreateView(RoleRequiredMixin, View):
     template_name = 'vuln_manager/tarea/form.html'
     allowed_roles = ['admin']
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         form = TareaForm()
-        tipos_tarea = TipoTarea.objects.filter(activo=True)
-        tipos_tarea_json = json.dumps(
-            [{
-                'id': t.id,
-                'codigo': t.codigo,
-                'nombre': t.nombre,
-                'parametros': t.parametros,
-                'descripcion': t.descripcion
-            } for t in tipos_tarea],
-            cls=DjangoJSONEncoder
-        )
+        tipos_tarea = list(TipoTarea.objects.filter(activo=True).values('id', 'codigo', 'nombre', 'parametros'))
+        for t in tipos_tarea:
+            t['parametros'] = t['parametros'] or {}
         return render(request, self.template_name, {
             'form': form,
-            'tipos_tarea_json': tipos_tarea_json
+            'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
         })
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = TareaForm(request.POST)
+        tipos_tarea = list(TipoTarea.objects.filter(activo=True).values('id', 'codigo', 'nombre', 'parametros'))
+        for t in tipos_tarea:
+            t['parametros'] = t['parametros'] or {}
         if form.is_valid():
             try:
                 tarea = form.save(commit=False)
@@ -49,18 +45,7 @@ class TareaCreateView(RoleRequiredMixin, View):
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
 
-        tipos_tarea = TipoTarea.objects.filter(activo=True)
-        tipos_tarea_json = json.dumps(
-            [{
-                'id': t.id,
-                'codigo': t.codigo,
-                'nombre': t.nombre,
-                'parametros': t.parametros,
-                'descripcion': t.descripcion
-            } for t in tipos_tarea],
-            cls=DjangoJSONEncoder
-        )
         return render(request, self.template_name, {
             'form': form,
-            'tipos_tarea_json': tipos_tarea_json
+            'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
         })

@@ -17,7 +17,9 @@ class TareaForm(forms.ModelForm):
             'programacion': forms.TextInput(
                 attrs={'placeholder': "Ej: '0 0 * * *' para diario a medianoche"}
             ),
-            'parametros': forms.HiddenInput()
+            'parametros': forms.HiddenInput(
+                attrs={'id': 'id_parametros'}
+            )
         }
 
     def __init__(self, *args, **kwargs):
@@ -44,6 +46,8 @@ class TareaForm(forms.ModelForm):
                 dias_atras = int(parametros.get('dias_atras', 1))
                 if dias_atras > 30:
                     raise forms.ValidationError('No se pueden buscar CVEs de más de 30 días atrás')
+                if dias_atras < 1:
+                    raise forms.ValidationError('El número de días debe ser mayor que 0')
             except (ValueError, TypeError):
                 raise forms.ValidationError('El valor de días atrás debe ser un número entero')
         return cleaned_data
