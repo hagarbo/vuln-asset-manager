@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 {% load vuln_manager_filters %}
 
@@ -9,9 +9,12 @@
 No se necesita CSS adicional específico para esta vista por ahora, 
 pero el base.html ya carga severity.css.
 {% endcomment %}
+<style>
+.table-link-row { cursor: pointer; }
+</style>
 {% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Listado de Activos</h1>
     {% include 'components/list_actions.html' with create_url='vuln_manager:activo_create' model_name='Activo' %}
@@ -34,7 +37,7 @@ pero el base.html ya carga severity.css.
                 </thead>
                 <tbody>
                     {% for activo in activos %}
-                    <tr>
+                    <tr class="table-link-row" data-href="{% url 'vuln_manager:activo_detail' activo.pk %}">
                         <td>{{ activo.nombre }}</td>
                         <td>
                             <a href="{% url 'vuln_manager:cliente_detail' activo.cliente.pk %}" class="text-decoration-none">
@@ -46,9 +49,6 @@ pero el base.html ya carga severity.css.
                         <td>{{ activo.version|default:"N/A" }}</td>
                         <td>
                             <div class="d-flex">
-                                <a href="{% url 'vuln_manager:activo_detail' activo.pk %}" class="btn btn-info btn-sm me-2">
-                                    <i class="bi bi-eye"></i> Ver
-                                </a>
                                 {% if perms.vuln_manager.change_activo %}
                                 <a href="{% url 'vuln_manager:activo_update' activo.pk %}" class="btn btn-warning btn-sm me-2">
                                     <i class="bi bi-pencil"></i> Editar
@@ -73,4 +73,18 @@ pero el base.html ya carga severity.css.
     <i class="bi bi-info-circle"></i> No hay activos registrados.
 </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-link-row').forEach(function(row) {
+        row.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'A' && !e.target.closest('a')) {
+                window.location = row.dataset.href;
+            }
+        });
+    });
+});
+</script>
 {% endblock %} 

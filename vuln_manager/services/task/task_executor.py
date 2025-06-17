@@ -42,8 +42,8 @@ class TaskExecutor:
                 estado='completada',
                 fecha_fin=timezone.now()
             )
-            # Actualizar última y próxima ejecución usando el repositorio
-            self.tarea_repo.actualizar_ultima_ejecucion(tarea.id)
+            # Actualizar última ejecución
+            self.tarea_repo.update_ultima_ejecucion(tarea.id)
             return ejecucion
         except Exception as e:
             # Registrar error en la ejecución usando el repositorio

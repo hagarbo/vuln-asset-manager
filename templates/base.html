@@ -1,3 +1,9 @@
+<!--
+    PLANTILLA BASE GLOBAL
+    Esta plantilla define la estructura y los recursos comunes para todo el proyecto (Bootstrap, Mazer, navbar, etc).
+    Todas las páginas principales deben extender de aquí.
+    Las plantillas especializadas (como dashboard/base.html) pueden extender de esta para añadir layouts específicos.
+-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,11 +13,13 @@
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Mazer CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/app-dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/css/iconly.css">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% include 'components/navbar.html' %}
-
     <div class="container mt-4">
         {% include 'components/messages.html' %}
         {% block content %}
@@ -19,6 +27,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Mazer JS -->
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/initTheme.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/compiled/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/zuramai/mazer@docs/demo/assets/static/js/components/dark.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html> 

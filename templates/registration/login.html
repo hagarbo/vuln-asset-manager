@@ -1,26 +1,173 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Iniciar Sesión{% endblock %}
+{% block hide_navbar %}1{% endblock %}
+
+{% block title %}Iniciar Sesión | Vuln-Asset-Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #181c2f !important;
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .login-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .login-card {
+        background: #232946;
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid #2d3748;
+    }
+    .login-header {
+        background: linear-gradient(135deg, #00c9a7, #00e6be);
+        color: #181c2f;
+        padding: 2rem;
+        border-radius: 1rem 1rem 0 0;
+        text-align: center;
+    }
+    .login-header h2 {
+        margin: 0;
+        font-weight: bold;
+        font-size: 1.8rem;
+    }
+    .login-body {
+        padding: 2rem;
+    }
+    .form-label {
+        color: #00c9a7;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+        font-size: 1rem;
+        display: block;
+        text-align: left;
+    }
+    .form-control {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+        color: #fff;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+        margin-bottom: 0.7rem;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        background: #2d3748;
+        border-color: #00c9a7;
+        color: #fff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 201, 167, 0.25);
+    }
+    .form-control::placeholder {
+        color: #a0aec0;
+        opacity: 1;
+    }
+    .btn-login {
+        background: linear-gradient(135deg, #00c9a7, #00e6be);
+        color: #181c2f!important;
+        font-weight: bold!important;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.75rem 2rem;
+        width: 100%;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(0, 201, 167, 0.3);
+        font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    .btn-login:hover {
+        background: linear-gradient(135deg, #00e6be, #00c9a7);
+        color: #00c9a7;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 201, 167, 0.4);
+    }
+    .alert {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+        color: #e2e8f0;
+        border-radius: 0.5rem;
+    }
+    .alert-danger {
+        background: #742a2a;
+        border-color: #c53030;
+        color: #fed7d7;
+    }
+    .alert-success {
+        background: #22543d;
+        border-color: #38a169;
+        color: #c6f6d5;
+    }
+    .back-link {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+    .back-link a {
+        color: #00c9a7;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .back-link a:hover {
+        color: #00e6be;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h2>Iniciar Sesión</h2>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form|crispy }}
-                        <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    <small class="text-muted"></small>
-                </div>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2><i class="bi bi-shield-lock me-2"></i>Iniciar Sesión</h2>
+        </div>
+        <div class="login-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-login">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="back-link">
+                <a href="{% url 'home' %}">
+                    <i class="bi bi-arrow-left me-1"></i>Volver al inicio
+                </a>
             </div>
         </div>
     </div>

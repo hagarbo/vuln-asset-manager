@@ -27,10 +27,10 @@ class ActivoDetailView(RoleRequiredMixin, DetailView):
         user = self.request.user
         
         if user.es_admin:
-            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+            context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(self.object)
         elif user.es_analista:
-            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+            context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(self.object)
         elif user.es_cliente:
-            context['vulnerabilidades'] = self.object.vulnerabilidades.all()
+            context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(self.object)
             
         return context 

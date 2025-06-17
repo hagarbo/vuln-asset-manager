@@ -12,4 +12,6 @@ class VulnerabilidadDTO:
     fecha_modificacion: str  # ISO format
     # Datos de CVSS en formato dinámico
     cvss_data: Dict[str, Any]
-    referencias: List[str] 
+    referencias: List[str]
+    cvss_score: float = None  # Score de la versión más reciente de CVSS
+    cvss_severidad: str = None  # Severidad de la versión más reciente de CVSS 

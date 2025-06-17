@@ -9,7 +9,7 @@ from vuln_manager.repository.usuario.usuario_repository import UsuarioRepository
 class RoleRequiredMixin(CustomLoginRequiredMixin):
     """
     Mixin que asegura que un usuario tenga uno de los roles requeridos.
-    Redirige a la página de inicio si el rol no es válido.
+    Redirige a la página de login si el rol no es válido.
     
     Attributes:
         allowed_roles (list): Lista de roles permitidos para acceder a la vista.
@@ -38,76 +38,88 @@ class RoleRequiredMixin(CustomLoginRequiredMixin):
 class AdminRequiredMixin(RoleRequiredMixin):
     """
     Mixin para verificar que el usuario es administrador.
+    Redirige a la página de login si no es administrador.
     """
     allowed_roles = ['admin']
 
 class AnalistaRequiredMixin(RoleRequiredMixin):
     """
     Mixin para verificar que el usuario es analista.
+    Redirige a la página de login si no es analista.
     """
     allowed_roles = ['analista']
 
 class ClienteRequiredMixin(RoleRequiredMixin):
     """
     Mixin para verificar que el usuario es cliente.
+    Redirige a la página de login si no es cliente.
     """
     allowed_roles = ['cliente']
 
-class ClientePropioMixin(UserPassesTestMixin):
+class ClientePropioMixin(CustomLoginRequiredMixin):
     """
     Mixin para verificar que el usuario está accediendo a sus propios datos.
     Solo aplicable para usuarios con rol 'cliente'.
+    Redirige a la página de login si no tiene permisos.
     
     Attributes:
         login_url (str): URL a la que redirigir si el usuario no tiene permisos.
     """
     login_url = reverse_lazy('vuln_manager:login')
 
-    def test_func(self):
+    def dispatch(self, request, *args, **kwargs):
         """
         Verifica si el usuario está accediendo a sus propios datos.
         
+        Args:
+            request: La petición HTTP.
+            *args: Argumentos posicionales adicionales.
+            **kwargs: Argumentos de palabra clave adicionales.
+            
         Returns:
-            bool: True si el usuario está accediendo a sus propios datos,
-                  False en caso contrario.
+            La respuesta de la vista si el usuario tiene permisos,
+            o una redirección al login si no los tiene.
         """
-        if not self.request.user.is_authenticated:
-            return False
-        if not self.request.user.es_cliente:
-            return False
+        if not request.user.is_authenticated or not request.user.es_cliente:
+            return self.handle_no_permission()
+            
         cliente_id = self.kwargs.get('pk') or self.kwargs.get('cliente_id')
-        return str(self.request.user.id) == str(cliente_id)
+        if str(self.request.user.id) != str(cliente_id):
+            return self.handle_no_permission()
+            
+        return super().dispatch(request, *args, **kwargs)
 
-class AnalistaClienteMixin(UserPassesTestMixin):
+class AnalistaClienteMixin(CustomLoginRequiredMixin):
     """
     Mixin para verificar que el usuario es un analista asignado al cliente.
+    Redirige a la página de login si no tiene permisos.
     """
-    def test_func(self):
-        user = self.request.user
-        if not user.is_authenticated or not user.es_analista:
-            return False
+    login_url = reverse_lazy('vuln_manager:login')
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Verifica si el usuario es un analista asignado al cliente.
+        
+        Args:
+            request: La petición HTTP.
+            *args: Argumentos posicionales adicionales.
+            **kwargs: Argumentos de palabra clave adicionales.
+            
+        Returns:
+            La respuesta de la vista si el usuario tiene permisos,
+            o una redirección al login si no los tiene.
+        """
+        if not request.user.is_authenticated or not request.user.es_analista:
+            return self.handle_no_permission()
             
         cliente_id = self.kwargs.get('pk')
         if not cliente_id:
-            return False
+            return self.handle_no_permission()
             
-        from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
         cliente_repo = ClienteRepository()
         cliente = cliente_repo.get_by_id(cliente_id)
         
-        if not cliente:
-            return False
+        if not cliente or not cliente.analistas.filter(id=request.user.id).exists():
+            return self.handle_no_permission()
             
-        return cliente.analistas.filter(id=user.id).exists()
-
-    def has_permission(self):
-        if not super().has_permission():
-            return False
-        
-        # Si es analista, verificar que tenga acceso al cliente
-        if self.request.user.es_analista:
-            cliente_id = self.kwargs.get('pk')
-            if cliente_id:
-                repository = ClienteRepository()
-                return repository.exists_cliente_for_analista(self.request.user.id, cliente_id)
-        return True 
+        return super().dispatch(request, *args, **kwargs) 

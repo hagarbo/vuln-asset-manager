@@ -37,7 +37,22 @@ class Vulnerabilidad(models.Model):
         default=dict,
         blank=True,
         verbose_name="Datos CVSS",
-        help_text="Datos de CVSS en formato: {'v3.0': {'score': 6.7, 'severidad': 'MEDIUM', 'vector': '...'}}"
+        help_text="Datos de CVSS en formato original de la API"
+    )
+    
+    # Campos derivados para uso común
+    cvss_score = models.DecimalField(
+        max_digits=3, 
+        decimal_places=1,
+        null=True,
+        blank=True,
+        verbose_name="Score CVSS"
+    )
+    cvss_severidad = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        verbose_name="Severidad CVSS"
     )
     
     # Referencias

@@ -16,17 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView
 from vuln_manager.mixins.auth import CustomLoginRequiredMixin
+from vuln_manager.views.public import PublicHomeView
+from vuln_manager.views.dashboard.redirect import HomeView
 from django.conf import settings
 from django.conf.urls.static import static
 
-class HomeView(CustomLoginRequiredMixin, TemplateView):
-    template_name = 'home.html'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomeView.as_view(), name='home'),
+    path('', PublicHomeView.as_view(), name='home'),  # Landing pública
+    path('dashboard/', HomeView.as_view(), name='dashboard_redirect'),  # Redirección por rol
     path('', include('vuln_manager.urls')),
 ]
 

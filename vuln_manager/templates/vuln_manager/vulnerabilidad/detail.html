@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 {% load vuln_manager_filters %}
 
@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/severity.css' %}">
 {% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>
         {{ vulnerabilidad.cve_id }}

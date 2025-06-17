@@ -13,7 +13,7 @@ class TareaDetailView(RoleRequiredMixin, DetailView):
     allowed_roles = ['admin']
 
     def get_queryset(self):
-        return TareaRepository().get_queryset().select_related('creada_por')
+        return TareaRepository().get_all().select_related('creada_por')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

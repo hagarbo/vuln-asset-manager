@@ -71,8 +71,11 @@ class NISTCVECollector:
             # Procesar datos de CVSS de forma dinámica
             cvss_data = {}
             severidad = 'no_establecida'
+            cvss_score = None
+            cvss_severidad = None
             
             if 'metrics' in cve:
+                latest_version = None
                 for metric_key, metric_value in cve['metrics'].items():
                     if metric_value and isinstance(metric_value, list) and len(metric_value) > 0:
                         cvss_info = metric_value[0].get('cvssData', {})
@@ -86,7 +89,20 @@ class NISTCVECollector:
                                 }
                                 # Usar la severidad de la versión más reciente de CVSS
                                 if version.startswith('3.') or version.startswith('4.'):
-                                    severidad = cvss_info.get('baseSeverity', 'no establecida').lower()
+                                    if latest_version is None or version > latest_version:
+                                        latest_version = version
+                                        cvss_score = cvss_info.get('baseScore')
+                                        cvss_severidad = cvss_info.get('baseSeverity', 'no establecida').lower()
+                                        severidad = cvss_severidad
+            
+            # Si no encontramos métricas CVSS 3.x o 4.x, intentamos usar cualquier versión disponible
+            if cvss_score is None and cvss_data:
+                for version, data in cvss_data.items():
+                    if data.get('score') is not None:
+                        cvss_score = data['score']
+                        cvss_severidad = data.get('severidad', 'no establecida').lower()
+                        severidad = cvss_severidad
+                        break
             
             # Referencias
             referencias = [ref['url'] for ref in cve.get('references', [])]
@@ -100,6 +116,8 @@ class NISTCVECollector:
                 fecha_publicacion=fecha_publicacion,
                 fecha_modificacion=fecha_modificacion,
                 cvss_data=cvss_data,
+                cvss_score=cvss_score,
+                cvss_severidad=cvss_severidad,
                 referencias=referencias
             ))
         return cve_list 

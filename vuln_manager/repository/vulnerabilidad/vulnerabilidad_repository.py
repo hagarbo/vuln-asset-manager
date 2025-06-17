@@ -45,4 +45,8 @@ class VulnerabilidadRepository(BaseRepository):
                 "referencias": dto.referencias,
             }
         )
-        return obj, created 
+        return obj, created
+
+    def count(self):
+        """Cuenta el número total de vulnerabilidades."""
+        return self.model.objects.count() 

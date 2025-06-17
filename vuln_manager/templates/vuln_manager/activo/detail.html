@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 {% load vuln_manager_filters %}
 
-{% block title %}Detalle de Activo{% endblock %}
+{% block title %}Detalle de Activo - Vuln-Asset-Manager{% endblock %}
 
 {% block extra_css %}
 {% comment %}
@@ -11,7 +11,7 @@ El base.html ya carga severity.css.
 {% endcomment %}
 {% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="container mt-4">
     <h1>{{ activo.nombre }}</h1>
     <div class="card mb-4">

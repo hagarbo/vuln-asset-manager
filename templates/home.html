@@ -1,42 +1,162 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Inicio - Vuln-Asset-Manager{% endblock %}
+{% block hide_navbar %}1{% endblock %}
+
+{% block title %}Vuln-Asset-Manager | Gestión segura de activos y vulnerabilidades{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #181c2f !important;
+        color: #fff;
+    }
+    .vam-logo {
+        width: 80px;
+        height: 80px;
+        background: #232946;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        box-shadow: 0 2px 16px #0004;
+    }
+    .vam-logo i {
+        font-size: 2.5rem;
+        color: #00c9a7;
+    }
+    .vam-logo span {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #fff;
+        margin-left: 0.5rem;
+    }
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #00c9a7;
+    }
+    .hero-desc {
+        font-size: 1.2rem;
+        color: #e0e0e0;
+    }
+    /* Usar especificidad CSS en lugar de !important */
+    .container .btn.btn-login {
+        background: #00c9a7;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        border-radius: 2rem;
+        padding: 0.75rem 2rem;
+        font-size: 1.2rem;
+        margin-top: 2rem;
+        box-shadow: 0 0 16px 2px #00c9a7cc, 0 2px 8px #0006;
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    .container .btn.btn-login:hover {
+        background: #00e6be;
+        color: #181c2f;
+        box-shadow: 0 0 24px 4px #00e6becc, 0 2px 12px #0008;
+    }
+    .feature-icon {
+        font-size: 2rem;
+        color: #00c9a7;
+        margin-bottom: 0.5rem;
+    }
+    footer {
+        color: #aaa;
+        font-size: 0.95rem;
+        margin-top: 4rem;
+    }
+    .vam-banner {
+        position: relative;
+        width: 100vw;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        height: 220px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+        border-bottom: 3px solid #00c9a7;
+    }
+    .vam-banner-bg {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        object-fit: cover;
+        filter: blur(3px) brightness(0.7) grayscale(0.2);
+        z-index: 1;
+        transition: filter 0.3s;
+    }
+    .vam-banner-content {
+        position: relative;
+        z-index: 2;
+        color: #fff;
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+    .vam-banner-content h1 {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 2px 16px #000a;
+        margin-bottom: 0.5rem;
+    }
+    .vam-banner-content p {
+        font-size: 1.1rem;
+        color: #e0e0e0;
+        text-shadow: 0 1px 8px #0008;
+    }
+    @media (max-width: 768px) {
+        .vam-banner { height: 120px; }
+        .vam-banner-content h1 { font-size: 1.3rem; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1>Bienvenido a Vuln-Asset-Manager</h1>
-        <p class="lead">Sistema de gestión de activos tecnológicos y vulnerabilidades para PYMES</p>
+<div class="vam-banner">
+    <img src="{% static 'img/cyber_header_1600x600.png' %}" alt="Ciberseguridad" class="vam-banner-bg">
+    <div class="vam-banner-content">
+        <h1>Protege tus activos, protege tu empresa</h1>
+        <p>Solución integral de gestión de vulnerabilidades y activos para organizaciones modernas.</p>
     </div>
 </div>
+<div class="container py-5 text-center">
+    <div class="vam-logo mb-3">
+        <i class="bi bi-shield-lock"></i>
+        <span>VAM</span>
+    </div>
+    <div class="hero-title mb-3">Gestión segura de activos y vulnerabilidades</div>
+    <div class="hero-desc mb-4">
+        Vuln Asset Manager ayuda a las <b>empresas</b> a proteger sus sistemas y gestionar riesgos tecnológicos de forma sencilla y centralizada.
+    </div>
+    <a href="{% url 'vuln_manager:login' %}" class="btn btn-login shadow">Iniciar sesión</a>
 
-<div class="row mt-5">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <h5 class="card-title">Clientes</h5>
-                <p class="card-text">Gestiona los clientes y sus activos tecnológicos.</p>
-                <a href="{% url 'vuln_manager:cliente_list' %}" class="btn btn-primary">Ver Clientes</a>
-            </div>
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-3 mb-4">
+            <div class="feature-icon"><i class="bi bi-hdd-network"></i></div>
+            <h5>Control total de activos</h5>
+            <p>Centraliza y gestiona todos los activos tecnológicos de tu empresa en un solo lugar.</p>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="feature-icon"><i class="bi bi-bug"></i></div>
+            <h5>Alertas de vulnerabilidades</h5>
+            <p>Recibe notificaciones y seguimiento de vulnerabilidades críticas en tiempo real.</p>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="feature-icon"><i class="bi bi-bar-chart"></i></div>
+            <h5>Paneles claros y personalizables</h5>
+            <p>Visualiza el estado de la seguridad de tu empresa con dashboards intuitivos.</p>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <h5 class="card-title">Activos</h5>
-                <p class="card-text">Administra los activos tecnológicos de tus clientes.</p>
-                <a href="{% url 'vuln_manager:activo_list' %}" class="btn btn-primary">Ver Activos</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body text-center">
-                <h5 class="card-title">Vulnerabilidades</h5>
-                <p class="card-text">Consulta y gestiona las vulnerabilidades detectadas.</p>
-                <a href="{% url 'vuln_manager:vulnerabilidad_list' %}" class="btn btn-primary">Ver Vulnerabilidades</a>
-            </div>
-        </div>
-    </div>
+
+    <footer class="mt-5">
+        &copy; {{ now|date:'Y' }} Vuln-Asset-Manager &middot; Contacto: <a href="mailto:info@vulnassetmanager.com" class="text-decoration-none text-info">info@vulnassetmanager.com</a>
+    </footer>
 </div>
 {% endblock %} 

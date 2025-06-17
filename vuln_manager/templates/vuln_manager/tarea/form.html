@@ -1,11 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
-{% block title %}
-    {% if form.instance.pk %}Editar Tarea{% else %}Crear Tarea{% endif %}
-{% endblock %}
+{% block title %}Formulario de Tarea - Vuln-Asset-Manager{% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="container mt-4">
     <h2>{% if form.instance.pk %}Editar Tarea{% else %}Crear Nueva Tarea{% endif %}</h2>
     <form method="post" id="tarea-form">

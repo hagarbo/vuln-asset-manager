@@ -30,6 +30,7 @@ from .views import (
     TareaDeleteView,
     ejecutar_tarea
 )
+from .views.dashboard.admin import AdminDashboardView
 
 app_name = 'vuln_manager'
 
@@ -37,6 +38,9 @@ urlpatterns = [
     # URLs de autenticación
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+    
+    # URLs de dashboard
+    path('dashboard/admin/', AdminDashboardView.as_view(), name='dashboard_admin'),
     
     # URLs de usuarios
     path('usuarios/create/', UsuarioCreateView.as_view(), name='usuario_create'),

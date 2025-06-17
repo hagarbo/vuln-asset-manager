@@ -38,4 +38,8 @@ class UsuarioRepository(BaseRepository):
         Returns:
             QuerySet de Usuario con los analistas asignados al cliente
         """
-        return cliente.analistas.all() 
+        return cliente.analistas.all()
+
+    def count(self):
+        """Cuenta el número total de usuarios."""
+        return self.model.objects.count() 

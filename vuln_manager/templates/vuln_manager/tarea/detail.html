@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Detalle de Tarea{% endblock %}
+{% block title %}Detalle de Tarea - Vuln-Asset-Manager{% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="container mt-4">
     <div class="row">
         <!-- Información básica de la tarea -->
@@ -46,7 +46,7 @@
                                 {% endfor %}
 
                                 <dt class="col-sm-4">Creada por:</dt>
-                                <dd class="col-sm-8">{{ tarea.creada_por|default:"-" }}</dd>
+                                <dd class="col-sm-8">{{ tarea.creada_por.username|default:"-" }}</dd>
 
                                 <dt class="col-sm-4">Creada el:</dt>
                                 <dd class="col-sm-8">{{ tarea.created_at }}</dd>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 
 {% block title %}Clientes - Vuln-Asset-Manager{% endblock %}
@@ -8,9 +8,15 @@
 No se necesita CSS adicional específico para esta vista por ahora, 
 pero el base.html ya carga severity.css.
 {% endcomment %}
+<style>
+.table-link-cell { cursor: pointer; }
+.table-link { color: #00c9a7; text-decoration: none; font-weight: 500; }
+.table-link:hover { text-decoration: underline; color: #009e86; }
+.table-link-row { cursor: pointer; }
+</style>
 {% endblock %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Listado de Clientes</h1>
     {% include 'components/list_actions.html' with create_url='vuln_manager:cliente_create' model_name='Cliente' %}
@@ -27,13 +33,10 @@ pero el base.html ya carga severity.css.
         </thead>
         <tbody>
             {% for cliente in clientes %}
-            <tr>
+            <tr class="table-link-row" data-href="{% url 'vuln_manager:cliente_detail' cliente.pk %}">
                 <td>{{ cliente.nombre }}</td>
                 <td>
                     <div class="d-flex">
-                        <a href="{% url 'vuln_manager:cliente_detail' cliente.pk %}" class="btn btn-info btn-sm me-2">
-                            <i class="bi bi-eye"></i> Ver
-                        </a>
                         {% if perms.vuln_manager.change_cliente %}
                         <a href="{% url 'vuln_manager:cliente_update' cliente.pk %}" class="btn btn-warning btn-sm me-2">
                             <i class="bi bi-pencil"></i> Editar
@@ -56,4 +59,18 @@ pero el base.html ya carga severity.css.
     <i class="bi bi-info-circle"></i> No hay clientes registrados.
 </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.table-link-row').forEach(function(row) {
+        row.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'A' && !e.target.closest('a')) {
+                window.location = row.dataset.href;
+            }
+        });
+    });
+});
+</script>
 {% endblock %} 

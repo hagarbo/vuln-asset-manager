@@ -246,3 +246,26 @@ docker compose exec vuln-manager-web python manage.py test vuln_manager
 
 #### Nota
 Mañana se abordará la implementación de los dashboards para los distintos roles. Se recomienda revisar primero los errores de los tests para dejar la base estable antes de avanzar con nuevas funcionalidades. 
+
+# Estado del proyecto (última sesión)
+
+## Cambios realizados hoy
+- Unificación visual y funcional de todas las plantillas antiguas al layout moderno del dashboard (sidebar, modo oscuro, bloques dashboard_content).
+- Integración del botón de modo oscuro en el sidebar, con persistencia de preferencia y funcionamiento real usando data-bs-theme en <html>.
+- Logo del sidebar igual que en la landing, coherente en ambos modos.
+- Listados de tareas, activos y clientes: toda la fila es clicable para acceder al detalle, eliminando el botón azul de "Ver" y mejorando la experiencia UX.
+- En el detalle de cliente, la tabla de activos asociados también tiene filas clicables y botón de borrar activo.
+- Corrección de referencias a campos y métodos inexistentes (como get_tipo_display en ForeignKey).
+- Refactor de vistas y plantillas para mayor coherencia y limpieza visual.
+
+## Pendiente de revisión visual
+- Repasar el formato y alineación de columnas en todas las tablas (especialmente tareas y activos) para asegurar consistencia y legibilidad.
+- Añadir el widget de usuario/logout en el header del dashboard (actualmente no visible, revisar si se eliminó o quedó sin incluir).
+
+## Tareas centrales para la próxima sesión
+- Implementar una tarea que cruce activos y CVE y genere alertas automáticamente.
+- Automatizar ambos procesos (cruce y generación de alertas) mediante un cron job en el entorno de despliegue.
+
+---
+
+Buen trabajo hoy. Mañana más y mejor 🚀 

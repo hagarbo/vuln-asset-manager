@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="app">
+    <div id="sidebar" class="active">
+        <div class="sidebar-wrapper active">
+            <div class="sidebar-header d-flex align-items-center justify-content-between">
+                <a href="/" class="d-flex align-items-center text-decoration-none">
+                    <span class="vam-logo-sidebar d-flex align-items-center justify-content-center me-2">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+                    <span class="fw-bold vam-logo-text">VAM</span>
+                </a>
+                <button id="theme-toggle" class="btn btn-sm btn-outline-secondary ms-auto" style="border: none; background: transparent;" title="Cambiar modo oscuro/claro">
+                    <i id="theme-icon" class="bi bi-moon-stars-fill fs-4"></i>
+                </button>
+            </div>
+            <div class="sidebar-menu">
+                <ul class="menu">
+                    <li class="sidebar-item {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
+                        <a href="{% url 'vuln_manager:dashboard_admin' %}" class='sidebar-link'>
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if 'tarea' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'vuln_manager:tarea_list' %}" class='sidebar-link'>
+                            <i class="bi bi-list-task"></i>
+                            <span>Tareas</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if 'vulnerabilidad' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'vuln_manager:vulnerabilidad_list' %}" class='sidebar-link'>
+                            <i class="bi bi-bug"></i>
+                            <span>Vulnerabilidades</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if 'cliente' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'vuln_manager:cliente_list' %}" class='sidebar-link'>
+                            <i class="bi bi-people"></i>
+                            <span>Clientes</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {% if 'activo' in request.resolver_match.url_name %}active{% endif %}">
+                        <a href="{% url 'vuln_manager:activo_list' %}" class='sidebar-link'>
+                            <i class="bi bi-hdd-network"></i>
+                            <span>Activos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="main" class="layout-navbar">
+        <header class="mb-3">
+            <a href="#" class="burger-btn d-block d-xl-none">
+                <i class="bi bi-justify fs-3"></i>
+            </a>
+        </header>
+        <main class="px-3">
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vam-logo-sidebar {
+        width: 2.2rem;
+        height: 2.2rem;
+        background: #232946;
+        border-radius: 50%;
+        color: #00c9a7;
+        font-size: 1.4rem;
+        box-shadow: 0 2px 8px #0003;
+    }
+    .vam-logo-text {
+        color: #00c9a7;
+        font-size: 1.3rem;
+        letter-spacing: 0.05em;
+    }
+    body.dark .vam-logo-sidebar {
+        background: #181c2f;
+        color: #00c9a7;
+    }
+    body.dark .vam-logo-text {
+        color: #00c9a7;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script para alternar el tema usando data-bs-theme en <html> y guardar preferencia
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+        // Cargar preferencia guardada
+        if (localStorage.getItem('theme') === 'dark') {
+            html.setAttribute('data-bs-theme', 'dark');
+            themeIcon.classList.remove('bi-sun-fill');
+            themeIcon.classList.add('bi-moon-stars-fill');
+        } else {
+            html.setAttribute('data-bs-theme', 'light');
+            themeIcon.classList.remove('bi-moon-stars-fill');
+            themeIcon.classList.add('bi-sun-fill');
+        }
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function() {
+                const isDark = html.getAttribute('data-bs-theme') === 'dark';
+                html.setAttribute('data-bs-theme', isDark ? 'light' : 'dark');
+                localStorage.setItem('theme', isDark ? 'light' : 'dark');
+                if (!isDark) {
+                    themeIcon.classList.remove('bi-sun-fill');
+                    themeIcon.classList.add('bi-moon-stars-fill');
+                } else {
+                    themeIcon.classList.remove('bi-moon-stars-fill');
+                    themeIcon.classList.add('bi-sun-fill');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

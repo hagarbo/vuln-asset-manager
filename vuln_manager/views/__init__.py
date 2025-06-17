@@ -39,6 +39,7 @@ from .tarea import (
     TareaDeleteView,
 )
 from .tarea.ejecutar import ejecutar_tarea
+from .dashboard.admin import AdminDashboardView
 
 __all__ = [
     'ClienteListView',
@@ -69,4 +70,5 @@ __all__ = [
     'TareaDetailView',
     'TareaUpdateView',
     'TareaDeleteView',
+    'AdminDashboardView',
 ] 
