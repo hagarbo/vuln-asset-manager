@@ -1,0 +1,72 @@
+{% extends 'vuln_manager/dashboard/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ form_title|default:"Formulario" }}{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>{{ form_title|default:"Formulario" }}</h3>
+                {% if form_subtitle %}
+                    <p class="text-subtitle text-muted">{{ form_subtitle }}</p>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                {% if breadcrumbs %}
+                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                    <ol class="breadcrumb">
+                        {% for crumb in breadcrumbs %}
+                            {% if crumb.url %}
+                                <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                            {% else %}
+                                <li class="breadcrumb-item active" aria-current="page">{{ crumb.label }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<section class="section">
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">{{ card_title|default:form_title|default:"Formulario" }}</h4>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Por favor, corrige los siguientes errores:</strong>
+                            {{ form.non_field_errors }}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div><strong>{{ field.label }}:</strong> {{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <form method="post" enctype="multipart/form-data" autocomplete="off">
+                        {% csrf_token %}
+                        {% block form_fields %}
+                            {{ form|crispy }}
+                        {% endblock %}
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% block submit_text %}Guardar{% endblock %}
+                            </button>
+                            <a href="{% block cancel_url %}#{% endblock %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'vuln_manager/dashboard/components/form_base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block form_fields %}
+    {{ form|crispy }}
+    <div id="chips-palabras-clave" class="mb-2"></div>
+{% endblock %}
+
+{% block submit_text %}Guardar{% endblock %}
+
+{% block cancel_url %}{% url 'vuln_manager:activo_list' %}{% endblock %}
+
+{% block extra_js %}
+<script>
+function renderChips() {
+    const chipsDiv = document.getElementById('chips-palabras-clave');
+    const inputHidden = document.getElementById('id_palabras_clave');
+    chipsDiv.innerHTML = '';
+    const palabras = inputHidden.value.split(',').map(p => p.trim()).filter(p => p);
+    palabras.forEach((palabra, idx) => {
+        const chip = document.createElement('span');
+        chip.className = 'badge bg-primary me-2 mb-2';
+        chip.textContent = palabra;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-close btn-close-white btn-sm ms-1';
+        btn.style.fontSize = '0.7em';
+        btn.onclick = function() {
+            palabras.splice(idx, 1);
+            inputHidden.value = palabras.join(',');
+            renderChips();
+        };
+        chip.appendChild(btn);
+        chipsDiv.appendChild(chip);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('input-palabra-clave');
+    const btnAdd = document.getElementById('btn-add-palabra');
+    const inputHidden = document.getElementById('id_palabras_clave');
+    if (input && btnAdd && inputHidden) {
+        renderChips();
+        btnAdd.addEventListener('click', function() {
+            let palabra = input.value.trim();
+            if (palabra) {
+                let palabras = inputHidden.value ? inputHidden.value.split(',').map(p => p.trim()).filter(p => p) : [];
+                if (!palabras.includes(palabra)) {
+                    palabras.push(palabra);
+                    inputHidden.value = palabras.join(',');
+                    renderChips();
+                }
+                input.value = '';
+            }
+        });
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnAdd.click();
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

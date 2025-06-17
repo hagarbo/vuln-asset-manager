@@ -32,5 +32,13 @@ class ActivoDetailView(RoleRequiredMixin, DetailView):
             context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(self.object)
         elif user.es_cliente:
             context['vulnerabilidades'] = ActivoVulnerabilidadRepository().get_by_activo(self.object)
-            
+        
+        # Añadir contextos para el template
+        context['page_title'] = 'Detalle de Activo'
+        context['breadcrumbs'] = [
+            {'text': 'Inicio', 'url': 'vuln_manager:dashboard'},
+            {'text': 'Activos', 'url': 'vuln_manager:activo_list'},
+            {'text': self.object.nombre, 'url': None}
+        ]
+        
         return context 

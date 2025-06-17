@@ -16,4 +16,9 @@ class TareaListView(RoleRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tipos_tarea'] = TipoTarea.objects.filter(activo=True)
+        context['page_title'] = 'Listado de Tareas'
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {"label": "Tareas", "url": None}
+        ]
         return context 

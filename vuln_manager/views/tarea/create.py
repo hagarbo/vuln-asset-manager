@@ -9,7 +9,7 @@ from vuln_manager.models.tarea.tipo_tarea import TipoTarea
 from vuln_manager.models.tarea.tarea import Tarea
 
 class TareaCreateView(RoleRequiredMixin, View):
-    template_name = 'vuln_manager/tarea/form.html'
+    template_name = 'vuln_manager/tarea/create.html'
     allowed_roles = ['admin']
 
     def get(self, request, *args, **kwargs):
@@ -17,16 +17,37 @@ class TareaCreateView(RoleRequiredMixin, View):
         tipos_tarea = list(TipoTarea.objects.filter(activo=True).values('id', 'codigo', 'nombre', 'parametros'))
         for t in tipos_tarea:
             t['parametros'] = t['parametros'] or {}
-        return render(request, self.template_name, {
+        context = {
             'form': form,
             'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
-        })
+            'form_title': 'Crear Nueva Tarea',
+            'form_subtitle': 'Configura una nueva tarea programada',
+            'breadcrumbs': [
+                {"label": "Dashboard", "url": "/dashboard/"},
+                {"label": "Tareas", "url": "/tareas/"},
+                {"label": "Nueva"}
+            ],
+            'card_title': 'Datos de la Tarea',
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = TareaForm(request.POST)
         tipos_tarea = list(TipoTarea.objects.filter(activo=True).values('id', 'codigo', 'nombre', 'parametros'))
         for t in tipos_tarea:
             t['parametros'] = t['parametros'] or {}
+        context = {
+            'form': form,
+            'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
+            'form_title': 'Crear Nueva Tarea',
+            'form_subtitle': 'Configura una nueva tarea programada',
+            'breadcrumbs': [
+                {"label": "Dashboard", "url": "/dashboard/"},
+                {"label": "Tareas", "url": "/tarea/"},
+                {"label": "Nueva"}
+            ],
+            'card_title': 'Datos de la Tarea',
+        }
         if form.is_valid():
             try:
                 tarea = form.save(commit=False)
@@ -44,8 +65,4 @@ class TareaCreateView(RoleRequiredMixin, View):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
-
-        return render(request, self.template_name, {
-            'form': form,
-            'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
-        })
+        return render(request, self.template_name, context)

@@ -8,12 +8,23 @@ from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.usuario.usuario_repository import UsuarioRepository
 
 class ClienteCreateView(RoleRequiredMixin, View):
-    template_name = 'vuln_manager/cliente/form.html'
+    template_name = 'vuln_manager/cliente/create.html'
     allowed_roles = ['admin']
 
     def get(self, request, *args, **kwargs):
         form = ClienteCreationForm(analistas_queryset=UsuarioRepository().get_analistas())
-        return render(request, self.template_name, {'form': form})
+        context = {
+            'form': form,
+            'form_title': 'Crear Cliente',
+            'form_subtitle': 'Crea un nuevo cliente en el sistema',
+            'breadcrumbs': [
+                {"label": "Dashboard", "url": "/dashboard/"},
+                {"label": "Clientes", "url": "/clientes/"},
+                {"label": "Crear"}
+            ],
+            'card_title': 'Datos del Cliente'
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = ClienteCreationForm(request.POST, request.FILES, analistas_queryset=UsuarioRepository().get_analistas())

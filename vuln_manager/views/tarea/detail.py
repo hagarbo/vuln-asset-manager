@@ -22,4 +22,10 @@ class TareaDetailView(RoleRequiredMixin, DetailView):
         ejecuciones = EjecucionTareaRepository().get_by_tarea(self.object).order_by('-fecha_inicio')
         paginator = Paginator(ejecuciones, 5)
         context['ejecuciones'] = paginator.get_page(page)
+        context['page_title'] = 'Detalle de Tarea'
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {"label": "Tareas", "url": "/tareas/"},
+            {"label": f"Tarea #{self.object.pk}", "url": None}
+        ]
         return context 

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_public.html' %}
 {% load crispy_forms_tags %}
 
 {% block hide_navbar %}1{% endblock %}
@@ -130,13 +130,12 @@
             <h2><i class="bi bi-shield-lock me-2"></i>Iniciar Sesión</h2>
         </div>
         <div class="login-body">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
             {% endif %}
             
             <form method="post">
@@ -151,7 +150,7 @@
                             <div class="form-text text-muted">{{ field.help_text }}</div>
                         {% endif %}
                         {% if field.errors %}
-                            <div class="invalid-feedback d-block">
+                            <div class="text-danger small mt-1">
                                 {% for error in field.errors %}
                                     {{ error }}
                                 {% endfor %}

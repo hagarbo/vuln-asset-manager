@@ -4,6 +4,8 @@ from vuln_manager.mixins import RoleRequiredMixin
 from django.db.models import F, Case, When, Value, IntegerField
 import json
 from vuln_manager.repository.vulnerabilidad.vulnerabilidad_repository import VulnerabilidadRepository
+from django.urls import reverse
+from django.core.paginator import Paginator
 
 class VulnerabilidadListView(RoleRequiredMixin, ListView):
     model = Vulnerabilidad
@@ -15,8 +17,7 @@ class VulnerabilidadListView(RoleRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        sort = self.request.GET.get('sort')
-        direction = self.request.GET.get('dir', 'desc')
+        ordering = self.request.GET.get('ordering', '-fecha_modificacion')
 
         # Anotación para ranking de severidad
         queryset = queryset.annotate(
@@ -31,20 +32,20 @@ class VulnerabilidadListView(RoleRequiredMixin, ListView):
             )
         )
 
-        if sort == 'severidad':
-            if direction == 'asc':
-                queryset = queryset.order_by(F('severidad_rank').asc(nulls_last=True))
-            else:
-                queryset = queryset.order_by(F('severidad_rank').desc(nulls_last=True))
-        elif sort in ['fecha_publicacion', 'fecha_modificacion']:
-            if direction == 'asc':
-                queryset = queryset.order_by(F(sort).asc(nulls_last=True))
-            else:
-                queryset = queryset.order_by(F(sort).desc(nulls_last=True))
+        # Mapeo especial para severidad
+        if ordering in ['severidad', '-severidad']:
+            direction = '' if ordering == 'severidad' else '-'
+            queryset = queryset.order_by(f'{direction}severidad_rank')
+        else:
+            queryset = queryset.order_by(ordering)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_sort'] = self.request.GET.get('sort', '')
-        context['current_dir'] = self.request.GET.get('dir', 'desc')
+        context['page_title'] = 'Listado de Vulnerabilidades'
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {'label': 'Vulnerabilidades', 'url': None}
+        ]
+        context['ordering'] = self.request.GET.get('ordering', '-fecha_modificacion')
         return context 

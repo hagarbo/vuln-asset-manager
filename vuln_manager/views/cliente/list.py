@@ -22,3 +22,15 @@ class ClienteListView(RoleRequiredMixin, ListView):
             return repository.get_by_usuario(user)
             
         return repository.get_none() 
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = "Listado de Clientes"
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {"label": "Clientes"}
+        ]
+        from django.urls import reverse
+        context['create_url'] = reverse('vuln_manager:cliente_create')
+        context['ordering'] = self.request.GET.get('ordering', 'nombre')
+        return context

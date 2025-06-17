@@ -92,7 +92,11 @@ class NISTCVECollector:
                                     if latest_version is None or version > latest_version:
                                         latest_version = version
                                         cvss_score = cvss_info.get('baseScore')
-                                        cvss_severidad = cvss_info.get('baseSeverity', 'no establecida').lower()
+                                        base_severity = cvss_info.get('baseSeverity')
+                                        if base_severity is not None:
+                                            cvss_severidad = base_severity.lower()
+                                        else:
+                                            cvss_severidad = 'no establecida'
                                         severidad = cvss_severidad
             
             # Si no encontramos métricas CVSS 3.x o 4.x, intentamos usar cualquier versión disponible
@@ -100,14 +104,18 @@ class NISTCVECollector:
                 for version, data in cvss_data.items():
                     if data.get('score') is not None:
                         cvss_score = data['score']
-                        cvss_severidad = data.get('severidad', 'no establecida').lower()
+                        base_severity = data.get('severidad')
+                        if base_severity is not None:
+                            cvss_severidad = base_severity.lower()
+                        else:
+                            cvss_severidad = 'no establecida'
                         severidad = cvss_severidad
                         break
             
             # Referencias
             referencias = [ref['url'] for ref in cve.get('references', [])]
             
-            cve_list.append(VulnerabilidadDTO(
+            new_dto = VulnerabilidadDTO(
                 cve_id=cve_id,
                 descripcion_en=descripcion_en,
                 descripcion_es=descripcion_es,
@@ -119,5 +127,6 @@ class NISTCVECollector:
                 cvss_score=cvss_score,
                 cvss_severidad=cvss_severidad,
                 referencias=referencias
-            ))
+            )
+            cve_list.append(new_dto)
         return cve_list 

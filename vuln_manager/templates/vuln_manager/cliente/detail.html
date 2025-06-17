@@ -1,95 +1,168 @@
 {% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Detalle de Cliente - Vuln-Asset-Manager{% endblock %}
+{% block title %}{{ page_title }} - Vuln-Asset-Manager{% endblock %}
 
 {% block extra_css %}
-{% comment %}
-No se necesita CSS adicional específico para esta vista. 
-El base.html ya carga severity.css.
-{% endcomment %}
 <style>
+.card-body {
+    padding: 2rem 2rem 1.5rem 2rem !important;
+}
+
+.card {
+    margin-bottom: 2rem;
+    border-radius: 1rem;
+}
+
 .table-link-row { cursor: pointer; }
 </style>
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Detalle del Cliente: {{ object.nombre }}</h1>
-    {% include 'components/detail_actions.html' with update_url='vuln_manager:cliente_update' delete_url='vuln_manager:cliente_delete' list_url='vuln_manager:cliente_list' %}
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <h3 class="mb-1">{{ page_title }}</h3>
+            </div>
+            <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center align-items-center">
+                {% if breadcrumbs %}
+                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                    <ol class="breadcrumb mb-0">
+                        {% for crumb in breadcrumbs %}
+                            {% if crumb.url %}
+                                <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                            {% else %}
+                                <li class="breadcrumb-item active" aria-current="page">{{ crumb.label }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <h5 class="card-title">Información General</h5>
-        <p class="card-text"><strong>Nombre:</strong> {{ object.nombre }}</p>
-        <p class="card-text"><strong>Fecha de Creación:</strong> {{ object.created_at|date:"d/m/Y H:i" }}</p>
-        <p class="card-text"><strong>Última Actualización:</strong> {{ object.updated_at|date:"d/m/Y H:i" }}</p>
-        <p class="card-text">
-            <strong>Analistas Asignados:</strong>
-            {% if analistas %}
-                <ul class="list-group list-group-flush">
-                {% for analista in analistas %}
-                    <li class="list-group-item">{{ analista.username }}</li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> No hay analistas asignados.
+<section class="section">
+    <div class="row g-4">
+        <!-- Información básica del cliente -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header border-bottom-0 bg-light">
+                    <h4 class="card-title mb-0"><i class="bi bi-building me-2"></i>Información General</h4>
                 </div>
-            {% endif %}
-        </p>
-    </div>
-</div>
+                <div class="card-body">
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Datos del Cliente</h6>
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">Nombre:</dt>
+                                <dd class="col-sm-7">{{ cliente.nombre }}</dd>
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title mb-0">Activos Asociados</h3>
-    </div>
-    <div class="card-body">
-        {% if object.activos.all %}
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nombre del Activo</th>
-                        <th>Tipo</th>
-                        <th>IP/Hostname</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for activo in object.activos.all %}
-                    <tr class="table-link-row" data-href="{% url 'vuln_manager:activo_detail' activo.pk %}">
-                        <td>{{ activo.nombre }}</td>
-                        <td>{{ activo.tipo.nombre }}</td>
-                        <td>{{ activo.ip }}</td>
-                        <td>
-                            <div class="d-flex">
-                                {% if perms.vuln_manager.change_activo %}
-                                <a href="{% url 'vuln_manager:activo_update' activo.pk %}" class="btn btn-warning btn-sm me-2">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                {% endif %}
-                                {% if perms.vuln_manager.delete_activo %}
-                                <a href="{% url 'vuln_manager:activo_delete' activo.pk %}" class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                <dt class="col-sm-5">Fecha de Creación:</dt>
+                                <dd class="col-sm-7">{{ cliente.created_at|date:"d/m/Y H:i" }}</dd>
+
+                                <dt class="col-sm-5">Última Actualización:</dt>
+                                <dd class="col-sm-7">{{ cliente.updated_at|date:"d/m/Y H:i" }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-2">Analistas Asignados</h6>
+                            {% if analistas %}
+                                <ul class="list-group list-group-flush">
+                                {% for analista in analistas %}
+                                    <li class="list-group-item">{{ analista.username }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> No hay analistas asignados.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% else %}
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Este cliente no tiene activos registrados.
+
+        <!-- Acciones -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header border-bottom-0 bg-light">
+                    <h6 class="card-title mb-0"><i class="bi bi-tools me-2"></i>Acciones</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if perms.vuln_manager.change_cliente %}
+                        <a href="{% url 'vuln_manager:cliente_update' cliente.pk %}" class="btn btn-warning btn-block">
+                            <i class="bi bi-pencil"></i> Editar Cliente
+                        </a>
+                        {% endif %}
+                        {% if perms.vuln_manager.delete_cliente %}
+                        <a href="{% url 'vuln_manager:cliente_delete' cliente.pk %}" class="btn btn-danger btn-block">
+                            <i class="bi bi-trash"></i> Eliminar Cliente
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'vuln_manager:cliente_list' %}" class="btn btn-secondary btn-block">
+                            <i class="bi bi-arrow-left"></i> Volver a la lista
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endif %}
     </div>
-</div>
+
+    <!-- Activos asociados -->
+    <div class="card shadow-sm">
+        <div class="card-header border-bottom-0 bg-light">
+            <h5 class="card-title mb-0"><i class="bi bi-hdd-stack me-2"></i>Activos Asociados</h5>
+        </div>
+        <div class="card-body">
+            {% if cliente.activos.all %}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre del Activo</th>
+                            <th>Tipo</th>
+                            <th>IP/Hostname</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activo in cliente.activos.all %}
+                        <tr class="table-link-row" data-href="{% url 'vuln_manager:activo_detail' activo.pk %}">
+                            <td>{{ activo.nombre }}</td>
+                            <td>{{ activo.get_tipo_display }}</td>
+                            <td>{{ activo.ip }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    {% if perms.vuln_manager.change_activo %}
+                                    <a href="{% url 'vuln_manager:activo_update' activo.pk %}" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.vuln_manager.delete_activo %}
+                                    <a href="{% url 'vuln_manager:activo_delete' activo.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Este cliente no tiene activos registrados.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

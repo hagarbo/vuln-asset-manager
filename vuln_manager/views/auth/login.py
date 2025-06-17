@@ -12,6 +12,10 @@ class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
 
     def get_success_url(self):
+        """
+        Determina la URL de redirección después del login basado en el rol del usuario.
+        Por defecto redirige al dashboard admin para evitar la landing page.
+        """
         user = self.request.user
         if user.es_admin:
             return reverse_lazy('vuln_manager:dashboard_admin')
@@ -19,4 +23,5 @@ class CustomLoginView(LoginView):
             return reverse_lazy('vuln_manager:dashboard_analista')
         elif user.es_cliente:
             return reverse_lazy('vuln_manager:dashboard_cliente')
-        return reverse_lazy('home') 
+        # Si por algún motivo no tiene rol, redirigir al dashboard admin por defecto
+        return reverse_lazy('vuln_manager:dashboard_admin') 

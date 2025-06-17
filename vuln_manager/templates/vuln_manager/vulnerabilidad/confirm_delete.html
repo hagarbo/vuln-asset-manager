@@ -1,23 +1,49 @@
 {% extends 'vuln_manager/dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Eliminar Vulnerabilidad - Vuln-Asset-Manager{% endblock %}
+{% block title %}{{ page_title|default:'Eliminar Vulnerabilidad - Vuln-Asset-Manager' }}{% endblock %}
 
 {% block dashboard_content %}
-<div class="container mt-5">
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8 offset-md-2 text-center">
+                <h3 class="text-danger mb-2">{{ page_title|default:'Confirmar borrado de vulnerabilidad' }}</h3>
+                <p class="text-subtitle text-muted">{{ page_subtitle|default:'Esta acción no se puede deshacer' }}</p>
+            </div>
+            <div class="col-12 col-md-2 d-flex align-items-center justify-content-md-end justify-content-center mt-2 mt-md-0">
+                {% if breadcrumbs %}
+                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                    <ol class="breadcrumb mb-0">
+                        {% for crumb in breadcrumbs %}
+                            {% if crumb.url %}
+                                <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                            {% else %}
+                                <li class="breadcrumb-item active" aria-current="page">{{ crumb.label }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<section class="section">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
+        <div class="col-12 col-md-8 col-lg-6">
             <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0">¿Eliminar vulnerabilidad <strong>{{ object.cve_id }}</strong>?</h4>
+                </div>
                 <div class="card-body">
-                    <h2 class="mb-4 text-center text-danger">Confirmar borrado de vulnerabilidad</h2>
-                    <p class="lead text-center">¿Estás seguro de que deseas eliminar la vulnerabilidad <strong>{{ object }}</strong>?</p>
                     <ul class="list-group mb-3">
-                        <li class="list-group-item"><strong>ID:</strong> {{ object.id }}</li>
-                        <li class="list-group-item"><strong>Nombre:</strong> {{ object.nombre|default:object }}</li>
-                        <li class="list-group-item"><strong>Fecha de creación:</strong> {{ object.created_at|date:"d/m/Y H:i" }}</li>
+                        <li class="list-group-item"><strong>Descripción:</strong> {{ object.descripcion_es|truncatechars:80 }}</li>
+                        <li class="list-group-item"><strong>Severidad:</strong> {{ object.get_severidad_display }}</li>
+                        <li class="list-group-item"><strong>Fecha de publicación:</strong> {{ object.fecha_publicacion|date:"d/m/Y" }}</li>
                     </ul>
                     <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle"></i> Esta acción eliminará la vulnerabilidad y sus relaciones asociadas.
+                        <i class="bi bi-exclamation-triangle"></i> Esta acción eliminará también todas las relaciones y datos asociados a esta vulnerabilidad.
                     </div>
                     <form method="post">
                         {% csrf_token %}
@@ -30,5 +56,5 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %} 

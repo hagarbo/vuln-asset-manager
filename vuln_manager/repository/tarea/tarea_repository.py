@@ -47,10 +47,7 @@ class TareaRepository(BaseRepository):
         tarea = self.get_by_id(tarea_id)
         if tarea:
             ahora = timezone.now()
-            self.update(tarea_id, {
-                'ultima_ejecucion': ahora,
-                'proxima_ejecucion': ahora + timedelta(days=1)
-            })
+            self.update(tarea_id, ultima_ejecucion=ahora, proxima_ejecucion=ahora + timedelta(days=1))
         return tarea
 
     def count_programadas(self):

@@ -74,10 +74,10 @@ urlpatterns = [
     path('activo-vulnerabilidad/<int:pk>/delete/', ActivoVulnerabilidadDeleteView.as_view(), name='activo_vulnerabilidad_delete'),
     
     # URLs de tareas
-    path('tarea/', TareaListView.as_view(), name='tarea_list'),
-    path('tarea/create/', TareaCreateView.as_view(), name='tarea_create'),
-    path('tarea/<int:pk>/', TareaDetailView.as_view(), name='tarea_detail'),
-    path('tarea/<int:pk>/update/', TareaUpdateView.as_view(), name='tarea_update'),
-    path('tarea/<int:pk>/delete/', TareaDeleteView.as_view(), name='tarea_delete'),
-    path('tarea/<int:pk>/ejecutar/', ejecutar_tarea, name='ejecutar_tarea'),
+    path('tareas/', TareaListView.as_view(), name='tarea_list'),
+    path('tareas/create/', TareaCreateView.as_view(), name='tarea_create'),
+    path('tareas/<int:pk>/', TareaDetailView.as_view(), name='tarea_detail'),
+    path('tareas/<int:pk>/update/', TareaUpdateView.as_view(), name='tarea_update'),
+    path('tareas/<int:pk>/delete/', TareaDeleteView.as_view(), name='tarea_delete'),
+    path('tareas/<int:pk>/ejecutar/', ejecutar_tarea, name='ejecutar_tarea'),
 ] 

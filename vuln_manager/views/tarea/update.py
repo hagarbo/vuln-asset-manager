@@ -12,7 +12,7 @@ from vuln_manager.repository.tarea.tarea_repository import TareaRepository
 class TareaUpdateView(RoleRequiredMixin, UpdateView):
     model = Tarea
     form_class = TareaForm
-    template_name = 'vuln_manager/tarea/form.html'
+    template_name = 'vuln_manager/tarea/create.html'
     success_url = reverse_lazy('vuln_manager:tarea_list')
     allowed_roles = ['admin']
 
@@ -26,6 +26,14 @@ class TareaUpdateView(RoleRequiredMixin, UpdateView):
             list(tipos_tarea.values('id', 'nombre', 'codigo', 'parametros', 'descripcion')),
             ensure_ascii=False
         )
+        context['form_title'] = 'Editar Tarea'
+        context['form_subtitle'] = 'Modifica la configuración de la tarea'
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {"label": "Tareas", "url": "/tareas/"},
+            {"label": "Editar"}
+        ]
+        context['card_title'] = 'Datos de la Tarea'
         return context
 
     def form_valid(self, form):

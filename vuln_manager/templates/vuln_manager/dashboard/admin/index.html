@@ -68,7 +68,7 @@
                     </thead>
                     <tbody>
                         {% for tarea in ultimas_tareas %}
-                        <tr>
+                        <tr class="table-link-row" data-href="{% url 'vuln_manager:tarea_detail' tarea.pk %}">
                             <td>{% if tarea.get_tipo_display %}{{ tarea.get_tipo_display }}{% else %}{{ tarea.tipo }}{% endif %}</td>
                             <td>
                                 <span class="badge {% if tarea.estado == 'pendiente' %}bg-warning{% elif tarea.estado == 'en_proceso' %}bg-info{% elif tarea.estado == 'completada' %}bg-success{% else %}bg-secondary{% endif %}">

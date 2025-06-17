@@ -1,0 +1,10 @@
+{% extends 'vuln_manager/dashboard/components/form_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block form_fields %}
+    {{ form|crispy }}
+{% endblock %}
+
+{% block submit_text %}Guardar{% endblock %}
+
+{% block cancel_url %}{% url 'vuln_manager:cliente_list' %}{% endblock %} 

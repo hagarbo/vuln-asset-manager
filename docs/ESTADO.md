@@ -91,6 +91,13 @@
 - Se han desarrollado y ejecutado tests unitarios para los modelos y el repositorio, cubriendo validaciones, creación, actualización, filtrado y representación.
 - **Todos los tests han pasado correctamente.**
 
+### 2024-06-17: Mejora visual del dashboard y padding
+- Se ha añadido padding generoso (2rem) al contenido principal del dashboard (`main-content`) para mejorar la legibilidad y el aspecto visual en todas las vistas internas.
+- El color de fondo oscuro (`#181c2f`) ahora se define en una sección de estilos CSS en `base_dashboard.html` en vez de en línea, facilitando su mantenimiento y personalización.
+- Se ha creado la clase `.main-content` y se ha aplicado en `dashboard/base.html` para unificar el espaciado en todas las páginas del dashboard.
+- Se mantiene la coherencia visual y la separación clara entre sidebar y contenido principal.
+- No se han realizado cambios funcionales, solo mejoras visuales y de organización del CSS.
+
 ## Estado Actual
 - **Modelos implementados y registrados en Admin:**
   - [x] Usuario (con sistema de roles)
@@ -269,3 +276,31 @@ Mañana se abordará la implementación de los dashboards para los distintos rol
 ---
 
 Buen trabajo hoy. Mañana más y mejor 🚀 
+
+# Estado del Proyecto - Refactorización de Plantillas (junio 2024)
+
+## Cambios estructurales recientes
+
+- Se ha eliminado la plantilla `base.html` de la raíz y se ha dividido la herencia en dos bases especializadas:
+  - `base_public.html`: para landing page y login, con `.container` y diseño centrado.
+  - `base_dashboard.html`: para dashboard y todos los CRUD, sin `.container`, con layout de app (sidebar + main content), 100% alto.
+- Todas las vistas internas (dashboard, CRUD, etc.) heredan ahora de `vuln_manager/dashboard/base.html`, que a su vez hereda de `base_dashboard.html`.
+- Todas las vistas públicas (landing, login) heredan de `base_public.html`.
+- Se han corregido las herencias de todas las plantillas, eliminando cualquier referencia a la antigua `base.html`.
+- El layout del sidebar y el botón de logout ahora es coherente en todas las vistas internas.
+
+## Observaciones y evolución
+
+- El motivo inicial de la refactorización fue un problema visual con el botón de logout en el sidebar, que no se ha resuelto completamente: sigue sin comportarse como se esperaba en todas las situaciones.
+- Durante el proceso, se ha mejorado la coherencia de la estructura de herencia y la separación de layouts, pero el resultado visual general es menos atractivo que el original.
+- Se recomienda una revisión de estilos y layout para mejorar la experiencia visual, especialmente en el dashboard y el sidebar.
+
+## Próximos pasos sugeridos
+
+- Revisar y refinar el CSS del sidebar y el main content para lograr un resultado visual más profesional y atractivo.
+- Considerar el uso de utilidades de Bootstrap/Mazer para el layout, evitando sobrescribir estilos a mano salvo que sea imprescindible.
+- Documentar cualquier ajuste visual o funcional adicional en este archivo.
+
+---
+
+**Nota:** El proceso de refactorización ha dejado la base del proyecto más preparada para el crecimiento y el mantenimiento, aunque el problema visual original persiste y la estética general requiere mejoras. 

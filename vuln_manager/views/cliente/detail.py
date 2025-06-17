@@ -34,4 +34,13 @@ class ClienteDetailView(RoleRequiredMixin, DetailView):
             context['activos'] = self.object.activos.all()
             
         context['analistas'] = self.object.analistas.all()
+        
+        # Añadir contextos para el template
+        context['page_title'] = 'Detalle de Cliente'
+        context['breadcrumbs'] = [
+            {'text': 'Inicio', 'url': 'vuln_manager:dashboard'},
+            {'text': 'Clientes', 'url': 'vuln_manager:cliente_list'},
+            {'text': self.object.nombre, 'url': None}
+        ]
+        
         return context 
