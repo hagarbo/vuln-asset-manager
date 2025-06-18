@@ -54,6 +54,42 @@
 
 ## 📝 Registro de Cambios
 
+### 2025-06-19: Ordenación y badges mejorados en detalle de activos
+- **Implementada ordenación completa** en la tabla de vulnerabilidades del detalle de activos
+- **Ordenación por severidad** con ranking inteligente (crítica=5, alta=4, media=3, baja=2, no_establecida=1)
+- **Ordenación por fechas** (detección, resolución) y estado
+- **Enlaces de ordenación** en encabezados con iconos de dirección (↑↓)
+- **Badges mejorados** consistentes con el listado de vulnerabilidades
+- **Paginación mejorada** que mantiene el parámetro de ordenación
+- **Formato de fechas** mejorado (d/m/Y) para mejor legibilidad
+- **CVE ID destacado** en negrita para mejor identificación
+- **Consistencia mantenida** con el patrón de ordenación del listado de vulnerabilidades
+
+### 2025-06-19: Paginación en detalle de vulnerabilidades
+- **Implementada paginación** en la vista de detalle de vulnerabilidades para los activos afectados
+- **Seguido el mismo patrón** usado en las otras vistas de detalle para mantener consistencia
+- **10 activos por página** para mejorar el rendimiento y usabilidad
+- **Navegación consistente** con botones anterior/siguiente y números de página
+- **Preparado para escalabilidad** cuando las vulnerabilidades afecten a muchos activos
+- **Mantenida la funcionalidad** existente sin afectar otras características
+
+### 2025-06-19: Paginación en detalle de clientes
+- **Implementada paginación** en la vista de detalle de clientes para los activos asociados
+- **Seguido el mismo patrón** usado en el detalle de activos para mantener consistencia
+- **10 activos por página** para mejorar el rendimiento y usabilidad
+- **Navegación consistente** con botones anterior/siguiente y números de página
+- **Preparado para escalabilidad** cuando los clientes tengan muchos activos
+- **Mantenida la funcionalidad** existente sin afectar otras características
+
+### 2025-06-19: Paginación implementada correctamente en detalle de activos
+- **Implementada paginación completa** en la vista `ActivoDetailView` para las vulnerabilidades
+- **Seguido el patrón de Mazer** usado en las vistas de listado existentes
+- **10 vulnerabilidades por página** para mejorar el rendimiento y usabilidad
+- **Navegación consistente** con botones anterior/siguiente y números de página
+- **Verificación exitosa** con activos que tienen 174 vulnerabilidades (18 páginas)
+- **Mantenida la funcionalidad** existente sin afectar otras características
+- **Template actualizado** con paginación completa y responsive
+
 ### 2025-06-13: Integración y normalización de la recolección de CVEs desde NIST
 - Arquitectura desacoplada con DTO, recolector y repositorio.
 - Añadido soporte para CVSS v3 y CVSS v4 (eliminado CVSS v2).
@@ -97,6 +133,38 @@
 - Se ha creado la clase `.main-content` y se ha aplicado en `dashboard/base.html` para unificar el espaciado en todas las páginas del dashboard.
 - Se mantiene la coherencia visual y la separación clara entre sidebar y contenido principal.
 - No se han realizado cambios funcionales, solo mejoras visuales y de organización del CSS.
+
+### 2025-06-18: Paginación en detalle de activos
+- **Implementada paginación** en la vista de detalle de activos para las vulnerabilidades
+- **Seguido el patrón de Mazer** usado en las vistas de listado existentes
+- **10 vulnerabilidades por página** para mejorar el rendimiento
+- **Navegación consistente** con botones anterior/siguiente y números de página
+- **Mantenida la funcionalidad** de asignación automática de analistas a clientes
+
+### 2025-06-18: Simplificación de scripts de inicialización
+- **Eliminados archivos extra:** `start_production.sh`, `docker-compose.prod.yml`, `reset_production.py`
+- **Mantenida verificación simple** en `init_project.sh` para evitar inicialización repetida
+- **Solución minimalista:** Solo verifica si hay datos existentes antes de inicializar
+- **Variable de entorno:** `FORCE_INIT=true` para forzar inicialización cuando sea necesario
+- **Keep it simple:** Sin auto-eliminación ni scripts complejos
+
+### 2025-06-18: Control de inicialización condicional para producción
+- **Implementado control inteligente de inicialización** en `init_project.sh`
+- **Verificación automática** de datos existentes antes de ejecutar inicialización
+- **Variable de entorno `FORCE_INIT=true`** para forzar inicialización cuando sea necesario
+- **Script `reset_production.py`** para reset completo con confirmación manual
+- **Documentación actualizada** con nuevos comandos y flujos de trabajo
+- **Lógica de verificación:** Solo inicializa si `usuarios_count > 1` o `clientes_count > 0`
+
+### 2025-06-18: Asignación automática de analistas a clientes
+- **Implementada asignación automática de analistas a clientes** en los scripts de inicialización
+- **Actualizado `init_production.py`** para incluir asignación aleatoria de 1-2 analistas por cliente
+- **Verificado que `populate_demo_data.py`** ya incluía esta funcionalidad
+- **Documentación actualizada** en `scripts/README.md` con ejemplos y comandos de verificación
+- **Pruebas exitosas** de correlación con datos que incluyen asignaciones de analistas
+- **Funcionalidad completa** para verificar asignaciones desde clientes y analistas
+
+### 2025-06-18: Scripts de inicialización y limpieza completados
 
 ## Estado Actual
 - **Modelos implementados y registrados en Admin:**
@@ -304,3 +372,34 @@ Buen trabajo hoy. Mañana más y mejor 🚀
 ---
 
 **Nota:** El proceso de refactorización ha dejado la base del proyecto más preparada para el crecimiento y el mantenimiento, aunque el problema visual original persiste y la estética general requiere mejoras. 
+
+## Nota sobre tests en carpetas profundas (junio 2025)
+
+- Cuando los tests se encuentran en rutas profundas (por ejemplo, `vuln_manager/tests/services/correlation/`), el comando `python manage.py test` de Django puede no detectarlos automáticamente, aunque el archivo y la clase sigan la convención de nombres.
+- En estos casos, es recomendable ejecutar los tests usando `pytest`, que sí detecta correctamente los archivos y métodos de test en cualquier subcarpeta:
+
+  ```sh
+  docker compose exec vuln-manager-web pytest vuln_manager/tests/services/correlation/test_keyword_correlator.py -v
+  ```
+
+- Además, para la clase `KeywordCorrelator`, el método correcto para ejecutar la correlación es `correlate()`. Si se usa el nombre anterior `correlacionar()`, los tests fallarán con `AttributeError`.
+
+- Si los tests no se detectan, revisar:
+  - Que los métodos empiecen por `test_`.
+  - Que la clase empiece por `Test`.
+  - Que el archivo empiece por `test_`.
+  - Probar con `pytest` si Django no los encuentra. 
+
+- Refactorizada la lógica de correlación en `TaskExecutor` para que solo procese las CVEs nuevas o actualizadas desde la última ejecución exitosa del colector, usando el repositorio y pasando la lista de CVEs al correlador.
+- Modificado `KeywordCorrelator` para aceptar una lista de CVEs a procesar y usarla en vez de consultar todas las vulnerabilidades.
+- Añadido un test en `test_keyword_correlator.py` que verifica que el correlador solo procesa la lista de CVEs pasada por parámetro (simulando el filtrado por fecha).
+- Todos los tests de correlación pasan correctamente tras la refactorización.
+- Refactorizado `KeywordCorrelator` para usar el patrón repository en lugar de acceder directamente a los modelos: ahora usa `ActivoRepository`, `VulnerabilidadRepository`, `ActivoVulnerabilidadRepository` y `AlertaRepository`.
+- Añadido método `get_by_activo_y_vulnerabilidad` al `AlertaRepository` para verificar alertas existentes.
+- Todos los tests siguen pasando correctamente tras la refactorización a repositorios.
+- Reutilizados los campos existentes de `EjecucionTarea` para las métricas de correlación:
+  - `cves_procesadas` → CVEs procesadas (coincide)
+  - `cves_nuevas` → Correlaciones creadas
+  - `cves_actualizadas` → Alertas generadas
+- Actualizado el template `tarea/detail.html` para mostrar las etiquetas correctas según el tipo de tarea.
+- Verificado que la funcionalidad funciona correctamente: ejecución de prueba procesó 679 CVEs, creó 0 correlaciones nuevas y generó 15700 alertas. 

@@ -143,9 +143,15 @@
                                 <th>Fecha Inicio</th>
                                 <th>Fecha Fin</th>
                                 <th>Estado</th>
-                                <th>CVEs Procesadas</th>
-                                <th>CVEs Nuevas</th>
-                                <th>CVEs Actualizadas</th>
+                                {% if tarea.tipo.codigo == 'cve_collector' %}
+                                    <th>CVEs Procesadas</th>
+                                    <th>CVEs Nuevas</th>
+                                    <th>CVEs Actualizadas</th>
+                                {% elif tarea.tipo.codigo == 'cve_asset_correlation' %}
+                                    <th>CVEs Procesadas</th>
+                                    <th>Correlaciones Creadas</th>
+                                    <th>Alertas Generadas</th>
+                                {% endif %}
                                 <th>Ejecutada por</th>
                             </tr>
                         </thead>
@@ -161,9 +167,15 @@
                                         <i class="bi bi-circle-fill me-1"></i>{{ ejecucion.get_estado_display|default:ejecucion.estado }}
                                     </span>
                                 </td>
-                                <td>{{ ejecucion.cves_procesadas }}</td>
-                                <td>{{ ejecucion.cves_nuevas }}</td>
-                                <td>{{ ejecucion.cves_actualizadas }}</td>
+                                {% if tarea.tipo.codigo == 'cve_collector' %}
+                                    <td>{{ ejecucion.cves_procesadas }}</td>
+                                    <td>{{ ejecucion.cves_nuevas }}</td>
+                                    <td>{{ ejecucion.cves_actualizadas }}</td>
+                                {% elif tarea.tipo.codigo == 'cve_asset_correlation' %}
+                                    <td>{{ ejecucion.cves_procesadas }}</td>
+                                    <td>{{ ejecucion.cves_nuevas }}</td>
+                                    <td>{{ ejecucion.cves_actualizadas }}</td>
+                                {% endif %}
                                 <td>{{ ejecucion.ejecutada_por|default:"-" }}</td>
                             </tr>
                             {% if ejecucion.error %}

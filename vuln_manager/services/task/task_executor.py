@@ -34,6 +34,8 @@ class TaskExecutor:
         try:
             if tarea.tipo.codigo == 'cve_collector':
                 self._ejecutar_cve_collector(tarea, ejecucion)
+            elif tarea.tipo.codigo == 'cve_asset_correlation':
+                self._ejecutar_cve_asset_correlation(tarea, ejecucion)
             else:
                 raise ValueError(f'Tipo de tarea no soportado: {tarea.tipo.codigo}')
             # Actualizar ejecución como completada usando el repositorio
@@ -76,4 +78,36 @@ class TaskExecutor:
             cves_procesadas=len(cves),
             cves_nuevas=nuevas,
             cves_actualizadas=actualizadas
+        )
+
+    def _ejecutar_cve_asset_correlation(self, tarea, ejecucion):
+        """
+        Ejecuta la correlación entre CVEs y activos usando el servicio KeywordCorrelator.
+        Solo procesa las CVEs nuevas/actualizadas desde la última ejecución del colector.
+        """
+        from vuln_manager.services.correlation import KeywordCorrelator
+        from vuln_manager.repository.vulnerabilidad.vulnerabilidad_repository import VulnerabilidadRepository
+        from vuln_manager.repository.tarea.ejecucion_tarea_repository import EjecucionTareaRepository
+
+        # 1. Obtener la fecha de la última ejecución exitosa del colector
+        ejecucion_repo = EjecucionTareaRepository()
+        ultima_ejecucion_colector = ejecucion_repo.get_ultima_ejecucion_exitosa('cve_collector')
+        fecha_corte = ultima_ejecucion_colector.fecha_fin if ultima_ejecucion_colector else None
+
+        # 2. Obtener solo las CVEs nuevas/actualizadas
+        cves = []
+        if fecha_corte:
+            cves = list(VulnerabilidadRepository().get_updated_since(fecha_corte))
+
+        # 3. Pasar solo esas CVEs al correlador
+        severidad_minima = tarea.parametros.get('severidad_minima', 'critica')
+        correlator = KeywordCorrelator(severidad_minima=severidad_minima, cves=cves)
+        result = correlator.correlate()
+
+        # 4. Actualizar contadores en la ejecución
+        self.ejecucion_repo.update_ejecucion(
+            ejecucion.id,
+            cves_procesadas=result.vulnerabilidades_procesadas,
+            cves_nuevas=result.correlaciones_creadas,
+            cves_actualizadas=result.alertas_generadas,
         ) 

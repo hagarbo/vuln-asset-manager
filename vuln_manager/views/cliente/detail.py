@@ -1,4 +1,5 @@
 from django.views.generic import DetailView
+from django.core.paginator import Paginator
 from vuln_manager.models import Cliente
 from vuln_manager.mixins.permissions import RoleRequiredMixin
 from vuln_manager.repository.cliente.cliente_repository import ClienteRepository
@@ -26,13 +27,24 @@ class ClienteDetailView(RoleRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         
+        # Obtener activos del cliente
         if user.es_admin:
-            context['activos'] = self.object.activos.all()
+            activos_queryset = self.object.activos.all()
         elif user.es_analista:
-            context['activos'] = self.object.activos.all()
+            activos_queryset = self.object.activos.all()
         elif user.es_cliente:
-            context['activos'] = self.object.activos.all()
-            
+            activos_queryset = self.object.activos.all()
+        
+        # Configurar paginación
+        paginator = Paginator(activos_queryset, 10)  # 10 activos por página
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['activos'] = page_obj.object_list  # Lista de objetos para el template
+        context['page_obj'] = page_obj  # Objeto de página para la paginación
+        context['is_paginated'] = paginator.num_pages > 1
+        context['paginator'] = paginator
+        
         context['analistas'] = self.object.analistas.all()
         
         # Añadir contextos para el template

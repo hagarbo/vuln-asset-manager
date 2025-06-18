@@ -21,4 +21,15 @@ class EjecucionTareaRepository(BaseRepository):
         return ejecucion
 
     def get_by_tarea(self, tarea):
-        return self.model.objects.filter(tarea=tarea) 
+        return self.model.objects.filter(tarea=tarea)
+
+    def get_ultima_ejecucion_exitosa(self, tipo_codigo):
+        """
+        Devuelve la última ejecución exitosa (completada) de una tarea de un tipo dado.
+        :param tipo_codigo: Código del tipo de tarea (str)
+        :return: EjecucionTarea o None
+        """
+        return self.model.objects.filter(
+            tarea__tipo__codigo=tipo_codigo,
+            estado='completada'
+        ).order_by('-fecha_fin').first() 

@@ -5,6 +5,7 @@
 {% block title %}{{ page_title }} - Vuln-Asset-Manager{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
 <style>
 .card-body {
     padding: 2rem 2rem 1.5rem 2rem !important;
@@ -129,25 +130,61 @@
                     <thead class="table-dark">
                         <tr>
                             <th>Vulnerabilidad</th>
-                            <th>Estado</th>
-                            <th>Fecha Detección</th>
-                            <th>Fecha Resolución</th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'estado' %}-estado{% else %}estado{% endif %}{% if page_obj.number > 1 %}&page={{ page_obj.number }}{% endif %}">
+                                    Estado
+                                    {% if ordering == 'estado' %}
+                                        <i class="bi bi-caret-up-fill"></i>
+                                    {% elif ordering == '-estado' %}
+                                        <i class="bi bi-caret-down-fill"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'fecha_deteccion' %}-fecha_deteccion{% else %}fecha_deteccion{% endif %}{% if page_obj.number > 1 %}&page={{ page_obj.number }}{% endif %}">
+                                    Fecha Detección
+                                    {% if ordering == 'fecha_deteccion' %}
+                                        <i class="bi bi-caret-up-fill"></i>
+                                    {% elif ordering == '-fecha_deteccion' %}
+                                        <i class="bi bi-caret-down-fill"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'fecha_resolucion' %}-fecha_resolucion{% else %}fecha_resolucion{% endif %}{% if page_obj.number > 1 %}&page={{ page_obj.number }}{% endif %}">
+                                    Fecha Resolución
+                                    {% if ordering == 'fecha_resolucion' %}
+                                        <i class="bi bi-caret-up-fill"></i>
+                                    {% elif ordering == '-fecha_resolucion' %}
+                                        <i class="bi bi-caret-down-fill"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
                             <th>Score CVSS</th>
-                            <th>Vector CVSS</th>
+                            <th>
+                                <a href="?ordering={% if ordering == 'severidad' %}-severidad{% else %}severidad{% endif %}{% if page_obj.number > 1 %}&page={{ page_obj.number }}{% endif %}">
+                                    Severidad
+                                    {% if ordering == 'severidad' %}
+                                        <i class="bi bi-caret-up-fill"></i>
+                                    {% elif ordering == '-severidad' %}
+                                        <i class="bi bi-caret-down-fill"></i>
+                                    {% endif %}
+                                </a>
+                            </th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for av in vulnerabilidades %}
                         <tr>
-                            <td>{{ av.vulnerabilidad|default:"-" }}</td>
+                            <td><strong>{{ av.vulnerabilidad.cve_id|default:av.vulnerabilidad }}</strong></td>
                             <td>
                                 <span class="badge bg-{{ av.estado|status_to_css_class }}">
                                     {{ av.get_estado_display }}
                                 </span>
                             </td>
-                            <td>{{ av.fecha_deteccion|default:"-" }}</td>
-                            <td>{{ av.fecha_resolucion|default:"-" }}</td>
+                            <td>{{ av.fecha_deteccion|date:"d/m/Y"|default:"-" }}</td>
+                            <td>{{ av.fecha_resolucion|date:"d/m/Y"|default:"-" }}</td>
                             <td>
                                 {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'4.0' %}
                                     {% if cvss.score %}
@@ -170,25 +207,9 @@
                                 {% endwith %}
                             </td>
                             <td>
-                                {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'4.0' %}
-                                    {% if cvss.vector %}
-                                        {{ cvss.vector }}
-                                    {% else %}
-                                        {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.1' %}
-                                            {% if cvss.vector %}
-                                                {{ cvss.vector }}
-                                            {% else %}
-                                                {% with cvss=av.vulnerabilidad.cvss_data|get_cvss:'3.0' %}
-                                                    {% if cvss.vector %}
-                                                        {{ cvss.vector }}
-                                                    {% else %}
-                                                        N/A
-                                                    {% endif %}
-                                                {% endwith %}
-                                            {% endif %}
-                                        {% endwith %}
-                                    {% endif %}
-                                {% endwith %}
+                                <span class="badge {{ av.vulnerabilidad.severidad|severity_to_css_class }}">
+                                    {{ av.vulnerabilidad.get_severidad_display }}
+                                </span>
                             </td>
                             <td>
                                 <div class="d-flex gap-2">
@@ -208,6 +229,41 @@
                     </tbody>
                 </table>
             </div>
+            {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-3">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if ordering %}&ordering={{ ordering }}{% endif %}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo;</span>
+                    </li>
+                    {% endif %}
+                    {% for num in paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% if ordering %}&ordering={{ ordering }}{% endif %}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if ordering %}&ordering={{ ordering }}{% endif %}" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&raquo;</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
             {% else %}
             <div class="alert alert-info">
                 <i class="bi bi-info-circle"></i> No hay vulnerabilidades asociadas a este activo.

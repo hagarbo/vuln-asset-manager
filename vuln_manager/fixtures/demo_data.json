@@ -1,0 +1,180 @@
+[
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "marta.garcia",
+      "first_name": "Marta",
+      "last_name": "García",
+      "email": "marta.garcia@acme.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "analista",
+      "telefono": "+34 600 123 456",
+      "empresa": "ACME Security",
+      "cargo": "Analista Senior"
+    }
+  },
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "juan.perez",
+      "first_name": "Juan",
+      "last_name": "Pérez",
+      "email": "juan.perez@telefonica.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "analista",
+      "telefono": "+34 600 234 567",
+      "empresa": "Telefónica",
+      "cargo": "Especialista en Ciberseguridad"
+    }
+  },
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 8,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "ana.rodriguez",
+      "first_name": "Ana",
+      "last_name": "Rodríguez",
+      "email": "ana.rodriguez@bbva.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "analista",
+      "telefono": "+34 600 345 678",
+      "empresa": "BBVA",
+      "cargo": "Analista de Vulnerabilidades"
+    }
+  },
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 9,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "carlos.lopez",
+      "first_name": "Carlos",
+      "last_name": "López",
+      "email": "carlos.lopez@indra.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "analista",
+      "telefono": "+34 600 456 789",
+      "empresa": "Indra",
+      "cargo": "Consultor de Seguridad"
+    }
+  },
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 10,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "lucia.martin",
+      "first_name": "Lucía",
+      "last_name": "Martín",
+      "email": "lucia.martin@everis.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "analista",
+      "telefono": "+34 600 567 890",
+      "empresa": "Everis",
+      "cargo": "Analista de Threat Intelligence"
+    }
+  },
+  {
+    "model": "vuln_manager.usuario",
+    "pk": 11,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$cONEZ7Z0io2KLZr8BrzMjJ$kBCZ5EWeyadlK7rkf2rtQYLzgZ5v/cZf/8qZrRSetho=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "contacto_iberdrola",
+      "first_name": "Contacto",
+      "last_name": "Iberdrola",
+      "email": "contacto@iberdrola.es",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2025-06-18T18:30:00Z",
+      "rol": "cliente",
+      "telefono": "+34 900 123 456",
+      "empresa": "Iberdrola",
+      "cargo": "IT Manager"
+    }
+  },
+  {
+    "model": "vuln_manager.cliente",
+    "pk": 2,
+    "fields": {
+      "nombre": "Iberdrola",
+      "usuario": 11,
+      "created_at": "2025-06-18T18:30:00Z",
+      "updated_at": "2025-06-18T18:30:00Z"
+    }
+  },
+  {
+    "model": "vuln_manager.activo",
+    "pk": 6,
+    "fields": {
+      "nombre": "Servidor Web Principal - Iberdrola",
+      "tipo": "software",
+      "descripcion": "Servidor web Apache con PHP y MySQL para Iberdrola",
+      "palabras_clave": "apache,php,mysql,web,servidor",
+      "ip": "10.2.1.45",
+      "puerto": 80,
+      "version": "Apache 2.4 + PHP 8.1",
+      "cliente": 2,
+      "created_at": "2025-06-18T18:30:00Z",
+      "updated_at": "2025-06-18T18:30:00Z"
+    }
+  },
+  {
+    "model": "vuln_manager.activo",
+    "pk": 7,
+    "fields": {
+      "nombre": "Base de Datos Principal - Iberdrola",
+      "tipo": "software",
+      "descripcion": "Servidor de base de datos MySQL para Iberdrola",
+      "palabras_clave": "mysql,database,bbdd,servidor",
+      "ip": "10.2.2.123",
+      "puerto": 3306,
+      "version": "MySQL 8.0",
+      "cliente": 2,
+      "created_at": "2025-06-18T18:30:00Z",
+      "updated_at": "2025-06-18T18:30:00Z"
+    }
+  },
+  {
+    "model": "vuln_manager.activo",
+    "pk": 8,
+    "fields": {
+      "nombre": "Firewall Perimetral - Iberdrola",
+      "tipo": "red",
+      "descripcion": "Firewall Cisco ASA para Iberdrola",
+      "palabras_clave": "cisco,firewall,seguridad,perimetro",
+      "ip": "10.2.3.67",
+      "puerto": 443,
+      "version": "Cisco ASA 9.12",
+      "cliente": 2,
+      "created_at": "2025-06-18T18:30:00Z",
+      "updated_at": "2025-06-18T18:30:00Z"
+    }
+  }
+] 

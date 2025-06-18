@@ -49,4 +49,21 @@ class VulnerabilidadRepository(BaseRepository):
 
     def count(self):
         """Cuenta el número total de vulnerabilidades."""
-        return self.model.objects.count() 
+        return self.model.objects.count()
+
+    def get_updated_since(self, fecha):
+        """
+        Devuelve las vulnerabilidades creadas o modificadas desde la fecha dada.
+        :param fecha: datetime o string en formato ISO/fecha
+        :return: QuerySet de Vulnerabilidad
+        """
+        if not fecha:
+            return self.model.objects.none()
+        if isinstance(fecha, str):
+            try:
+                fecha = datetime.fromisoformat(fecha)
+            except Exception:
+                return self.model.objects.none()
+        return self.model.objects.filter(
+            fecha_modificacion__gte=fecha
+        ) 

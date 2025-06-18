@@ -40,11 +40,22 @@ class ClienteUpdateView(RoleRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         try:
+            # Separar los datos de analistas del resto de campos
+            data = form.cleaned_data.copy()
+            analistas = data.pop('analistas', None)
+            
+            # Actualizar campos normales del cliente
             repository = ClienteRepository()
-            instance = repository.update(self.object.id, **form.cleaned_data)
+            instance = repository.update(self.object.id, **data)
+            
             if instance:
+                # Actualizar la relación many-to-many de analistas
+                if analistas is not None:
+                    instance.analistas.set(analistas)
+                
                 messages.success(self.request, f'Cliente "{instance.nombre}" actualizado correctamente.')
                 return super().form_valid(form)
+            
             messages.error(self.request, 'No se pudo actualizar el cliente.')
             return self.form_invalid(form)
         except Exception as e:

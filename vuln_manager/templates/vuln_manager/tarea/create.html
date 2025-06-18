@@ -6,9 +6,6 @@
 
 {% block form_fields %}
     {{ form|crispy }}
-    <div id="parametros-tarea" class="mt-3">
-        <!-- Los parámetros específicos se cargarán dinámicamente con JavaScript -->
-    </div>
 {% endblock %}
 
 {% block submit_text %}Guardar{% endblock %}
@@ -19,64 +16,77 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const tipoSelect = document.querySelector('#id_tipo');
-    const parametrosDiv = document.querySelector('#parametros-tarea');
-    const parametrosInput = document.querySelector('#id_parametros');
-    let tiposTarea = [];
-    {% if tipos_tarea %}tiposTarea = {{ tipos_tarea|safe }};{% endif %}
+    const severidadInput = document.querySelector('#id_severidad_minima');
+    const diasInput = document.querySelector('#id_dias_atras');
     const form = document.querySelector('form');
+    const parametrosInput = document.querySelector('#id_parametros');
 
-    function actualizarParametros() {
-        const tipoId = tipoSelect.value;
-        const tipoSeleccionado = tiposTarea.find(t => t.id === parseInt(tipoId));
-        
-        if (tipoSeleccionado) {
-            let html = '<h4>Parámetros de la Tarea</h4>';
-            for (const [key, param] of Object.entries(tipoSeleccionado.parametros)) {
-                html += `
-                    <div class="form-group">
-                        <label for="param_${key}">${param.label || key}</label>
-                        <input type="${param.tipo === 'integer' ? 'number' : 'text'}"
-                               class="form-control"
-                               id="param_${key}"
-                               name="param_${key}"
-                               min="${param.min || ''}"
-                               max="${param.max || ''}"
-                               value="${param.default || ''}"
-                               ${param.requerido ? 'required' : ''}>
-                        ${param.descripcion ? `<small class=\"form-text text-muted\">${param.descripcion}</small>` : ''}
-                    </div>
-                `;
+    // Función mejorada para ocultar/mostrar input, label y help-text
+    function setFieldVisible(input, visible) {
+        if (!input) return;
+        // Oculta el input
+        input.style.display = visible ? '' : 'none';
+        // Oculta el label asociado
+        let label = document.querySelector(`label[for='${input.id}']`);
+        if (label) label.style.display = visible ? '' : 'none';
+        // Oculta el help-text o form-text asociado
+        let help = null;
+        if (input.parentElement) {
+            help = input.parentElement.querySelector('.help-text, .form-text, small');
+            if (help) help.style.display = visible ? '' : 'none';
+        }
+        // Si el padre es un div y contiene solo estos elementos, oculta el div entero
+        let parent = input.parentElement;
+        if (parent && parent.tagName === 'DIV') {
+            let visibles = Array.from(parent.children).filter(
+                el => el.style.display !== 'none'
+            );
+            if (!visible && visibles.length <= 3) {
+                parent.style.display = 'none';
+            } else {
+                parent.style.display = '';
             }
-            parametrosDiv.innerHTML = html;
-            actualizarParametrosJSON();
-        } else {
-            parametrosDiv.innerHTML = '';
-            parametrosInput.value = '{}';
         }
     }
 
-    function actualizarParametrosJSON() {
-        const parametros = {};
-        const inputs = parametrosDiv.querySelectorAll('input');
-        inputs.forEach(input => {
-            const key = input.id.replace('param_', '');
-            parametros[key] = input.value;
-        });
-        parametrosInput.value = JSON.stringify(parametros);
+    let tiposTarea = [];
+    {% if tipos_tarea %}tiposTarea = {{ tipos_tarea|safe }};{% endif %}
+
+    function actualizarCamposParametros() {
+        if (!tipoSelect) return;
+        const tipoId = tipoSelect.value;
+        const tipoSeleccionado = tiposTarea.find(t => t.id === parseInt(tipoId));
+        setFieldVisible(severidadInput, false);
+        setFieldVisible(diasInput, false);
+        if (tipoSeleccionado && tipoSeleccionado.codigo === 'cve_asset_correlation') {
+            setFieldVisible(severidadInput, true);
+        } else if (tipoSeleccionado && tipoSeleccionado.codigo === 'cve_collector') {
+            setFieldVisible(diasInput, true);
+        }
+    }
+
+    function actualizarParametrosHidden() {
+        let params = {};
+        if (severidadInput && severidadInput.style.display !== 'none') {
+            params['severidad_minima'] = severidadInput.value;
+        }
+        if (diasInput && diasInput.style.display !== 'none') {
+            params['dias_atras'] = diasInput.value;
+        }
+        if (parametrosInput) {
+            parametrosInput.value = JSON.stringify(params);
+        }
     }
 
     if (tipoSelect) {
-        tipoSelect.addEventListener('change', actualizarParametros);
-    }
-    if (parametrosDiv) {
-        parametrosDiv.addEventListener('change', actualizarParametrosJSON);
+        tipoSelect.addEventListener('change', actualizarCamposParametros);
+        actualizarCamposParametros();
     }
     if (form) {
         form.addEventListener('submit', function(e) {
-            actualizarParametrosJSON();
+            actualizarParametrosHidden();
         });
     }
-    actualizarParametros();
 });
 </script>
 {% endblock %} 
