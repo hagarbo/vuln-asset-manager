@@ -16,13 +16,19 @@
                 <h3 class="mb-1">Detalle de Vulnerabilidad</h3>
             </div>
             <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center align-items-center">
+                {% if breadcrumbs %}
                 <nav aria-label="breadcrumb" class="breadcrumb-header">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="/dashboard/">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="/vulnerabilidades/">Vulnerabilidades</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Detalle</li>
+                        {% for crumb in breadcrumbs %}
+                            {% if crumb.url %}
+                                <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.label }}</a></li>
+                            {% else %}
+                                <li class="breadcrumb-item active" aria-current="page">{{ crumb.label }}</li>
+                            {% endif %}
+                        {% endfor %}
                     </ol>
                 </nav>
+                {% endif %}
             </div>
         </div>
     </div>

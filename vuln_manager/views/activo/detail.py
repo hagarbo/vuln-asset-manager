@@ -36,9 +36,9 @@ class ActivoDetailView(RoleRequiredMixin, DetailView):
         # Añadir contextos para el template
         context['page_title'] = 'Detalle de Activo'
         context['breadcrumbs'] = [
-            {'text': 'Inicio', 'url': 'vuln_manager:dashboard'},
-            {'text': 'Activos', 'url': 'vuln_manager:activo_list'},
-            {'text': self.object.nombre, 'url': None}
+            {'label': 'Dashboard', 'url': '/dashboard/'},
+            {'label': 'Activos', 'url': '/activos/'},
+            {'label': self.object.nombre, 'url': None}
         ]
         
         return context 

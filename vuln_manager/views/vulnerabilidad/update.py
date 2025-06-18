@@ -36,7 +36,7 @@ class VulnerabilidadUpdateView(RoleRequiredMixin, UpdateView):
         context['form_subtitle'] = 'Modifica los datos de la vulnerabilidad'
         context['breadcrumbs'] = [
             {"label": "Dashboard", "url": "/dashboard/"},
-            {"label": "Vulnerabilidades", "url": "/vulnerabilidad/"},
+            {"label": "Vulnerabilidades", "url": "/vulnerabilidades/"},
             {"label": "Editar"}
         ]
         context['card_title'] = 'Datos de la Vulnerabilidad'

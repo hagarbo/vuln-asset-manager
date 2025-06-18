@@ -14,4 +14,10 @@ class VulnerabilidadDetailView(RoleRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['activos'] = ActivoVulnerabilidadRepository().get_by_vulnerabilidad(self.object.id)
+        context['page_title'] = 'Detalle de Vulnerabilidad'
+        context['breadcrumbs'] = [
+            {"label": "Dashboard", "url": "/dashboard/"},
+            {"label": "Vulnerabilidades", "url": "/vulnerabilidades/"},
+            {"label": "Detalle"}
+        ]
         return context 
