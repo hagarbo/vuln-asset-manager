@@ -30,7 +30,8 @@ if [ "$FORCE_INIT" = "true" ]; then
     echo -e "${YELLOW}Forzando inicialización por variable de entorno FORCE_INIT=true${NC}"
     python manage.py shell -c "exec(open('scripts/init_production.py').read())"
 else
-    python << END
+    # Usar una variable para comunicar el resultado en lugar de exit()
+    INIT_NEEDED=$(python << END
 import os
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -44,17 +45,19 @@ clientes_count = Cliente.objects.count()
 if usuarios_count > 1 or clientes_count > 0:  # Más de 1 porque siempre hay admin
     print(f'✅ Base de datos ya inicializada: {usuarios_count} usuarios, {clientes_count} clientes')
     print('Skipping initialization...')
-    exit(0)
+    print('NEED_INIT=false')
 else:
     print('🔄 Base de datos vacía, procediendo con inicialización...')
-    exit(1)
+    print('NEED_INIT=true')
 END
+)
 
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}Base de datos ya inicializada, saltando inicialización${NC}"
-    else
+    # Extraer el valor de NEED_INIT del output
+    if echo "$INIT_NEEDED" | grep -q "NEED_INIT=true"; then
         echo -e "${YELLOW}Inicializando base de datos para producción...${NC}"
-        python manage.py shell -c "exec(open('scripts/populate_demo_data.py').read())"
+        python manage.py shell -c "exec(open('scripts/init_production.py').read())"
+    else
+        echo -e "${GREEN}Base de datos ya inicializada, saltando inicialización${NC}"
     fi
 fi
 
