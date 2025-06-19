@@ -3,10 +3,70 @@
 
 from vuln_manager.models import Usuario, Cliente, Activo
 from vuln_manager.models.tarea.tipo_tarea import TipoTarea
+from vuln_manager.models.activo_vulnerabilidad.activo_vulnerabilidad import ActivoVulnerabilidad
+from vuln_manager.models.alerta.alerta import Alerta
+from vuln_manager.models.tarea.ejecucion_tarea import EjecucionTarea
+from vuln_manager.models.tarea.tarea import Tarea
 from django.contrib.auth.hashers import make_password
 import random
 
+def limpiar_base_datos():
+    """Limpia la base de datos antes de crear nuevos datos de demo."""
+    print("🧹 Limpiando base de datos antes de crear datos de demo...")
+    
+    # Contar registros antes de limpiar
+    correlaciones_antes = ActivoVulnerabilidad.objects.count()
+    alertas_antes = Alerta.objects.count()
+    ejecuciones_antes = EjecucionTarea.objects.count()
+    tareas_antes = Tarea.objects.count()
+    usuarios_antes = Usuario.objects.count()
+    clientes_antes = Cliente.objects.count()
+    activos_antes = Activo.objects.count()
+    
+    print(f"📊 Registros antes de limpiar:")
+    print(f"   - Correlaciones: {correlaciones_antes}")
+    print(f"   - Alertas: {alertas_antes}")
+    print(f"   - Ejecuciones de tareas: {ejecuciones_antes}")
+    print(f"   - Tareas: {tareas_antes}")
+    print(f"   - Usuarios: {usuarios_antes}")
+    print(f"   - Clientes: {clientes_antes}")
+    print(f"   - Activos: {activos_antes}")
+    
+    # Limpiar tablas
+    print("\n🗑️  Eliminando registros...")
+    
+    # Eliminar correlaciones y alertas
+    correlaciones_eliminadas = ActivoVulnerabilidad.objects.all().delete()[0]
+    alertas_eliminadas = Alerta.objects.all().delete()[0]
+    print(f"   ✅ Correlaciones eliminadas: {correlaciones_eliminadas}")
+    print(f"   ✅ Alertas eliminadas: {alertas_eliminadas}")
+    
+    # Eliminar ejecuciones de tareas
+    ejecuciones_eliminadas = EjecucionTarea.objects.all().delete()[0]
+    print(f"   ✅ Ejecuciones de tareas eliminadas: {ejecuciones_eliminadas}")
+    
+    # Eliminar tareas
+    tareas_eliminadas = Tarea.objects.all().delete()[0]
+    print(f"   ✅ Tareas eliminadas: {tareas_eliminadas}")
+    
+    # Eliminar activos
+    activos_eliminadas = Activo.objects.all().delete()[0]
+    print(f"   ✅ Activos eliminados: {activos_eliminadas}")
+    
+    # Eliminar clientes (esto también eliminará los usuarios de cliente)
+    clientes_eliminadas = Cliente.objects.all().delete()[0]
+    print(f"   ✅ Clientes eliminados: {clientes_eliminadas}")
+    
+    # Eliminar usuarios que no sean admin
+    usuarios_eliminadas = Usuario.objects.exclude(username='admin').delete()[0]
+    print(f"   ✅ Usuarios eliminados: {usuarios_eliminadas}")
+    
+    print("✅ Limpieza completada\n")
+
 print("Iniciando población de datos de demo...")
+
+# Limpiar la base de datos antes de crear nuevos datos
+limpiar_base_datos()
 
 # Crear tipos de tarea
 print("Creando tipos de tarea...")

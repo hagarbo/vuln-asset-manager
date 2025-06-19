@@ -54,7 +54,7 @@ END
         echo -e "${GREEN}Base de datos ya inicializada, saltando inicialización${NC}"
     else
         echo -e "${YELLOW}Inicializando base de datos para producción...${NC}"
-        python manage.py shell -c "exec(open('scripts/init_production.py').read())"
+        python manage.py shell -c "exec(open('scripts/populate_demo_data.py').read())"
     fi
 fi
 
