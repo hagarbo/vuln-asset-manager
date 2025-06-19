@@ -12,8 +12,22 @@
 <li class="breadcrumb-item active">Editar</li>
 {% endblock %}
 
-{% block form_fields %}
-    {{ form|crispy }}
+{% block dashboard_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+        {% if vulnerabilidad.pk %}Editar Vulnerabilidad{% else %}Nueva Vulnerabilidad{% endif %}
+    </h1>
+    <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">
+        {% if vulnerabilidad.cve_id %}{{ vulnerabilidad.cve_id }}{% else %}Formulario de vulnerabilidad{% endif %}
+    </p>
+</div>
+<section class="section">
+    <div class="card">
+        <div class="card-body">
+            {{ form|crispy }}
+        </div>
+    </div>
+</section>
 {% endblock %}
 
 {% block submit_text %}Confirmar cambios{% endblock %}

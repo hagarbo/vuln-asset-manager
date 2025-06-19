@@ -10,7 +10,7 @@ class VulnerabilidadDetailView(RoleRequiredMixin, DetailView):
     model = Vulnerabilidad
     template_name = 'vuln_manager/vulnerabilidad/detail.html'
     context_object_name = 'vulnerabilidad'
-    allowed_roles = ['admin', 'analista', 'gestor']
+    allowed_roles = ['admin', 'analista']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

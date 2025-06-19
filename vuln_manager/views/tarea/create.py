@@ -22,12 +22,6 @@ class TareaCreateView(RoleRequiredMixin, View):
             'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
             'form_title': 'Crear Nueva Tarea',
             'form_subtitle': 'Configura una nueva tarea programada',
-            'breadcrumbs': [
-                {"label": "Dashboard", "url": "/dashboard/"},
-                {"label": "Tareas", "url": "/tareas/"},
-                {"label": "Nueva"}
-            ],
-            'card_title': 'Datos de la Tarea',
         }
         return render(request, self.template_name, context)
 
@@ -41,12 +35,6 @@ class TareaCreateView(RoleRequiredMixin, View):
             'tipos_tarea': json.dumps(tipos_tarea, cls=DjangoJSONEncoder, ensure_ascii=False),
             'form_title': 'Crear Nueva Tarea',
             'form_subtitle': 'Configura una nueva tarea programada',
-            'breadcrumbs': [
-                {"label": "Dashboard", "url": "/dashboard/"},
-                {"label": "Tareas", "url": "/tarea/"},
-                {"label": "Nueva"}
-            ],
-            'card_title': 'Datos de la Tarea',
         }
         if form.is_valid():
             try:

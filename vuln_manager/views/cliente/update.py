@@ -23,20 +23,11 @@ class ClienteUpdateView(RoleRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        
         if user.es_admin:
             context['form'].fields['analistas'].queryset = Usuario.objects.filter(rol='analista')
-        
         context['form_title'] = 'Editar Cliente'
         context['form_subtitle'] = 'Modifica los datos del cliente'
-        context['breadcrumbs'] = [
-            {"label": "Dashboard", "url": "/dashboard/"},
-            {"label": "Clientes", "url": "/clientes/"},
-            {"label": "Editar"}
-        ]
-        context['card_title'] = 'Datos del Cliente'
-            
-        return context 
+        return context
 
     def form_valid(self, form):
         try:

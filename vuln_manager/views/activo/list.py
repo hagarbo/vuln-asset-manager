@@ -32,11 +32,6 @@ class ActivoListView(RoleRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Listado de Activos'
-        context['breadcrumbs'] = [
-            {"label": "Dashboard", "url": "/dashboard/"},
-            {'label': 'Activos', 'url': None}
-        ]
         context['create_url'] = reverse('vuln_manager:activo_create')
         context['ordering'] = self.request.GET.get('ordering', '-nombre')
         return context 

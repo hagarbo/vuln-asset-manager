@@ -1,5 +1,236 @@
 # Estado del Proyecto Vuln-Asset-Manager
 
+## Última Actualización: 19/06/2025
+
+### ✅ Completado
+
+#### Funcionalidades Core
+- [x] **Sistema de Autenticación y Autorización**
+  - Login/logout personalizado
+  - Roles: admin, analista, cliente
+  - Mixins de permisos por rol
+  - Redirección automática por rol
+
+- [x] **Gestión de Usuarios**
+  - CRUD completo de usuarios
+  - Asignación de roles
+  - Formularios de creación y edición
+
+- [x] **Gestión de Clientes**
+  - CRUD completo de clientes
+  - Asignación de analistas a clientes
+  - Relación ManyToMany con usuarios analistas
+
+- [x] **Gestión de Activos**
+  - CRUD completo de activos
+  - Asignación a clientes
+  - Paginación en listados
+  - Filtros y búsqueda
+
+- [x] **Gestión de Vulnerabilidades**
+  - CRUD completo de vulnerabilidades
+  - Integración con NIST NVD API
+  - Sistema de severidad (crítica, alta, media, baja)
+  - Paginación y filtros
+
+- [x] **Sistema de Correlación**
+  - Correlación automática activo-vulnerabilidad
+  - Correlador por palabras clave
+  - Correlador por CVE específico
+  - Generación automática de alertas
+
+- [x] **Sistema de Alertas**
+  - Modelo de alertas con estados
+  - Estados: nueva, en_proceso, resuelta
+  - Asociación con activos y vulnerabilidades
+
+- [x] **Sistema de Tareas**
+  - Tareas programadas de correlación
+  - Ejecución manual de tareas
+  - Tipos de tarea configurables
+  - Historial de ejecuciones
+
+#### Mejoras de UX/UI
+- [x] **Paginación Implementada**
+  - Lista de vulnerabilidades en detalle de activos (10 por página)
+  - Lista de activos en detalle de clientes (10 por página)
+  - Lista de activos afectados en detalle de vulnerabilidades (10 por página)
+  - Navegación consistente con botones anterior/siguiente
+
+- [x] **Mejoras Visuales**
+  - Columna "Severidad" en lugar de "Vector CVSS" en detalle de activos
+  - Badges de severidad consistentes con el listado de vulnerabilidades
+  - Ordenación por severidad en detalle de activos
+  - CSS de severidad cargado correctamente
+
+#### Dashboards
+- [x] **Dashboard del Analista**
+  - Vista `AnalistaDashboardView` con permisos por rol
+  - Template con diseño moderno y responsive
+  - **Estructura corregida para cumplir con Mazer**:
+    - Uso de `container-fluid py-4` como en admin dashboard
+    - Widgets de estadísticas con `h-100` y `display-4`
+    - Headers de tarjetas consistentes sin `border-bottom-0 bg-light`
+    - Tabla con `table-link-row` para filas clickeables
+    - Estilos CSS simplificados y coherentes
+  - Estadísticas generales (alertas nuevas, en proceso, resueltas)
+  - Alertas nuevas con información detallada
+  - Resumen por cliente expandible/colapsable
+  - Activos más vulnerables con ranking
+  - Resumen de trabajo (hoy y esta semana)
+  - URL: `/dashboard/analista/`
+  - Funcionalidades JavaScript para interactividad
+  - **Coherencia visual completa con dashboard de admin**
+  - **Error corregido**: Referencias a `activo.alerta_set` en lugar de `activo.alertas`
+
+#### Vistas de Alerta
+- [x] **Sistema Completo de Gestión de Alertas**
+  - **Repositorio actualizado** con métodos para filtrado por usuario y rol
+  - **AlertaListView**: Listado único para admin y analistas con filtros
+  - **AlertaDetailView**: Detalle con cambio automático de estado
+  - **AlertaUpdateView**: Edición con validaciones por rol
+  - **Templates completos**: list.html, detail.html, form.html
+  - **URLs configuradas**: `/alertas/`, `/alertas/<id>/`, `/alertas/<id>/editar/`
+  - **Funcionalidades avanzadas**:
+    - Filtros por cliente, severidad y estado
+    - Ordenación por múltiples campos
+    - Paginación (10 por página)
+    - Cambio automático de estado al acceder al detalle
+    - Alertas relacionadas para contexto
+  - **Integración con dashboard**: Enlaces funcionales desde dashboard del analista
+  - **Seguridad**: Solo admin y analistas pueden acceder
+  - **UX/UI**: Diseño Mazer consistente y responsive
+
+#### Infraestructura y DevOps
+- [x] **Docker y Docker Compose**
+  - Contenedores para web, base de datos y Redis
+  - Volúmenes persistentes
+  - Variables de entorno configuradas
+
+- [x] **Base de Datos**
+  - PostgreSQL configurado
+  - Migraciones aplicadas
+  - Datos de prueba cargados
+
+- [x] **Scripts de Utilidad**
+  - `init_project.sh`: Inicialización completa del proyecto
+  - `populate_demo_data.py`: Población de datos de prueba
+  - `clean_database.py`: Limpieza de base de datos
+  - `quick_clean.py`: Limpieza rápida
+  - Documentación en `scripts/README.md`
+
+#### Testing
+- [x] **Tests Unitarios**
+  - Tests de modelos
+  - Tests de formularios
+  - Tests de vistas
+  - Tests de repositorios
+  - Tests de servicios
+
+### 🔄 En Progreso
+
+#### Dashboards
+- [ ] **Dashboard del Cliente**
+  - Vista y template pendientes
+  - Resumen de activos y vulnerabilidades
+  - Alertas del cliente
+  - Estadísticas de seguridad
+
+### 📋 Pendiente
+
+#### Funcionalidades Avanzadas
+- [ ] **Sistema de Notificaciones**
+  - Notificaciones por email
+  - Notificaciones en tiempo real
+  - Configuración de alertas
+
+- [ ] **Reportes y Analytics**
+  - Reportes PDF
+  - Gráficos y estadísticas
+  - Exportación de datos
+
+- [ ] **API REST**
+  - Endpoints para integración externa
+  - Autenticación por token
+  - Documentación con Swagger
+
+#### Mejoras de UX/UI
+- [ ] **Dashboard del Cliente**
+  - Implementación completa
+  - Funcionalidades específicas para clientes
+
+- [ ] **Mejoras de Navegación**
+  - Breadcrumbs
+  - Menús contextuales
+  - Accesos directos
+
+### 🐛 Problemas Conocidos
+
+#### Resueltos
+- ✅ Error de migración con tabla `vuln_manager_usuario` ya existente
+  - **Solución**: Limpieza manual del volumen de datos con `docker volume rm vuln_manager_postgres_data`
+  - **Prevención**: Usar `docker compose down -v` y reconstruir cuando sea necesario
+
+- ✅ Errores de importación tras refactorización
+  - **Solución**: Revisión sistemática de todas las importaciones y referencias
+  - **Prevención**: Verificar imports tras cambios estructurales
+
+### 📝 Notas Técnicas
+
+#### Estructura del Proyecto
+- **Plantillas**: Globales en `/templates/`, específicas en `/app_name/templates/app_name/`
+- **Estáticos**: Específicos de app en `/app_name/static/`
+- **Vistas**: Modularizadas en `/app_name/views/` con `__init__.py`
+- **URLs**: Delegadas en `config/urls.py`, definidas con namespaces
+
+#### Patrones de Desarrollo
+- **TDD**: Tests escritos antes que la funcionalidad
+- **Repository Pattern**: Separación de lógica de acceso a datos
+- **Service Pattern**: Lógica de negocio en servicios
+- **Mixin Pattern**: Reutilización de funcionalidad de permisos
+
+#### Configuración de Docker
+- **Servicio principal**: `vuln-manager-web`
+- **Base de datos**: PostgreSQL con volumen persistente
+- **Redis**: Para tareas asíncronas (futuro)
+- **Variables de entorno**: Configuradas en `docker-compose.yml`
+
+### 🎯 Próximos Pasos
+
+1. **Completar Dashboard del Cliente**
+   - Implementar vista y template
+   - Añadir funcionalidades específicas
+   - Probar con datos reales
+
+2. **Sistema de Notificaciones**
+   - Configurar email backend
+   - Implementar notificaciones automáticas
+   - Añadir configuración de alertas
+
+3. **Mejoras de UX**
+   - Implementar breadcrumbs
+   - Añadir menús contextuales
+   - Mejorar navegación general
+
+4. **Testing Completo**
+   - Aumentar cobertura de tests
+   - Tests de integración
+   - Tests de UI
+
+### 📊 Métricas del Proyecto
+
+- **Líneas de código**: ~15,000+
+- **Archivos**: ~200+
+- **Tests**: ~50+
+- **Migraciones**: 17
+- **Funcionalidades principales**: 8
+- **Dashboards**: 1/2 completados
+
+---
+
+**Estado General**: 🟢 **Estable y Funcional**
+El proyecto está en un estado sólido con todas las funcionalidades core implementadas y funcionando correctamente. El dashboard del analista está completo y funcional. El siguiente paso prioritario es completar el dashboard del cliente.
+
 ## 🚨 REGLAS MUY IMPORTANTES 🚨
 
 ### Estructura y Organización

@@ -10,7 +10,7 @@ class UsuarioChangeForm(UserChangeForm):
     """
     class Meta:
         model = Usuario
-        fields = ('email', 'first_name', 'last_name', 'telefono', 'empresa', 'cargo')
+        fields = ('email', 'first_name', 'last_name', 'rol', 'telefono', 'empresa', 'cargo')
         exclude = ('password', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):

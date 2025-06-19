@@ -191,6 +191,7 @@ def init_production():
                 palabras_clave=template['palabras_clave'],
                 ip=f"10.{cliente.id}.{i+1}.{random.randint(1, 254)}",
                 puerto=template['puerto'],
+                tipo=template['tipo'],
                 version=template['version'],
                 cliente=cliente
             )

@@ -70,4 +70,31 @@ tr.severity-none {
 
 .clickable-row {
     cursor: pointer;
-} 
+}
+
+/* --- Cabeceras de tabla unificadas para modo oscuro (dashboard) --- */
+.table thead th,
+.table thead td {
+    background: transparent !important;
+    color: #bfc9da !important;
+    font-weight: 500;
+    border-bottom: 1px solid #444857;
+    vertical-align: middle;
+}
+
+.table thead th a,
+.table thead th a:visited {
+    color: #bfc9da !important;
+    text-decoration: none;
+}
+
+.table thead th a:hover {
+    color: #e0e6ed !important;
+    text-decoration: underline;
+}
+
+.table thead th:last-child {
+    color: #bfc9da !important;
+}
+
+/* --- Fin cabeceras de tabla unificadas --- */ 

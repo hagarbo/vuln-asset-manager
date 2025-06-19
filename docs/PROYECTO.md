@@ -4,18 +4,113 @@
 Sistema de gestión de activos tecnológicos y vulnerabilidades para PYMES, desarrollado como Proyecto Fin de Ciclo para el Ciclo Superior de Desarrollo de Aplicaciones Web.
 
 ## Estado Actual
-- ✅ Configuración inicial del proyecto Django
-- ✅ Configuración de Docker y Docker Compose
-- ✅ Implementación de modelos de datos
-- ✅ Configuración de la base de datos PostgreSQL
-- ✅ Implementación de vistas básicas
-- ✅ Creación de plantillas HTML
-- ✅ Reorganización de vistas en archivos separados
-- ⏳ Implementación de formularios
-- ⏳ Sistema de autenticación
-- ⏳ Sistema de búsqueda y filtrado
-- ⏳ Pruebas unitarias
-- ⏳ Despliegue en producción
+
+### **1. Objetivo general y arquitectura**
+- **Estado:** ✅ Completado
+- El portal web está implementado en Django, con PostgreSQL, Docker y siguiendo el patrón Modelo-Vista-Plantilla (MVT).
+- Se ha priorizado la separación de roles (admin, analista, cliente) y la escalabilidad, cumpliendo la arquitectura propuesta.
+
+### **2. Objetivos específicos**
+
+#### **Gestión de activos tecnológicos por cliente**
+- ✅ CRUD completo de activos, asociados a clientes y gestionados por roles.
+
+#### **Base de datos de vulnerabilidades CVE y activos**
+- ✅ Modelos y relaciones implementados.
+- ✅ Integración con fuentes oficiales (NIST) para importar CVEs.
+
+#### **Extracción diaria de vulnerabilidades (NIST)**
+- ✅ Implementada la recolección automática mediante comandos de gestión y servicios.
+- ✅ **Nota:** Se gestionará mediante cron jobs en Render cuando el proyecto crezca (no se implementará Celery en esta fase).
+
+#### **Cruce de información entre activos y CVEs**
+- ✅ Lógica de correlación desarrollada y funcional, con vistas y repositorios específicos.
+
+#### **Sistema de alertas ante vulnerabilidades críticas**
+- ✅ Alertas automáticas generadas y asociadas a activos/clientes.
+- ⏳ Pendiente: Envío de notificaciones por correo electrónico (la lógica está preparada, falta integración final y pruebas).
+
+#### **Generación automática y personalizada de informes**
+- ⏳ Parcial: Se generan resúmenes y métricas en dashboards, pero la exportación de informes PDF/Excel está pendiente de finalizar.
+
+#### **Roles diferenciados y permisos**
+- ✅ Implementados y revisados.
+- ✅ Dashboards y vistas adaptadas a cada rol (admin, analista, cliente).
+
+#### **Escalabilidad y seguridad**
+- ✅ Uso de Docker, separación de servicios, y buenas prácticas de Django.
+- ✅ Control de acceso y permisos revisados.
+
+### **3. Historias de usuario (MVP)**
+
+#### **Actualización automática de vulnerabilidades**
+- ✅ Implementada (mediante comandos de gestión y servicios).
+
+#### **Alta de clientes y activos desde archivo externo**
+- ✅ Importación de activos desde CSV disponible.
+- ✅ Alta de clientes funcional.
+
+#### **Alta de analistas y asignación de clientes**
+- ✅ Registro de analistas y asignación de clientes implementados.
+
+#### **Visualización por parte del analista**
+- ✅ Dashboards y listados para analistas con métricas, activos y vulnerabilidades asociadas.
+
+#### **Alertas automáticas por vulnerabilidades críticas**
+- ✅ Generación de alertas funcional.
+- ⏳ Pendiente: Notificación por email.
+
+#### **Consulta de histórico de vulnerabilidades (cliente)**
+- ✅ El cliente puede consultar el histórico de vulnerabilidades de sus activos.
+
+### **4. Fases técnicas y planificación**
+
+#### **Análisis, diseño y configuración base**
+- ✅ Completados.
+
+#### **Desarrollo iterativo por módulos**
+- ✅ CRUD de activos, clientes, usuarios, alertas y vulnerabilidades.
+- ✅ Correlación y alertas.
+- ✅ Dashboards diferenciados y visualmente integrados (Mazer).
+- ⏳ Pendiente: Generación/exportación de informes.
+
+#### **Pruebas y validación**
+- ✅ Pruebas unitarias y de integración en modelos, formularios, repositorios y vistas.
+- ⏳ Pendiente: Ampliar cobertura de tests en vistas específicas.
+
+#### **Documentación y despliegue**
+- ✅ Documentación técnica y de usuario en proceso (`docs/`, `README.md`).
+- ✅ Despliegue en Docker funcional.
+- ✅ Configuración para Render.com y despliegue automático desde GitHub.
+- ⏳ Pendiente: Documentar el proceso de despliegue final y CI/CD completo.
+
+### **5. Decisiones y mejoras adicionales**
+
+#### **Unificación visual y experiencia de usuario**
+- ✅ Dashboards y listados adaptados a cada rol, coherentes y visualmente integrados.
+- ✅ Uso de Mazer, eliminación de Bootstrap innecesario.
+
+#### **Permisos y rutas**
+- ✅ Separación clara de rutas y vistas para cada rol.
+- ✅ Eliminación de referencias a roles no usados ("gestor").
+
+#### **Patrón repositorio y servicios**
+- ✅ Adoptado para lógica compleja y reutilizable, siguiendo buenas prácticas.
+
+#### **Contenerización y portabilidad**
+- ✅ Docker y Docker Compose configurados y en uso.
+
+### **6. Pendientes y próximos pasos**
+- **Finalizar y probar el envío de notificaciones por correo electrónico.**
+- **Completar la exportación/generación de informes automáticos y personalizados.**
+- **Revisar y ampliar la cobertura de tests, especialmente en vistas.**
+- **Documentar el proceso de despliegue y CI/CD.**
+- **Decidir y personalizar la información mostrada en el dashboard del cliente.**
+
+### **Resumen**
+El proyecto cumple la mayoría de los hitos y objetivos definidos en el anteproyecto, especialmente en cuanto a la gestión de activos, usuarios, roles, correlación de vulnerabilidades y visualización adaptada.  
+Quedan pendientes principalmente el envío de notificaciones por email, la exportación de informes y la documentación/despliegue final.  
+El desarrollo sigue las buenas prácticas y la planificación establecida, con una base sólida para su ampliación y entrega final.
 
 ## Estructura del Proyecto
 ```

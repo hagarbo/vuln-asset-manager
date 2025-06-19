@@ -12,6 +12,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'vuln_manager:cliente_list' %}">Clientes</a>
                     </li>
+                    {% if user.es_analista %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'vuln_manager:mis_clientes' %}">Mis Clientes</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'vuln_manager:activo_list' %}">Activos</a>
                     </li>

@@ -30,6 +30,7 @@ from .auth import (
     CustomLogoutView,
     UsuarioCreateView,
     UsuarioUpdateView,
+    UsuarioListView,
 )
 from .tarea import (
     TareaListView,
@@ -37,6 +38,11 @@ from .tarea import (
     TareaDetailView,
     TareaUpdateView,
     TareaDeleteView,
+)
+from .alerta import (
+    AlertaListView,
+    AlertaDetailView,
+    AlertaUpdateView,
 )
 from .tarea.ejecutar import ejecutar_tarea
 from .dashboard.admin import AdminDashboardView
@@ -65,10 +71,14 @@ __all__ = [
     'CustomLogoutView',
     'UsuarioCreateView',
     'UsuarioUpdateView',
+    'UsuarioListView',
     'TareaListView',
     'TareaCreateView',
     'TareaDetailView',
     'TareaUpdateView',
     'TareaDeleteView',
+    'AlertaListView',
+    'AlertaDetailView',
+    'AlertaUpdateView',
     'AdminDashboardView',
 ] 

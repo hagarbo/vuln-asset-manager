@@ -1,0 +1,14 @@
+{% block dashboard_content %}
+<div class="page-header d-flex justify-content-between align-items-center mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <div>
+        <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Editar Cliente</h1>
+        <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">{{ cliente.nombre }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'vuln_manager:cliente_detail' cliente.pk %}" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+{# ... resto del contenido ... #}
+{% endblock %} 

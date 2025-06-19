@@ -48,36 +48,101 @@
             <div class="sidebar-menu">
                 <ul class="menu">
                     <li class="sidebar-title">Menú</li>
-                    <li class="sidebar-item {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">
-                        <a href="{% url 'vuln_manager:dashboard_admin' %}" class="sidebar-link">
-                            <i class="bi bi-speedometer2"></i>
-                            <span>Dashboard</span>
-                        </a>
+                    
+                    <!-- Dashboard - Visible para todos los roles -->
+                    <li class="sidebar-item {% if request.resolver_match.url_name == 'dashboard_admin' or request.resolver_match.url_name == 'dashboard_analista' or request.resolver_match.url_name == 'dashboard_cliente' %}active{% endif %}">
+                        {% if user.rol == 'admin' %}
+                            <a href="{% url 'vuln_manager:dashboard_admin' %}" class="sidebar-link">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        {% elif user.rol == 'analista' %}
+                            <a href="{% url 'vuln_manager:dashboard_analista' %}" class="sidebar-link">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        {% elif user.rol == 'cliente' %}
+                            <a href="{% url 'vuln_manager:dashboard_cliente' %}" class="sidebar-link">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        {% else %}
+                            <a href="#" class="sidebar-link">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        {% endif %}
                     </li>
-                    <li class="sidebar-item {% if 'tarea' in request.resolver_match.url_name %}active{% endif %}">
-                        <a href="{% url 'vuln_manager:tarea_list' %}" class="sidebar-link">
-                            <i class="bi bi-list-task"></i>
-                            <span>Tareas</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item {% if 'vulnerabilidad' in request.resolver_match.url_name %}active{% endif %}">
-                        <a href="{% url 'vuln_manager:vulnerabilidad_list' %}" class="sidebar-link">
-                            <i class="bi bi-bug"></i>
-                            <span>Vulnerabilidades</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item {% if 'cliente' in request.resolver_match.url_name %}active{% endif %}">
-                        <a href="{% url 'vuln_manager:cliente_list' %}" class="sidebar-link">
-                            <i class="bi bi-people"></i>
-                            <span>Clientes</span>
-                     </a>
-                    </li>
-                    <li class="sidebar-item {% if 'activo' in request.resolver_match.url_name %}active{% endif %}">
-                        <a href="{% url 'vuln_manager:activo_list' %}" class="sidebar-link">
-                            <i class="bi bi-hdd-network"></i>
-                            <span>Activos</span>
-                        </a>
-                    </li>
+                    
+                    <!-- Menú específico para Admin -->
+                    {% if user.rol == 'admin' %}
+                        <li class="sidebar-item {% if 'cliente' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:cliente_list' %}" class="sidebar-link">
+                                <i class="bi bi-people"></i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if 'activo' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:activo_list' %}" class="sidebar-link">
+                                <i class="bi bi-hdd-network"></i>
+                                <span>Activos</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if 'usuario' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:usuario_list' %}" class="sidebar-link">
+                                <i class="bi bi-person"></i>
+                                <span>Usuarios</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if 'tarea' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:tarea_list' %}" class="sidebar-link">
+                                <i class="bi bi-list-task"></i>
+                                <span>Tareas</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Menú para Admin y Analista -->
+                    {% if user.rol == 'admin' or user.rol == 'analista' %}
+                        <!-- Clientes para Analista (solo sus asignados) -->
+                        {% if user.rol == 'analista' %}
+                            <li class="sidebar-item {% if request.resolver_match.url_name == 'mis_clientes' %}active{% endif %}">
+                                <a href="{% url 'vuln_manager:mis_clientes' %}" class="sidebar-link">
+                                    <i class="bi bi-people"></i>
+                                    <span>Mis Clientes</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="sidebar-item {% if 'alerta' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:alerta_list' %}" class="sidebar-link">
+                                <i class="bi bi-bell"></i>
+                                <span>Alertas</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if 'vulnerabilidad' in request.resolver_match.url_name %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:vulnerabilidad_list' %}" class="sidebar-link">
+                                <i class="bi bi-bug"></i>
+                                <span>Vulnerabilidades</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Menú específico para Cliente -->
+                    {% if user.rol == 'cliente' %}
+                        <li class="sidebar-item {% if request.resolver_match.url_name == 'cliente_activo_list' %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:cliente_activo_list' %}" class="sidebar-link">
+                                <i class="bi bi-hdd-network"></i>
+                                <span>Mis Activos</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item {% if request.resolver_match.url_name == 'cliente_alerta_list' %}active{% endif %}">
+                            <a href="{% url 'vuln_manager:cliente_alerta_list' %}" class="sidebar-link">
+                                <i class="bi bi-bell"></i>
+                                <span>Mis Alertas</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
             <!-- FOOTER: Logout -->

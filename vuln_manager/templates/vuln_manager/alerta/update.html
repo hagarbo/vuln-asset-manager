@@ -1,0 +1,112 @@
+{% extends 'vuln_manager/dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Editar Alerta - Vuln-Asset-Manager{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Editar Alerta</h1>
+    <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">Modifica el estado y asignación de la alerta</p>
+</div>
+
+<section class="section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pencil me-2"></i>Editar Alerta
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- Información de la alerta -->
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <strong>Alerta:</strong> {{ alerta.vulnerabilidad.cve_id }} - {{ alerta.activo.nombre }} ({{ alerta.activo.cliente.nombre }})
+                                </div>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="col-md-6">
+                                <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                    Estado <span class="text-danger">*</span>
+                                </label>
+                                {{ form.estado }}
+                                {% if form.estado.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.estado.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Analista asignado -->
+                            <div class="col-md-6">
+                                <label for="{{ form.analista_asignado.id_for_label }}" class="form-label">
+                                    Analista Asignado
+                                </label>
+                                {{ form.analista_asignado }}
+                                {% if form.analista_asignado.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.analista_asignado.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Notas -->
+                            <div class="col-12">
+                                <label for="{{ form.notas.id_for_label }}" class="form-label">
+                                    Notas
+                                </label>
+                                {{ form.notas }}
+                                {% if form.notas.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.notas.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Añade notas sobre el progreso o resolución de esta alerta.
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+                                    </button>
+                                    <a href="{% url 'vuln_manager:alerta_detail' alerta.pk %}" class="btn btn-secondary">
+                                        <i class="bi bi-x-circle me-2"></i>Cancelar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+</style>
+{% endblock %} 

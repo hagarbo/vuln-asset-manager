@@ -1,41 +1,89 @@
 {% extends 'vuln_manager/dashboard/base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
 
-{% block content %}
-<div class="container mt-4">
-    <h2>Activos Vulnerabilidades</h2>
-    <a href="{% url 'vuln_manager:activo_vulnerabilidad_create' %}" class="btn btn-primary mb-3">Nueva Asignación</a>
-    
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Activo</th>
-                    <th>Vulnerabilidad</th>
-                    <th>Estado</th>
-                    <th>Fecha Detección</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for av in activo_vulnerabilidades %}
-                <tr>
-                    <td>{{ av.activo.nombre }}</td>
-                    <td>{{ av.vulnerabilidad.nombre }}</td>
-                    <td>{{ av.get_estado_display }}</td>
-                    <td>{{ av.fecha_deteccion|date:"d/m/Y" }}</td>
-                    <td>
-                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_detail' av.pk %}" class="btn btn-info btn-sm">Ver</a>
-                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_update' av.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_delete' av.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center">No hay asignaciones de vulnerabilidades a activos.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+{% block title %}Asignaciones de Vulnerabilidades - Vuln-Asset-Manager{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Asignaciones de Vulnerabilidades</h1>
+    <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">Gestiona las vulnerabilidades asignadas a los activos</p>
 </div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header border-bottom-0 bg-light d-flex align-items-center justify-content-between">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-link-45deg me-2"></i>Asignaciones
+                    </h4>
+                    <div>
+                        <a href="{% url 'vuln_manager:activo_vulnerabilidad_create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nueva Asignación
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Activo</th>
+                                    <th>Vulnerabilidad</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Detección</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for av in activo_vulnerabilidades %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'vuln_manager:activo_detail' av.activo.pk %}" class="text-decoration-none">
+                                            {{ av.activo.nombre }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'vuln_manager:vulnerabilidad_detail' av.vulnerabilidad.pk %}" class="text-decoration-none">
+                                            {{ av.vulnerabilidad.cve_id }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ av.estado|status_to_css_class }}">
+                                            {{ av.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ av.fecha_deteccion|date:"d/m/Y" }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'vuln_manager:activo_vulnerabilidad_detail' av.pk %}" class="btn btn-info btn-sm">
+                                                <i class="bi bi-eye"></i> Ver
+                                            </a>
+                                            <a href="{% url 'vuln_manager:activo_vulnerabilidad_update' av.pk %}" class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                            <a href="{% url 'vuln_manager:activo_vulnerabilidad_delete' av.pk %}" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <div class="alert alert-info mb-0">
+                                            <i class="bi bi-info-circle me-2"></i>No hay asignaciones de vulnerabilidades a activos.
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %} 

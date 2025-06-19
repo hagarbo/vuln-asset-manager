@@ -28,12 +28,6 @@ class TareaUpdateView(RoleRequiredMixin, UpdateView):
         )
         context['form_title'] = 'Editar Tarea'
         context['form_subtitle'] = 'Modifica la configuración de la tarea'
-        context['breadcrumbs'] = [
-            {"label": "Dashboard", "url": "/dashboard/"},
-            {"label": "Tareas", "url": "/tareas/"},
-            {"label": "Editar"}
-        ]
-        context['card_title'] = 'Datos de la Tarea'
         return context
 
     def form_valid(self, form):

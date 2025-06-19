@@ -17,12 +17,6 @@ class ClienteCreateView(RoleRequiredMixin, View):
             'form': form,
             'form_title': 'Crear Cliente',
             'form_subtitle': 'Crea un nuevo cliente en el sistema',
-            'breadcrumbs': [
-                {"label": "Dashboard", "url": "/dashboard/"},
-                {"label": "Clientes", "url": "/clientes/"},
-                {"label": "Crear"}
-            ],
-            'card_title': 'Datos del Cliente'
         }
         return render(request, self.template_name, context)
 
@@ -50,4 +44,4 @@ class ClienteCreateView(RoleRequiredMixin, View):
                 return redirect(reverse_lazy('vuln_manager:cliente_list'))
             except Exception as e:
                 messages.error(request, f'Error al crear el cliente: {str(e)}')
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'form_title': 'Crear Cliente', 'form_subtitle': 'Crea un nuevo cliente en el sistema'})

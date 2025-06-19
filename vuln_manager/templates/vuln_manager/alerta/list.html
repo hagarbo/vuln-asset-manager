@@ -1,0 +1,279 @@
+{% extends 'vuln_manager/dashboard/base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
+
+{% block title %}Alertas - Vuln-Asset-Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
+<style>
+.severity-badge {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Alertas</h1>
+    <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">Gestiona las alertas de vulnerabilidades</p>
+</div>
+
+<section class="section">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                    <span class="badge bg-primary fs-6">{{ alertas_nuevas }} nuevas</span>
+                    <span class="badge bg-warning fs-6">{{ alertas_en_proceso }} en proceso</span>
+                    <span class="badge bg-success fs-6">{{ alertas_resueltas }} resueltas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <select name="cliente" id="cliente" class="form-select">
+                        <option value="">Todos los clientes</option>
+                        {% for cliente in clientes %}
+                            <option value="{{ cliente.nombre }}" {% if cliente_filter == cliente.nombre %}selected{% endif %}>
+                                {{ cliente.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="severidad" class="form-label">Severidad</label>
+                    <select name="severidad" id="severidad" class="form-select">
+                        <option value="">Todas las severidades</option>
+                        {% for sev_value, sev_label in severidades %}
+                            <option value="{{ sev_value }}" {% if severidad_filter == sev_value %}selected{% endif %}>
+                                {{ sev_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select name="estado" id="estado" class="form-select">
+                        <option value="">Todos los estados</option>
+                        {% for est_value, est_label in estados %}
+                            <option value="{{ est_value }}" {% if estado_filter == est_value %}selected{% endif %}>
+                                {{ est_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-funnel"></i> Filtrar
+                        </button>
+                        <a href="{% url 'vuln_manager:alerta_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-clockwise"></i> Limpiar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de alertas -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-exclamation-triangle me-2"></i>Alertas ({{ total_alertas }})
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if alertas %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'vulnerabilidad__cve_id' %}-vulnerabilidad__cve_id{% else %}vulnerabilidad__cve_id{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        CVE
+                                        {% if ordering == 'vulnerabilidad__cve_id' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-vulnerabilidad__cve_id' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'activo__nombre' %}-activo__nombre{% else %}activo__nombre{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        Activo
+                                        {% if ordering == 'activo__nombre' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-activo__nombre' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'activo__cliente__nombre' %}-activo__cliente__nombre{% else %}activo__cliente__nombre{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        Cliente
+                                        {% if ordering == 'activo__cliente__nombre' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-activo__cliente__nombre' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'vulnerabilidad__severidad' %}-vulnerabilidad__severidad{% else %}vulnerabilidad__severidad{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        Severidad
+                                        {% if ordering == 'vulnerabilidad__severidad' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-vulnerabilidad__severidad' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'estado' %}-estado{% else %}estado{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        Estado
+                                        {% if ordering == 'estado' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-estado' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="?ordering={% if ordering == 'fecha_creacion' %}-fecha_creacion{% else %}fecha_creacion{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
+                                        Fecha
+                                        {% if ordering == 'fecha_creacion' %}
+                                            <i class="bi bi-arrow-up"></i>
+                                        {% elif ordering == '-fecha_creacion' %}
+                                            <i class="bi bi-arrow-down"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alerta in alertas %}
+                            <tr class="table-link-row" data-href="{% url 'vuln_manager:alerta_detail' alerta.pk %}">
+                                <td>
+                                    <a href="{% url 'vuln_manager:vulnerabilidad_detail' alerta.vulnerabilidad.pk %}" class="text-decoration-none fw-bold">
+                                        {{ alerta.vulnerabilidad.cve_id }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'vuln_manager:activo_detail' alerta.activo.pk %}" class="text-decoration-none">
+                                        {{ alerta.activo.nombre }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'vuln_manager:cliente_detail' alerta.activo.cliente.pk %}" class="text-decoration-none">
+                                        {{ alerta.activo.cliente.nombre }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="badge {{ alerta.vulnerabilidad.severidad|severity_to_css_class }} severity-badge">
+                                        {{ alerta.vulnerabilidad.get_severidad_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if alerta.estado == 'nueva' %}bg-primary{% elif alerta.estado == 'en_proceso' %}bg-warning{% elif alerta.estado == 'resuelta' %}bg-success{% elif alerta.estado == 'ignorada' %}bg-secondary{% else %}bg-info{% endif %}">
+                                        {{ alerta.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td>{{ alerta.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'vuln_manager:alerta_detail' alerta.pk %}" class="btn btn-info btn-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'vuln_manager:alerta_update' alerta.pk %}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                    <nav aria-label="Paginación de alertas">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&ordering={{ ordering }}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}">
+                                        <i class="bi bi-chevron-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&ordering={{ ordering }}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&ordering={{ ordering }}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&ordering={{ ordering }}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&ordering={{ ordering }}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}">
+                                        <i class="bi bi-chevron-double-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-check-circle text-success fs-1"></i>
+                    <p class="text-muted mt-2">No se encontraron alertas con los filtros aplicados.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Hacer las filas de tabla clickeables
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.table-link-row').forEach(function(row) {
+            row.addEventListener('click', function(e) {
+                // No navegar si se hace clic en enlaces o botones
+                if (e.target.closest('a, button')) {
+                    return;
+                }
+                const href = this.getAttribute('data-href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,10 +1,36 @@
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from vuln_manager.models import Usuario
 from vuln_manager.mixins.permissions import AdminRequiredMixin
 from vuln_manager.forms.usuario import UsuarioCreationForm, UsuarioChangeForm
+
+class UsuarioListView(AdminRequiredMixin, ListView):
+    """
+    Vista para listar usuarios.
+    Solo accesible por administradores.
+    """
+    model = Usuario
+    template_name = 'vuln_manager/usuario/list.html'
+    context_object_name = 'usuarios'
+    paginate_by = 10
+    ordering = ['username']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filtrar por búsqueda si se proporciona
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(username__icontains=search)
+        
+        # Filtrar por rol
+        role = self.request.GET.get('role')
+        if role:
+            queryset = queryset.filter(rol=role)
+        
+        return queryset
 
 class UsuarioCreateView(AdminRequiredMixin, CreateView):
     """

@@ -1,0 +1,222 @@
+{% extends 'vuln_manager/dashboard/base.html' %}
+{% load static %}
+{% load vuln_manager_filters %}
+
+{% block title %}Detalle de Alerta - Vuln-Asset-Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/severity.css' %}">
+<style>
+.severity-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+}
+</style>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px;">
+    <h1 class="page-title" style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Detalle de Alerta</h1>
+    <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">{{ alerta.vulnerabilidad.cve_id }} - {{ alerta.activo.nombre }}</p>
+</div>
+
+<section class="section">
+    <div class="row g-4">
+        <!-- Información principal -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Información de la Alerta
+                    </h5>
+                    {% if puede_editar %}
+                    <a href="{% url 'vuln_manager:alerta_update' alerta.pk %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">CVE ID:</label>
+                            <p class="mb-0">{{ alerta.vulnerabilidad.cve_id }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Severidad:</label>
+                            <p class="mb-0">
+                                <span class="badge {{ alerta.vulnerabilidad.severidad|severity_to_css_class }} severity-badge">
+                                    {{ alerta.vulnerabilidad.get_severidad_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Estado:</label>
+                            <p class="mb-0">
+                                <span class="badge {% if alerta.estado == 'nueva' %}bg-primary{% elif alerta.estado == 'en_proceso' %}bg-warning{% elif alerta.estado == 'resuelta' %}bg-success{% elif alerta.estado == 'ignorada' %}bg-secondary{% else %}bg-info{% endif %}">
+                                    {{ alerta.get_estado_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Creación:</label>
+                            <p class="mb-0">{{ alerta.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Última Actualización:</label>
+                            <p class="mb-0">{{ alerta.fecha_actualizacion|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        {% if alerta.fecha_resolucion %}
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Fecha de Resolución:</label>
+                            <p class="mb-0">{{ alerta.fecha_resolucion|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        {% endif %}
+                        {% if alerta.analista_asignado %}
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Analista Asignado:</label>
+                            <p class="mb-0">{{ alerta.analista_asignado.username }}</p>
+                        </div>
+                        {% endif %}
+                        {% if alerta.resuelta_por %}
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Resuelta por:</label>
+                            <p class="mb-0">{{ alerta.resuelta_por.username }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if alerta.notas %}
+                    <div class="mt-4">
+                        <label class="form-label fw-bold">Notas:</label>
+                        <div class="alert alert-info">
+                            {{ alerta.notas|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información de la vulnerabilidad -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bug me-2"></i>Información de la Vulnerabilidad
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Descripción:</label>
+                            <p class="mb-0">
+                              {{ alerta.vulnerabilidad.descripcion_es|default:alerta.vulnerabilidad.descripcion_en|default:"Sin descripción" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Severidad:</label>
+                            <p class="mb-0">
+                                <span class="badge {{ alerta.vulnerabilidad.severidad|severity_to_css_class }} severity-badge">
+                                    {{ alerta.vulnerabilidad.get_severidad_display }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'vuln_manager:vulnerabilidad_detail' alerta.vulnerabilidad.pk %}" class="btn btn-info">
+                                <i class="bi bi-eye"></i> Ver detalles de la vulnerabilidad
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del activo y cliente -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-hdd-network me-2"></i>Activo Afectado
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre:</label>
+                        <p class="mb-0">{{ alerta.activo.nombre }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">IP:</label>
+                        <p class="mb-0">{{ alerta.activo.ip }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tipo:</label>
+                        <p class="mb-0">{{ alerta.activo.get_tipo_display }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cliente:</label>
+                        <p class="mb-0">{{ alerta.activo.cliente.nombre }}</p>
+                    </div>
+                    <a href="{% url 'vuln_manager:activo_detail' alerta.activo.pk %}" class="btn btn-info">
+                        <i class="bi bi-eye"></i> Ver detalles del activo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alertas relacionadas -->
+            {% if alertas_relacionadas %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-link-45deg me-2"></i>Otras Alertas del Activo
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for alerta_rel in alertas_relacionadas %}
+                        <a href="{% url 'vuln_manager:alerta_detail' alerta_rel.pk %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ alerta_rel.vulnerabilidad.cve_id }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ alerta_rel.fecha_creacion|date:"d/m/Y" }}</small>
+                                </div>
+                                <span class="badge {{ alerta_rel.vulnerabilidad.severidad|severity_to_css_class }}">
+                                    {{ alerta_rel.vulnerabilidad.get_severidad_display }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if alertas_misma_vulnerabilidad %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-share me-2"></i>Misma Vulnerabilidad en Otros Activos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for alerta_rel in alertas_misma_vulnerabilidad %}
+                        <a href="{% url 'vuln_manager:alerta_detail' alerta_rel.pk %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ alerta_rel.activo.nombre }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ alerta_rel.activo.cliente.nombre }}</small>
+                                </div>
+                                <span class="badge {% if alerta_rel.estado == 'nueva' %}bg-primary{% elif alerta_rel.estado == 'en_proceso' %}bg-warning{% elif alerta_rel.estado == 'resuelta' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ alerta_rel.get_estado_display }}
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %} 
