@@ -1,6 +1,53 @@
 # Estado del Proyecto Vuln-Asset-Manager
 
-## Última Actualización: 19/06/2025
+## Última Actualización: 20/06/2025
+
+### 🎨 Cambios Recientes - Unificación Visual y Corrección de Permisos (20/06/2025)
+
+#### Unificación del Diseño Visual de Dashboards
+- **Banner Moderno y Coherente**: Implementado banner consistente en todos los dashboards (admin, analista, cliente)
+- **Limpieza de Variables de Contexto**: Eliminadas variables innecesarias y duplicadas en vistas de dashboard
+- **Corrección de Errores de Relaciones**: Solucionados errores de `activo.alerta_set` vs `activo.alertas` en templates
+- **Coherencia Visual Completa**: Todos los dashboards ahora siguen el mismo patrón de diseño Mazer
+
+#### Adaptación de Vistas y Plantillas por Rol
+- **Vistas de Cliente**: Adaptadas para mostrar solo información relevante, ocultando botones de edición/eliminación
+- **Columnas Condicionales**: Implementadas columnas que se muestran/ocultan según el rol del usuario
+- **Acciones Seguras**: Clientes solo pueden ver detalles, no pueden editar ni eliminar datos
+- **Filtros Avanzados**: Replicados filtros de alertas en activos y vulnerabilidades con filtros por:
+  - Severidad (crítica, alta, media, baja)
+  - Estado (nuevo, en_proceso, resuelto)
+  - Búsqueda por texto
+  - Filtros por fechas
+
+#### Corrección de Permisos y Seguridad
+- **Acceso Restringido**: Clientes solo pueden acceder a sus propios datos
+- **Páginas 404**: Implementado comportamiento seguro mostrando 404 cuando clientes intentan acceder a datos de otros
+- **Vistas de Detalle**: Permitido acceso a clientes en alertas y vulnerabilidades con lógica de filtrado
+- **Listados Seguros**: Clientes solo ven sus activos, vulnerabilidades y alertas
+- **Condicionales en Templates**: Implementadas verificaciones para ocultar elementos no permitidos
+
+#### Mejoras de UX/UI
+- **Botones de Acción**: Reorganizados en dashboard admin para mejor coherencia visual
+- **Compatibilidad Nocturna**: Ajustados estilos para funcionar correctamente en modo oscuro
+- **Clases Mazer**: Eliminado CSS personalizado, usando solo clases de Mazer
+- **Selector de Cliente**: Ocultado para usuarios cliente en listado de alertas
+- **Columna Cliente**: Ocultada en listado de alertas para clientes
+- **Enlaces Funcionales**: Corregido enlace en dashboard cliente para filtro de alertas críticas
+
+#### Archivos Modificados
+- **Templates de Dashboard**: `admin/index.html`, `analista/index.html`, `cliente/index.html`
+- **Vistas de Dashboard**: `admin.py`, `analista.py`, `cliente.py`
+- **Templates de Entidades**: `activo/list.html`, `vulnerabilidad/list.html`, `alerta/list.html`
+- **Vistas de Entidades**: `activo/list.py`, `vulnerabilidad/list.py`, `alerta/list.py`
+- **Templates de Detalle**: `activo/detail.html`, `vulnerabilidad/detail.html`, `alerta/detail.html`
+- **Vistas de Detalle**: `activo/detail.py`, `vulnerabilidad/detail.py`, `alerta/detail.py`
+
+#### Seguridad Verificada
+- **Filtrado por Cliente**: Todas las vistas respetan la relación usuario-cliente
+- **Permisos por Rol**: Implementados correctamente en todas las vistas
+- **Sin Fugas de Información**: Clientes no pueden acceder a datos de otros clientes
+- **Experiencia Clara**: Interfaz adaptada para cada rol sin confusión
 
 ### ✅ Completado
 

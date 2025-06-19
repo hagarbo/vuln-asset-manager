@@ -14,6 +14,49 @@
     <p class="page-subtitle" style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 0;">Gestión de vulnerabilidades detectadas en el sistema</p>
 </div>
 <section class="section">
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="severidad" class="form-label">Severidad</label>
+                    <select name="severidad" id="severidad" class="form-select">
+                        <option value="">Todas</option>
+                        {% for sev_value, sev_label in severidades %}
+                            <option value="{{ sev_value }}" {% if severidad_filter == sev_value %}selected{% endif %}>{{ sev_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="cve_id" class="form-label">CVE ID</label>
+                    <input type="text" name="cve_id" id="cve_id" class="form-control" placeholder="Buscar por CVE" value="{{ cve_id_filter }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="descripcion_en" class="form-label">Descripción (en inglés)</label>
+                    <input type="text" name="descripcion_en" id="descripcion_en" class="form-control" placeholder="Buscar en descripción" value="{{ descripcion_en_filter }}">
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <div>
+                        <label for="fecha_inicio" class="form-label">Publicación desde</label>
+                        <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" value="{{ fecha_inicio_filter }}">
+                    </div>
+                    <div>
+                        <label for="fecha_fin" class="form-label">hasta</label>
+                        <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" value="{{ fecha_fin_filter }}">
+                    </div>
+                </div>
+                <div class="col-12 d-flex justify-content-end gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel"></i> Filtrar
+                    </button>
+                    <a href="{% url 'vuln_manager:vulnerabilidad_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Fin filtros -->
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">

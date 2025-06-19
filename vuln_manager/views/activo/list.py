@@ -14,24 +14,51 @@ class ActivoListView(RoleRequiredMixin, ListView):
 
     def get_queryset(self):
         ordering = self.request.GET.get('ordering', '-nombre')
-        # Permitimos ordenar por nombre, cliente__nombre y tipo
         allowed_orderings = ['nombre', '-nombre', 'cliente__nombre', '-cliente__nombre', 'tipo', '-tipo']
         if ordering not in allowed_orderings:
             ordering = '-nombre'
         user = self.request.user
         repository = ActivoRepository()
-        
-        if user.es_admin:
-            return repository.get_all().order_by(ordering)
-        elif user.es_analista:
-            return repository.get_by_analista(user).order_by(ordering)
+        # Filtros
+        nombre = self.request.GET.get('nombre', '')
+        tipo = self.request.GET.get('tipo', '')
+        cliente_id = self.request.GET.get('cliente', '')
+        cliente = None
+        if cliente_id:
+            from vuln_manager.models.cliente.cliente import Cliente
+            try:
+                cliente = Cliente.objects.get(pk=cliente_id)
+            except Cliente.DoesNotExist:
+                cliente = None
+        # Filtrado según rol
+        if user.es_admin or user.es_analista:
+            queryset = repository.get_filtered(
+                nombre=nombre if nombre else None,
+                tipo=tipo if tipo else None,
+                cliente=cliente if cliente else None
+            )
         elif user.es_cliente:
-            return repository.get_by_cliente(user.cliente).order_by(ordering)
-            
-        return repository.get_none().order_by(ordering)
+            queryset = repository.get_filtered(
+                nombre=nombre if nombre else None,
+                tipo=tipo if tipo else None,
+                cliente=user.cliente
+            )
+        else:
+            queryset = repository.get_none()
+        return queryset.order_by(ordering)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Opciones de tipo para el filtro
+        context['tipos'] = self.model.TIPO_CHOICES
+        # Opciones de cliente solo para admin y analista
+        user = self.request.user
+        if user.es_admin or user.es_analista:
+            from vuln_manager.models.cliente.cliente import Cliente
+            context['clientes'] = Cliente.objects.all().order_by('nombre')
+        context['nombre_filter'] = self.request.GET.get('nombre', '')
+        context['tipo_filter'] = self.request.GET.get('tipo', '')
+        context['cliente_filter'] = self.request.GET.get('cliente', '')
         context['create_url'] = reverse('vuln_manager:activo_create')
         context['ordering'] = self.request.GET.get('ordering', '-nombre')
         return context 

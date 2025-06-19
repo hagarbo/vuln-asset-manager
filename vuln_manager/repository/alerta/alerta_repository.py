@@ -60,6 +60,8 @@ class AlertaRepository(BaseRepository):
             return self.get_all().select_related('vulnerabilidad', 'activo', 'activo__cliente', 'analista_asignado')
         elif user.es_analista:
             return self.get_by_analista(user)
+        elif hasattr(user, 'cliente') and user.es_cliente:
+            return self.get_by_cliente(user.cliente)
         else:
             return self.get_none()
 

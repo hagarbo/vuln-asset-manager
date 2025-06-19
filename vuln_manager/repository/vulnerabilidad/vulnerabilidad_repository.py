@@ -66,4 +66,22 @@ class VulnerabilidadRepository(BaseRepository):
                 return self.model.objects.none()
         return self.model.objects.filter(
             fecha_modificacion__gte=fecha
-        ) 
+        )
+
+    def get_filtered(self, severidad=None, cve_id=None, descripcion_en=None, fecha_inicio=None, fecha_fin=None):
+        """
+        Devuelve un queryset filtrado por severidad, cve_id (parcial), descripcion_en (parcial, insensible a mayúsculas),
+        y rango de fecha_publicacion (inicio y fin, inclusivo).
+        """
+        qs = self.model.objects.all()
+        if severidad:
+            qs = qs.filter(severidad=severidad)
+        if cve_id:
+            qs = qs.filter(cve_id__icontains=cve_id)
+        if descripcion_en:
+            qs = qs.filter(descripcion_en__icontains=descripcion_en)
+        if fecha_inicio:
+            qs = qs.filter(fecha_publicacion__gte=fecha_inicio)
+        if fecha_fin:
+            qs = qs.filter(fecha_publicacion__lte=fecha_fin)
+        return qs 

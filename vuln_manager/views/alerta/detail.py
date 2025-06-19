@@ -8,7 +8,7 @@ class AlertaDetailView(RoleRequiredMixin, DetailView):
     model = Alerta
     template_name = 'vuln_manager/alerta/detail.html'
     context_object_name = 'alerta'
-    allowed_roles = ['admin', 'analista']
+    allowed_roles = ['admin', 'analista', 'cliente']
 
     def get_queryset(self):
         user = self.request.user
@@ -17,6 +17,8 @@ class AlertaDetailView(RoleRequiredMixin, DetailView):
             return repository.get_all().select_related('vulnerabilidad', 'activo', 'activo__cliente', 'analista_asignado', 'resuelta_por')
         elif user.es_analista:
             return repository.get_by_analista(user)
+        elif hasattr(user, 'cliente') and user.es_cliente:
+            return repository.get_by_cliente(user.cliente)
         return repository.get_none()
 
     def get_context_data(self, **kwargs):

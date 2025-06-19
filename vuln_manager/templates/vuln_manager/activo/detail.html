@@ -75,9 +75,11 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
+                        {% if not request.user.es_cliente %}
                         <a href="{% url 'vuln_manager:activo_vulnerabilidad_create' %}?activo={{ activo.pk }}" class="btn btn-primary btn-block">
                             <i class="bi bi-plus-circle"></i> Añadir Vulnerabilidad
                         </a>
+                        {% endif %}
                         {% if perms.vuln_manager.change_activo %}
                         <a href="{% url 'vuln_manager:activo_update' activo.pk %}" class="btn btn-warning btn-block">
                             <i class="bi bi-pencil"></i> Editar Activo
@@ -150,12 +152,14 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            {% if not request.user.es_cliente %}
                             <th>Acciones</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
                         {% for av in vulnerabilidades %}
-                        <tr>
+                        <tr {% if request.user.es_cliente %}class="clickable-row" data-href="{% url 'vuln_manager:vulnerabilidad_detail' av.vulnerabilidad.pk %}"{% endif %}>
                             <td><strong>{{ av.vulnerabilidad.cve_id|default:av.vulnerabilidad }}</strong></td>
                             <td>
                                 <span class="badge bg-{{ av.estado|status_to_css_class }}">
@@ -190,6 +194,7 @@
                                     {{ av.vulnerabilidad.get_severidad_display }}
                                 </span>
                             </td>
+                            {% if not request.user.es_cliente %}
                             <td>
                                 <div class="d-flex gap-2">
                                     <a href="{% url 'vuln_manager:activo_vulnerabilidad_detail' av.pk %}" class="btn btn-info btn-sm" title="Ver detalles">
@@ -201,6 +206,15 @@
                                     <a href="{% url 'vuln_manager:activo_vulnerabilidad_delete' av.pk %}" class="btn btn-danger btn-sm" title="Eliminar">
                                         <i class="bi bi-trash"></i> Eliminar
                                     </a>
+                                </div>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{% if not request.user.es_cliente %}7{% else %}6{% endif %}" class="text-center">
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle"></i> No hay vulnerabilidades asociadas a este activo.
                                 </div>
                             </td>
                         </tr>
@@ -251,4 +265,16 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.clickable-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
 {% endblock %} 

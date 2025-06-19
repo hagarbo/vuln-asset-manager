@@ -16,9 +16,21 @@ class VulnerabilidadListView(RoleRequiredMixin, ListView):
     allowed_roles = ['admin', 'analista', 'gestor']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         ordering = self.request.GET.get('ordering', '-fecha_modificacion')
-
+        repository = VulnerabilidadRepository()
+        # Filtros
+        severidad = self.request.GET.get('severidad', '')
+        cve_id = self.request.GET.get('cve_id', '')
+        descripcion_en = self.request.GET.get('descripcion_en', '')
+        fecha_inicio = self.request.GET.get('fecha_inicio', '')
+        fecha_fin = self.request.GET.get('fecha_fin', '')
+        queryset = repository.get_filtered(
+            severidad=severidad if severidad else None,
+            cve_id=cve_id if cve_id else None,
+            descripcion_en=descripcion_en if descripcion_en else None,
+            fecha_inicio=fecha_inicio if fecha_inicio else None,
+            fecha_fin=fecha_fin if fecha_fin else None
+        )
         # Anotación para ranking de severidad
         queryset = queryset.annotate(
             severidad_rank=Case(
@@ -26,12 +38,11 @@ class VulnerabilidadListView(RoleRequiredMixin, ListView):
                 When(severidad='alta', then=Value(4)),
                 When(severidad='media', then=Value(3)),
                 When(severidad='baja', then=Value(2)),
-                When(severidad='no_establecida', then=Value(1)),
+                When(severidad='no establecida', then=Value(1)),
                 default=Value(0),
                 output_field=IntegerField()
             )
         )
-
         # Mapeo especial para severidad
         if ordering in ['severidad', '-severidad']:
             direction = '' if ordering == 'severidad' else '-'
@@ -47,5 +58,12 @@ class VulnerabilidadListView(RoleRequiredMixin, ListView):
             {"label": "Dashboard", "url": "/dashboard/"},
             {'label': 'Vulnerabilidades', 'url': None}
         ]
+        # Opciones de severidad para el filtro
+        context['severidades'] = self.model.SEVERIDAD_CHOICES
+        context['severidad_filter'] = self.request.GET.get('severidad', '')
+        context['cve_id_filter'] = self.request.GET.get('cve_id', '')
+        context['descripcion_en_filter'] = self.request.GET.get('descripcion_en', '')
+        context['fecha_inicio_filter'] = self.request.GET.get('fecha_inicio', '')
+        context['fecha_fin_filter'] = self.request.GET.get('fecha_fin', '')
         context['ordering'] = self.request.GET.get('ordering', '-fecha_modificacion')
         return context 

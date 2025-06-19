@@ -11,7 +11,7 @@ class AlertaListView(RoleRequiredMixin, ListView):
     template_name = 'vuln_manager/alerta/list.html'
     context_object_name = 'alertas'
     paginate_by = 10
-    allowed_roles = ['admin', 'analista']
+    allowed_roles = ['admin', 'analista', 'cliente']
 
     def get_queryset(self):
         ordering = self.request.GET.get('ordering', '-fecha_creacion')

@@ -29,7 +29,7 @@
                     <h5 class="mb-0">
                         <i class="bi bi-exclamation-triangle me-2"></i>Información de la Alerta
                     </h5>
-                    {% if puede_editar %}
+                    {% if puede_editar and not request.user.es_cliente %}
                     <a href="{% url 'vuln_manager:alerta_update' alerta.pk %}" class="btn btn-primary btn-sm">
                         <i class="bi bi-pencil"></i> Editar
                     </a>
@@ -71,13 +71,13 @@
                             <p class="mb-0">{{ alerta.fecha_resolucion|date:"d/m/Y H:i" }}</p>
                         </div>
                         {% endif %}
-                        {% if alerta.analista_asignado %}
+                        {% if alerta.analista_asignado and not request.user.es_cliente %}
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Analista Asignado:</label>
                             <p class="mb-0">{{ alerta.analista_asignado.username }}</p>
                         </div>
                         {% endif %}
-                        {% if alerta.resuelta_por %}
+                        {% if alerta.resuelta_por and not request.user.es_cliente %}
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Resuelta por:</label>
                             <p class="mb-0">{{ alerta.resuelta_por.username }}</p>
@@ -85,7 +85,7 @@
                         {% endif %}
                     </div>
 
-                    {% if alerta.notas %}
+                    {% if alerta.notas and not request.user.es_cliente %}
                     <div class="mt-4">
                         <label class="form-label fw-bold">Notas:</label>
                         <div class="alert alert-info">
@@ -189,7 +189,7 @@
             </div>
             {% endif %}
 
-            {% if alertas_misma_vulnerabilidad %}
+            {% if alertas_misma_vulnerabilidad and not request.user.es_cliente %}
             <div class="card mt-4">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -198,16 +198,16 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
-                        {% for alerta_rel in alertas_misma_vulnerabilidad %}
-                        <a href="{% url 'vuln_manager:alerta_detail' alerta_rel.pk %}" class="list-group-item list-group-item-action">
+                        {% for alerta_mv in alertas_misma_vulnerabilidad %}
+                        <a href="{% url 'vuln_manager:alerta_detail' alerta_mv.pk %}" class="list-group-item list-group-item-action">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>{{ alerta_rel.activo.nombre }}</strong>
+                                    <strong>{{ alerta_mv.activo.nombre }}</strong>
                                     <br>
-                                    <small class="text-muted">{{ alerta_rel.activo.cliente.nombre }}</small>
+                                    <small class="text-muted">{{ alerta_mv.fecha_creacion|date:"d/m/Y" }}</small>
                                 </div>
-                                <span class="badge {% if alerta_rel.estado == 'nueva' %}bg-primary{% elif alerta_rel.estado == 'en_proceso' %}bg-warning{% elif alerta_rel.estado == 'resuelta' %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {{ alerta_rel.get_estado_display }}
+                                <span class="badge {{ alerta_mv.vulnerabilidad.severidad|severity_to_css_class }}">
+                                    {{ alerta_mv.vulnerabilidad.get_severidad_display }}
                                 </span>
                             </div>
                         </a>

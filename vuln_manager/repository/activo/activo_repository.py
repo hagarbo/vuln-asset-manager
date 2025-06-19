@@ -19,4 +19,17 @@ class ActivoRepository(BaseRepository):
         """
         Obtiene los activos asignados a un analista a través de sus clientes.
         """
-        return self.model.objects.filter(cliente__analistas=analista) 
+        return self.model.objects.filter(cliente__analistas=analista)
+
+    def get_filtered(self, nombre=None, tipo=None, cliente=None):
+        """
+        Devuelve un queryset filtrado por nombre (parcial, insensible a mayúsculas), tipo y cliente.
+        """
+        qs = self.model.objects.all()
+        if nombre:
+            qs = qs.filter(nombre__icontains=nombre)
+        if tipo:
+            qs = qs.filter(tipo=tipo)
+        if cliente:
+            qs = qs.filter(cliente=cliente)
+        return qs 

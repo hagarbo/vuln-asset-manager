@@ -37,6 +37,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
+                {% if not request.user.es_cliente %}
                 <div class="col-md-3">
                     <label for="cliente" class="form-label">Cliente</label>
                     <select name="cliente" id="cliente" class="form-select">
@@ -48,6 +49,7 @@
                         {% endfor %}
                     </select>
                 </div>
+                {% endif %}
                 <div class="col-md-3">
                     <label for="severidad" class="form-label">Severidad</label>
                     <select name="severidad" id="severidad" class="form-select">
@@ -117,6 +119,7 @@
                                         {% endif %}
                                     </a>
                                 </th>
+                                {% if not request.user.es_cliente %}
                                 <th>
                                     <a href="?ordering={% if ordering == 'activo__cliente__nombre' %}-activo__cliente__nombre{% else %}activo__cliente__nombre{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
                                         Cliente
@@ -127,6 +130,7 @@
                                         {% endif %}
                                     </a>
                                 </th>
+                                {% endif %}
                                 <th>
                                     <a href="?ordering={% if ordering == 'vulnerabilidad__severidad' %}-vulnerabilidad__severidad{% else %}vulnerabilidad__severidad{% endif %}&cliente={{ cliente_filter }}&severidad={{ severidad_filter }}&estado={{ estado_filter }}" class="text-decoration-none">
                                         Severidad
@@ -173,11 +177,13 @@
                                         {{ alerta.activo.nombre }}
                                     </a>
                                 </td>
+                                {% if not request.user.es_cliente %}
                                 <td>
                                     <a href="{% url 'vuln_manager:cliente_detail' alerta.activo.cliente.pk %}" class="text-decoration-none">
                                         {{ alerta.activo.cliente.nombre }}
                                     </a>
                                 </td>
+                                {% endif %}
                                 <td>
                                     <span class="badge {{ alerta.vulnerabilidad.severidad|severity_to_css_class }} severity-badge">
                                         {{ alerta.vulnerabilidad.get_severidad_display }}
@@ -193,9 +199,11 @@
                                     <a href="{% url 'vuln_manager:alerta_detail' alerta.pk %}" class="btn btn-info btn-sm">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    {% if not request.user.es_cliente %}
                                     <a href="{% url 'vuln_manager:alerta_update' alerta.pk %}" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
