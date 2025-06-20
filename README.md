@@ -318,6 +318,7 @@ En resumen, la reducción de tiempo refleja directamente las funcionalidades que
 | **SSL/HTTPS** | 0€ | Certificado gratuito incluido en Render |
 
 **Total mensual actual: 14€/mes**
+**Coste Desarrollo: 125h * 25€/h = 3125€**
 
 ### Costes futuros estimados:
 
