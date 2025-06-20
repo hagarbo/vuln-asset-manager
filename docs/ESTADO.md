@@ -177,7 +177,7 @@
 ### 🔄 En Progreso
 
 #### Dashboards
-- [ ] **Dashboard del Cliente**
+- [x] **Dashboard del Cliente**
   - Vista y template pendientes
   - Resumen de activos y vulnerabilidades
   - Alertas del cliente
@@ -314,7 +314,6 @@ El proyecto está en un estado sólido con todas las funcionalidades core implem
 - Para tests, usar el formato `test_entidad.py` y la clase `EntidadTest`
 
 ## Notas Importantes
-- La versión de docker-compose está fijada en 3.11 y NO debe cambiarse a 3.8 u otra versión para evitar problemas de compatibilidad.
 - **Estructura del Proyecto y Buenas Prácticas de Django:**
   - **Plantillas (Templates):**
     - **A nivel de Proyecto (`/templates/`):** Contiene plantillas globales como `base.html`, `home.html` y plantillas de autenticación (`/templates/registration/`).
